@@ -29,15 +29,36 @@
                     <div class="shape-preview round-rect"></div>
                     <span>Node</span>
                 </div>
+                <div class="draggable-shape" draggable="true" data-shape="triangle" title="Merge/Triangle">
+                    <div class="shape-preview triangle"></div>
+                    <span>Triangle</span>
+                </div>
+                <div class="draggable-shape" draggable="true" data-shape="star" title="Idea/Star">
+                    <div class="shape-preview star"></div>
+                    <span>Star</span>
+                </div>
+                <div class="draggable-shape" draggable="true" data-shape="hexagon" title="Preparation">
+                    <div class="shape-preview hexagon"></div>
+                    <span>Hexagon</span>
+                </div>
             </div>
 
             <div class="tool-section">
                 <h3>Tools</h3>
-                <button id="btn-pointer" class="tool-btn active" title="Select/Move"><i class="fas fa-mouse-pointer"></i></button>
-                <button id="btn-connector" class="tool-btn" title="Connect Shapes"><i class="fas fa-arrow-right"></i></button>
-                <button id="btn-delete" class="tool-btn" title="Delete Selected"><i class="fas fa-trash"></i></button>
-                <button id="btn-save" class="tool-btn" title="Save Image"><i class="fas fa-download"></i></button>
-                <button id="btn-clear" class="tool-btn" title="Clear All"><i class="fas fa-eraser"></i></button>
+                <div class="btn-group">
+                    <button id="btn-undo" class="tool-btn small" title="Undo (Ctrl+Z)"><i class="fas fa-undo"></i></button>
+                    <button id="btn-redo" class="tool-btn small" title="Redo (Ctrl+Y)"><i class="fas fa-redo"></i></button>
+                </div>
+                <div class="btn-group">
+                    <button id="btn-zoom-in" class="tool-btn small" title="Zoom In"><i class="fas fa-search-plus"></i></button>
+                    <button id="btn-zoom-out" class="tool-btn small" title="Zoom Out"><i class="fas fa-search-minus"></i></button>
+                    <button id="btn-reset-view" class="tool-btn small" title="Reset View"><i class="fas fa-compress-arrows-alt"></i></button>
+                </div>
+                <button id="btn-pointer" class="tool-btn active" title="Select/Move"><i class="fas fa-mouse-pointer"></i> Select</button>
+                <button id="btn-connector" class="tool-btn" title="Connect Shapes"><i class="fas fa-arrow-right"></i> Connect</button>
+                <button id="btn-delete" class="tool-btn" title="Delete Selected"><i class="fas fa-trash"></i> Delete</button>
+                <button id="btn-save" class="tool-btn" title="Save Image"><i class="fas fa-download"></i> Export</button>
+                <button id="btn-clear" class="tool-btn" title="Clear All"><i class="fas fa-eraser"></i> Clear</button>
             </div>
 
             <div class="tool-section">
@@ -56,9 +77,36 @@
                       <polygon points="0 0, 10 3.5, 0 7" fill="#333" />
                     </marker>
                 </defs>
-                <g id="layer-connectors"></g>
-                <g id="layer-shapes"></g>
+                <g id="viewport">
+                    <g id="layer-connectors"></g>
+                    <g id="layer-shapes"></g>
+                </g>
             </svg>
+        </div>
+
+        <div id="properties-panel">
+            <h3>Properties</h3>
+            <div id="prop-controls" style="display:none;">
+                <div class="prop-group">
+                    <label>Fill Color</label>
+                    <input type="color" id="prop-fill" value="#ffffff">
+                </div>
+                <div class="prop-group">
+                    <label>Stroke Color</label>
+                    <input type="color" id="prop-stroke" value="#333333">
+                </div>
+                <div class="prop-group">
+                    <label>Stroke Width</label>
+                    <input type="range" id="prop-stroke-width" min="1" max="10" value="2">
+                </div>
+                <div class="prop-group">
+                    <label>Text Color</label>
+                    <input type="color" id="prop-text-color" value="#333333">
+                </div>
+            </div>
+            <div id="prop-empty">
+                <p>Select a shape to edit properties.</p>
+            </div>
         </div>
     </div>
 

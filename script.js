@@ -8,14 +8,25 @@ const state = {
     isDragging: false,
     dragOffset: { x: 0, y: 0 },
     draggedShapeId: null,
-    connectorStartId: null
+    connectorStartId: null,
+    // History
+    history: [],
+    historyIndex: -1,
+    // Viewport
+    zoom: 1,
+    pan: { x: 0, y: 0 },
+    isPanning: false,
+    panStart: { x: 0, y: 0 }
 };
 
 // DOM Elements
 const canvas = document.getElementById('main-canvas');
+const viewport = document.getElementById('viewport');
 const layerShapes = document.getElementById('layer-shapes');
 const layerConnectors = document.getElementById('layer-connectors');
 const textEditor = document.getElementById('text-editor');
+const propPanel = document.getElementById('prop-controls');
+const propEmpty = document.getElementById('prop-empty');
 
 // Toolbar Events - Drag and Drop
 const draggables = document.querySelectorAll('.draggable-shape');
@@ -36,8 +47,8 @@ canvasContainer.addEventListener('drop', (e) => {
     const type = e.dataTransfer.getData('shape-type');
     const text = e.dataTransfer.getData('shape-text');
     const rect = canvasContainer.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const x = (e.clientX - rect.left - state.pan.x) / state.zoom;
+    const y = (e.clientY - rect.top - state.pan.y) / state.zoom;
 
     createShape(type, x, y, text);
 });
@@ -51,6 +62,8 @@ window.addEventListener('keydown', handleKeyDown);
 
 // Functions
 function createShape(type, x, y, textStr = 'Text') {
+    pushToHistory(); // Save state before creation
+
     const id = 'shape-' + state.nextId++;
     const shape = {
         id,
@@ -59,7 +72,11 @@ function createShape(type, x, y, textStr = 'Text') {
         y,
         text: textStr,
         width: 100,
-        height: 50
+        height: 50,
+        fill: '#ffffff',
+        stroke: '#333333',
+        strokeWidth: 2,
+        textColor: '#333333'
     };
 
     if (type === 'circle') {
@@ -68,6 +85,9 @@ function createShape(type, x, y, textStr = 'Text') {
     } else if (type === 'diamond') {
         shape.width = 100;
         shape.height = 60;
+    } else if (type === 'triangle' || type === 'star' || type === 'hexagon') {
+        shape.width = 80;
+        shape.height = 80;
     }
 
     state.shapes.push(shape);
@@ -111,6 +131,37 @@ function renderShape(shape) {
         const w = shape.width / 2;
         const h = shape.height / 2;
         geometry.setAttribute('points', `0,-${h} ${w},0 0,${h} -${w},0`);
+    } else if (shape.type === 'triangle') {
+        geometry = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+        const w = shape.width / 2;
+        const h = shape.height / 2;
+        geometry.setAttribute('points', `0,-${h} ${w},${h} -${w},${h}`);
+    } else if (shape.type === 'star') {
+        geometry = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+        // Simple star approximation
+        const outer = shape.width / 2;
+        const inner = outer * 0.4;
+        let points = '';
+        for(let i=0; i<10; i++) {
+            const r = (i % 2 === 0) ? outer : inner;
+            const a = Math.PI * i / 5 - Math.PI/2;
+            points += `${Math.cos(a)*r},${Math.sin(a)*r} `;
+        }
+        geometry.setAttribute('points', points);
+    } else if (shape.type === 'hexagon') {
+        geometry = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+        const w = shape.width / 2;
+        const h = shape.height / 2;
+        // Pointy top hexagon
+        // points: top, top-right, bot-right, bot, bot-left, top-left
+        geometry.setAttribute('points', `0,-${h} ${w},-${h/2} ${w},${h/2} 0,${h} -${w},${h/2} -${w},-${h/2}`);
+    }
+
+    // Apply Styles
+    if (geometry) {
+        geometry.setAttribute('fill', shape.fill || '#fff');
+        geometry.setAttribute('stroke', shape.stroke || '#333');
+        geometry.setAttribute('stroke-width', shape.strokeWidth || 2);
     }
 
     el.appendChild(geometry);
@@ -118,7 +169,8 @@ function renderShape(shape) {
     // Draw Text
     const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
     text.textContent = shape.text;
-    el.appendChild(text); // Centered by CSS
+    text.setAttribute('fill', shape.textColor || '#333');
+    el.appendChild(text);
 
     // Position
     el.setAttribute('transform', `translate(${shape.x}, ${shape.y})`);
@@ -134,6 +186,15 @@ function renderShape(shape) {
 function handleMouseDown(e) {
     if (e.target.closest('#text-editor')) return; // Ignore clicks in editor
 
+    // Middle click or Space+Click for Pan
+    if (e.button === 1 || (state.mode === 'select' && e.code === 'Space')) {
+        state.isPanning = true;
+        state.panStart = { x: e.clientX, y: e.clientY };
+        canvas.style.cursor = 'grabbing';
+        e.preventDefault();
+        return;
+    }
+
     const group = e.target.closest('.shape-group');
 
     if (group) {
@@ -141,6 +202,7 @@ function handleMouseDown(e) {
         selectElement(id);
 
         if (state.mode === 'select') {
+            pushToHistory(); // Save before potential move
             state.isDragging = true;
             state.draggedShapeId = id;
             const shape = state.shapes.find(s => s.id === id);
@@ -185,6 +247,15 @@ function handleMouseMove(e) {
             renderShape(shape);
             updateConnectors(shape.id); // We'll implement this next
         }
+    } else if (state.isPanning) {
+        const dx = e.clientX - state.panStart.x;
+        const dy = e.clientY - state.panStart.y;
+
+        state.pan.x += dx;
+        state.pan.y += dy;
+
+        state.panStart = { x: e.clientX, y: e.clientY };
+        updateViewport();
     }
 }
 
@@ -192,6 +263,11 @@ function handleMouseUp(e) {
     if (state.isDragging) {
         state.isDragging = false;
         state.draggedShapeId = null;
+        saveState(); // Update current state
+    }
+    if (state.isPanning) {
+        state.isPanning = false;
+        canvas.style.cursor = 'default';
         saveState();
     }
 }
@@ -200,7 +276,9 @@ function getSVGPoint(e) {
     const pt = canvas.createSVGPoint();
     pt.x = e.clientX;
     pt.y = e.clientY;
-    return pt.matrixTransform(canvas.getScreenCTM().inverse());
+    // We need to account for viewport transform manually or use getScreenCTM of the viewport group?
+    // Using viewport group CTM is better.
+    return pt.matrixTransform(viewport.getScreenCTM().inverse());
 }
 
 function selectElement(id) {
@@ -211,6 +289,24 @@ function selectElement(id) {
     if (id) {
         const el = document.getElementById(id);
         if (el) el.classList.add('selected');
+
+        // Update Property Panel
+        const shape = state.shapes.find(s => s.id === id);
+        if (shape) {
+            propEmpty.style.display = 'none';
+            propPanel.style.display = 'block';
+            document.getElementById('prop-fill').value = shape.fill || '#ffffff';
+            document.getElementById('prop-stroke').value = shape.stroke || '#333333';
+            document.getElementById('prop-stroke-width').value = shape.strokeWidth || 2;
+            document.getElementById('prop-text-color').value = shape.textColor || '#333333';
+        } else {
+            // Connector selected
+             propEmpty.style.display = 'block';
+             propPanel.style.display = 'none';
+        }
+    } else {
+        propEmpty.style.display = 'block';
+        propPanel.style.display = 'none';
     }
 }
 
@@ -223,9 +319,19 @@ function handleKeyDown(e) {
             }
         }
     }
+    // Shortcuts
+    if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
+        e.preventDefault();
+        undo();
+    }
+    if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.shiftKey && e.key === 'Z'))) {
+        e.preventDefault();
+        redo();
+    }
 }
 
 function deleteElement(id) {
+    pushToHistory();
     if (id.startsWith('shape-')) {
         state.shapes = state.shapes.filter(s => s.id !== id);
         // Also remove associated connectors
@@ -240,21 +346,107 @@ function deleteElement(id) {
         const el = document.getElementById(id);
         if (el) el.remove();
     }
-    state.selectedId = null;
+    selectElement(null); // Clear selection
     saveState();
 }
 
 function saveState() {
-    localStorage.setItem('flowchartState', JSON.stringify(state));
+    // We don't save history to local storage to avoid quota issues
+    const { history, historyIndex, ...persistentState } = state;
+    localStorage.setItem('flowchartState', JSON.stringify(persistentState));
+}
+
+// History Functions
+function pushToHistory() {
+    // Remove future states if we are in the middle of history
+    if (state.historyIndex < state.history.length - 1) {
+        state.history = state.history.slice(0, state.historyIndex + 1);
+    }
+
+    // Deep copy state (excluding history itself)
+    const snapshot = JSON.stringify({
+        shapes: state.shapes,
+        connectors: state.connectors,
+        nextId: state.nextId
+    });
+
+    state.history.push(snapshot);
+    state.historyIndex++;
+
+    // Limit history size
+    if (state.history.length > 50) {
+        state.history.shift();
+        state.historyIndex--;
+    }
+}
+
+function undo() {
+    if (state.historyIndex >= 0) {
+        // Save current state to "redo" slot (effectively index + 1)
+        const currentSnapshot = JSON.stringify({
+            shapes: state.shapes,
+            connectors: state.connectors,
+            nextId: state.nextId
+        });
+
+        if (state.historyIndex === state.history.length - 1) {
+            state.history.push(currentSnapshot);
+        } else {
+            state.history[state.historyIndex + 1] = currentSnapshot;
+        }
+
+        const prevSnapshot = state.history[state.historyIndex];
+        loadSnapshot(prevSnapshot);
+        state.historyIndex--;
+    }
+}
+
+function redo() {
+    if (state.historyIndex < state.history.length - 2) {
+         state.historyIndex++;
+         const nextSnapshot = state.history[state.historyIndex + 1];
+         loadSnapshot(nextSnapshot);
+    }
+}
+
+function loadSnapshot(json) {
+    const data = JSON.parse(json);
+    state.shapes = data.shapes;
+    state.connectors = data.connectors;
+    state.nextId = data.nextId;
+
+    layerShapes.innerHTML = '';
+    layerConnectors.innerHTML = '';
+    state.shapes.forEach(renderShape);
+    state.connectors.forEach(renderConnector);
+    saveState();
 }
 
 // Toolbar Buttons
+document.getElementById('btn-undo').addEventListener('click', undo);
+document.getElementById('btn-redo').addEventListener('click', redo);
+
+document.getElementById('btn-zoom-in').addEventListener('click', () => {
+    state.zoom *= 1.2;
+    updateViewport();
+});
+document.getElementById('btn-zoom-out').addEventListener('click', () => {
+    state.zoom /= 1.2;
+    updateViewport();
+});
+document.getElementById('btn-reset-view').addEventListener('click', () => {
+    state.zoom = 1;
+    state.pan = {x: 0, y: 0};
+    updateViewport();
+});
+
 document.getElementById('btn-pointer').addEventListener('click', () => setMode('select'));
 document.getElementById('btn-connector').addEventListener('click', () => setMode('connect'));
 document.getElementById('btn-delete').addEventListener('click', () => {
     if (state.selectedId) deleteElement(state.selectedId);
 });
 document.getElementById('btn-clear').addEventListener('click', () => {
+    pushToHistory();
     state.shapes = [];
     state.connectors = [];
     state.nextId = 1;
@@ -295,6 +487,7 @@ function setMode(mode) {
 
 // Connector Logic
 function createConnector(sourceId, targetId) {
+    pushToHistory();
     // Check if already connected
     const exists = state.connectors.find(c => c.source === sourceId && c.target === targetId);
     if (exists) return;
@@ -336,10 +529,34 @@ function renderConnector(connector) {
 }
 
 function getConnectorPath(source, target) {
-    // Simple straight line for now: Center to Center
-    // Since lines are behind shapes, this looks okay.
-    // For better visuals, we could calculate intersection with bounding box, but let's start simple.
-    return `M ${source.x} ${source.y} L ${target.x} ${target.y}`;
+    // Calculate vector
+    const dx = target.x - source.x;
+    const dy = target.y - source.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+
+    // Check for zero distance
+    if (dist === 0) return `M ${source.x} ${source.y} L ${target.x} ${target.y}`;
+
+    // Approximate edge intersection
+    // We want to stop at target's edge so arrowhead is visible
+    // Simple approach: subtract half of target's approx size
+    // Most shapes are roughly 60-100px wide.
+    // Let's assume a safe buffer of ~40px (half of 80)
+
+    // Better: use specific shape width
+    const targetRadius = (target.width + target.height) / 4;
+
+    // Shorten the line by targetRadius + arrowhead size (10)
+    const shortenBy = targetRadius + 5;
+
+    if (dist < shortenBy) return `M ${source.x} ${source.y} L ${target.x} ${target.y}`;
+
+    const scale = (dist - shortenBy) / dist;
+
+    const targetX = source.x + dx * scale;
+    const targetY = source.y + dy * scale;
+
+    return `M ${source.x} ${source.y} L ${targetX} ${targetY}`;
 }
 
 function updateConnectors(shapeId) {
@@ -357,6 +574,43 @@ function renderAllConnectors() {
     state.connectors.forEach(renderConnector);
 }
 
+// Viewport Logic
+function updateViewport() {
+    viewport.setAttribute('transform', `translate(${state.pan.x}, ${state.pan.y}) scale(${state.zoom})`);
+    // Store in local storage?
+    saveState();
+}
+
+canvas.addEventListener('wheel', (e) => {
+    if (e.ctrlKey) {
+        e.preventDefault();
+        const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
+        state.zoom *= zoomFactor;
+        updateViewport();
+    }
+});
+
+// Property Panel Logic
+function updateSelectedShapeProp(prop, value) {
+    if (!state.selectedId || !state.selectedId.startsWith('shape-')) return;
+
+    // We should probably save history here too, but maybe debounce it?
+    // For simplicity, let's save history on "change" which is what color inputs trigger.
+    pushToHistory();
+
+    const shape = state.shapes.find(s => s.id === state.selectedId);
+    if (shape) {
+        shape[prop] = value;
+        renderShape(shape);
+        saveState();
+    }
+}
+
+document.getElementById('prop-fill').addEventListener('change', (e) => updateSelectedShapeProp('fill', e.target.value));
+document.getElementById('prop-stroke').addEventListener('change', (e) => updateSelectedShapeProp('stroke', e.target.value));
+document.getElementById('prop-stroke-width').addEventListener('input', (e) => updateSelectedShapeProp('strokeWidth', e.target.value));
+document.getElementById('prop-text-color').addEventListener('change', (e) => updateSelectedShapeProp('textColor', e.target.value));
+
 // Text Editing
 function handleDblClick(e) {
     const group = e.target.closest('.shape-group');
@@ -373,11 +627,15 @@ function startTextEdit(shape) {
     const canvasRect = canvas.getBoundingClientRect();
 
     textEditor.style.display = 'block';
-    // Position centered on shape
-    textEditor.style.left = (canvasRect.left + shape.x) + 'px';
-    textEditor.style.top = (canvasRect.top + shape.y) + 'px';
+    // Position centered on shape considering zoom/pan
+    const screenX = shape.x * state.zoom + state.pan.x + canvasRect.left;
+    const screenY = shape.y * state.zoom + state.pan.y + canvasRect.top;
+
+    textEditor.style.left = screenX + 'px';
+    textEditor.style.top = screenY + 'px';
     textEditor.style.transform = 'translate(-50%, -50%)';
     textEditor.innerText = shape.text;
+    textEditor.style.color = shape.textColor || '#333';
 
     // Move cursor to end
     const range = document.createRange();
@@ -390,6 +648,7 @@ function startTextEdit(shape) {
     textEditor.focus();
 
     const onBlur = () => {
+        pushToHistory();
         shape.text = textEditor.innerText;
         renderShape(shape);
         textEditor.style.display = 'none';
@@ -420,6 +679,11 @@ function loadState() {
             state.shapes = loadedState.shapes || [];
             state.connectors = loadedState.connectors || [];
             state.nextId = loadedState.nextId || 1;
+
+            // Restore Viewport
+            state.zoom = loadedState.zoom || 1;
+            state.pan = loadedState.pan || { x: 0, y: 0 };
+            updateViewport();
 
             // Restore shapes
             state.shapes.forEach(renderShape);

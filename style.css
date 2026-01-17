@@ -26,78 +26,112 @@ body {
 
 /* Toolbar */
 #toolbar {
-    width: 250px;
+    width: 220px;
     background-color: var(--toolbar-bg);
     border-right: 1px solid var(--toolbar-border);
-    padding: 20px;
+    padding: 15px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 15px;
     box-shadow: 2px 0 5px rgba(0,0,0,0.05);
     z-index: 10;
+    overflow-y: auto;
 }
 
 .tool-section h3 {
     margin-top: 0;
-    margin-bottom: 15px;
-    font-size: 0.9rem;
+    margin-bottom: 10px;
+    font-size: 0.8rem;
     text-transform: uppercase;
     color: #888;
     letter-spacing: 1px;
+    font-weight: 600;
 }
 
 .draggable-shape {
     display: flex;
     align-items: center;
-    padding: 10px;
-    margin-bottom: 10px;
+    padding: 8px;
+    margin-bottom: 5px;
     border: 1px solid transparent;
     border-radius: 4px;
     cursor: grab;
-    transition: background 0.2s;
+    transition: all 0.2s;
 }
 
 .draggable-shape:hover {
-    background-color: #f0f0f0;
-    border-color: #ddd;
+    background-color: #eef2f5;
+    border-color: #d0d7de;
+    transform: translateX(2px);
 }
 
 .shape-preview {
-    width: 30px;
-    height: 30px;
+    width: 24px;
+    height: 24px;
     border: 2px solid #555;
-    margin-right: 15px;
+    margin-right: 12px;
     background: #fff;
 }
 
 .shape-preview.rect { border-radius: 0; }
 .shape-preview.circle { border-radius: 50%; }
 .shape-preview.diamond { transform: rotate(45deg) scale(0.7); }
-.shape-preview.round-rect { border-radius: 15px; width: 40px; height: 25px; }
+.shape-preview.round-rect { border-radius: 8px; width: 32px; height: 20px; }
+.shape-preview.triangle {
+    width: 0; height: 0; border: none; background: transparent;
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-bottom: 24px solid #555;
+}
+.shape-preview.star {
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    background: #555; border: none;
+}
+.shape-preview.hexagon {
+    clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+    background: #555; border: none;
+}
+
+
+.btn-group {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 5px;
+}
 
 .tool-btn {
-    width: 100%;
-    padding: 10px;
+    flex-grow: 1;
+    padding: 8px 12px;
     margin-bottom: 5px;
     background: #fff;
     border: 1px solid #ccc;
     border-radius: 4px;
     cursor: pointer;
-    text-align: left;
+    text-align: center; /* Centered icons */
     display: flex;
     align-items: center;
-    gap: 10px;
+    justify-content: center;
+    gap: 8px;
     transition: all 0.2s;
+    color: #555;
+}
+
+.tool-btn.small {
+    padding: 6px;
+    font-size: 0.9rem;
 }
 
 .tool-btn:hover {
-    background: #f9f9f9;
+    background: #f0f4f8;
+    color: var(--primary-color);
+    border-color: #b0c4de;
 }
 
 .tool-btn.active {
     background: var(--primary-color);
     color: white;
     border-color: var(--primary-color);
+    box-shadow: 0 2px 4px rgba(74, 144, 226, 0.3);
 }
 
 .info {
@@ -175,9 +209,9 @@ text {
 /* Text Editor */
 #text-editor {
     position: absolute;
-    background: rgba(255, 255, 255, 0.9);
-    border: 1px dashed #333;
-    padding: 5px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px dashed var(--primary-color);
+    padding: 4px 8px;
     min-width: 50px;
     min-height: 1em;
     outline: none;
@@ -185,4 +219,59 @@ text {
     font-size: 14px;
     text-align: center;
     white-space: nowrap;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Properties Panel */
+#properties-panel {
+    width: 220px;
+    background-color: #fff;
+    border-left: 1px solid var(--toolbar-border);
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: -2px 0 5px rgba(0,0,0,0.05);
+    z-index: 10;
+}
+
+#properties-panel h3 {
+    margin-top: 0;
+    font-size: 0.9rem;
+    color: #555;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.prop-group {
+    margin-bottom: 15px;
+}
+
+.prop-group label {
+    display: block;
+    font-size: 0.8rem;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.prop-group input[type="color"] {
+    width: 100%;
+    height: 30px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 2px;
+}
+
+.prop-group input[type="range"] {
+    width: 100%;
+}
+
+#prop-empty {
+    text-align: center;
+    color: #999;
+    font-style: italic;
+    font-size: 0.9rem;
+    padding-top: 20px;
 }
