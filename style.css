@@ -1,0 +1,188 @@
+:root {
+    --bg-color: #f4f4f9;
+    --toolbar-bg: #ffffff;
+    --toolbar-border: #ddd;
+    --primary-color: #4a90e2;
+    --text-color: #333;
+    --shape-stroke: #333;
+    --shape-fill: #fff;
+    --grid-color: #e0e0e0;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-color);
+    overflow: hidden;
+    height: 100vh;
+    color: var(--text-color);
+}
+
+#app {
+    display: flex;
+    height: 100vh;
+}
+
+/* Toolbar */
+#toolbar {
+    width: 250px;
+    background-color: var(--toolbar-bg);
+    border-right: 1px solid var(--toolbar-border);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+    z-index: 10;
+}
+
+.tool-section h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    color: #888;
+    letter-spacing: 1px;
+}
+
+.draggable-shape {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    cursor: grab;
+    transition: background 0.2s;
+}
+
+.draggable-shape:hover {
+    background-color: #f0f0f0;
+    border-color: #ddd;
+}
+
+.shape-preview {
+    width: 30px;
+    height: 30px;
+    border: 2px solid #555;
+    margin-right: 15px;
+    background: #fff;
+}
+
+.shape-preview.rect { border-radius: 0; }
+.shape-preview.circle { border-radius: 50%; }
+.shape-preview.diamond { transform: rotate(45deg) scale(0.7); }
+.shape-preview.round-rect { border-radius: 15px; width: 40px; height: 25px; }
+
+.tool-btn {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 5px;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.2s;
+}
+
+.tool-btn:hover {
+    background: #f9f9f9;
+}
+
+.tool-btn.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.info {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 20px;
+}
+.info small { display: block; margin-bottom: 5px; }
+
+/* Canvas */
+#canvas-container {
+    flex-grow: 1;
+    position: relative;
+    background-image:
+        linear-gradient(var(--grid-color) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+    background-size: 20px 20px;
+    background-color: var(--bg-color);
+    overflow: hidden;
+}
+
+svg {
+    display: block;
+    cursor: crosshair;
+}
+
+svg.mode-select { cursor: default; }
+svg.mode-connect { cursor: crosshair; }
+
+.shape-group { cursor: move; }
+.shape-group rect, .shape-group circle, .shape-group polygon, .shape-group path {
+    fill: var(--shape-fill);
+    stroke: var(--shape-stroke);
+    stroke-width: 2;
+    transition: stroke 0.2s;
+}
+
+.shape-group.selected rect,
+.shape-group.selected circle,
+.shape-group.selected polygon,
+.shape-group.selected path {
+    stroke: var(--primary-color);
+    stroke-width: 3;
+    filter: drop-shadow(0 0 3px rgba(74, 144, 226, 0.5));
+}
+
+.connector {
+    fill: none;
+    stroke: #333;
+    stroke-width: 2;
+    pointer-events: stroke; /* Allow clicking on line */
+}
+
+.connector:hover {
+    stroke: var(--primary-color);
+    stroke-width: 3;
+    cursor: pointer;
+}
+
+.connector.selected {
+    stroke: var(--primary-color);
+    stroke-width: 3;
+}
+
+text {
+    font-family: sans-serif;
+    font-size: 14px;
+    fill: #333;
+    user-select: none;
+    pointer-events: none; /* Let clicks pass through to shape */
+    text-anchor: middle;
+    dominant-baseline: middle;
+}
+
+/* Text Editor */
+#text-editor {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px dashed #333;
+    padding: 5px;
+    min-width: 50px;
+    min-height: 1em;
+    outline: none;
+    z-index: 100;
+    font-size: 14px;
+    text-align: center;
+    white-space: nowrap;
+}

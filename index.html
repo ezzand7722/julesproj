@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Flowchart Tool</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div id="app">
+        <div id="toolbar">
+            <div class="tool-section">
+                <h3>Shapes</h3>
+                <div class="draggable-shape" draggable="true" data-shape="rect" title="Process">
+                    <div class="shape-preview rect"></div>
+                    <span>Process</span>
+                </div>
+                <div class="draggable-shape" draggable="true" data-shape="circle" title="Start/End">
+                    <div class="shape-preview circle"></div>
+                    <span>Start/End</span>
+                </div>
+                <div class="draggable-shape" draggable="true" data-shape="diamond" title="Decision">
+                    <div class="shape-preview diamond"></div>
+                    <span>Decision</span>
+                </div>
+                <div class="draggable-shape" draggable="true" data-shape="round-rect" title="Mind Map Node">
+                    <div class="shape-preview round-rect"></div>
+                    <span>Node</span>
+                </div>
+            </div>
+
+            <div class="tool-section">
+                <h3>Tools</h3>
+                <button id="btn-pointer" class="tool-btn active" title="Select/Move"><i class="fas fa-mouse-pointer"></i></button>
+                <button id="btn-connector" class="tool-btn" title="Connect Shapes"><i class="fas fa-arrow-right"></i></button>
+                <button id="btn-delete" class="tool-btn" title="Delete Selected"><i class="fas fa-trash"></i></button>
+                <button id="btn-save" class="tool-btn" title="Save Image"><i class="fas fa-download"></i></button>
+                <button id="btn-clear" class="tool-btn" title="Clear All"><i class="fas fa-eraser"></i></button>
+            </div>
+
+            <div class="tool-section">
+                <div class="info">
+                    <small>Double-click shape to edit text.</small>
+                    <small>Del key to delete.</small>
+                </div>
+            </div>
+        </div>
+
+        <div id="canvas-container">
+            <svg id="main-canvas" width="100%" height="100%">
+                <defs>
+                    <marker id="arrowhead" markerWidth="10" markerHeight="7"
+                    refX="9" refY="3.5" orient="auto">
+                      <polygon points="0 0, 10 3.5, 0 7" fill="#333" />
+                    </marker>
+                </defs>
+                <g id="layer-connectors"></g>
+                <g id="layer-shapes"></g>
+            </svg>
+        </div>
+    </div>
+
+    <!-- Text Edit Overlay -->
+    <div id="text-editor" contenteditable="true" style="display:none;"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
