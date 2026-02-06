@@ -46,25 +46,30 @@ async function updateAuthUI(session) {
         guestButtons.classList.add('hidden');
         userMenu.classList.remove('hidden');
 
-        // Get profile to check simple info & role
+        // 1. Immediate Display (from Google/Metadata)
+        const metadata = session.user.user_metadata || {};
+        const displayName = metadata.full_name || metadata.name || session.user.email.split('@')[0];
+        const avatarUrl = metadata.avatar_url || metadata.picture;
+
+        document.getElementById('userName').textContent = displayName;
+        if (avatarUrl) {
+            document.getElementById('userAvatar').innerHTML = `<img src="${avatarUrl}" alt="Avatar">`;
+        }
+
+        // 2. Background Fetch (Role Only)
         try {
             const { data: profile } = await supabaseClient
                 .from('profiles')
-                .select('*')
+                .select('role')
                 .eq('id', session.user.id)
                 .single();
 
-            if (profile) {
-                document.getElementById('userName').textContent = profile.full_name || session.user.email.split('@')[0];
-                if (profile.role === 'provider') {
-                    document.getElementById('dashboardBtn').classList.remove('hidden');
-                }
-            } else {
-                document.getElementById('userName').textContent = session.user.email.split('@')[0];
+            if (profile && profile.role === 'provider') {
+                document.getElementById('dashboardBtn').classList.remove('hidden');
             }
         } catch (e) {
-            console.error('Error fetching profile:', e);
-            document.getElementById('userName').textContent = session.user.email.split('@')[0];
+            // Ignore low-priority error for profile fetch
+            console.warn('Profile fetch warning:', e);
         }
     } else {
         guestButtons.classList.remove('hidden');
