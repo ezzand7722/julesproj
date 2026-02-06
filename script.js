@@ -25,16 +25,23 @@ document.addEventListener('DOMContentLoaded', async function () {
 
 // Check Session & Update UI
 async function checkSession() {
+    console.log('🔍 Checking session...');
+    console.log('🔗 Connected to:', SUPABASE_URL);
     try {
         const { data: { session } } = await supabaseClient.auth.getSession();
+        console.log('📦 Session result:', session ? 'LOGGED IN' : 'NOT LOGGED IN');
+        if (session) {
+            console.log('👤 User:', session.user.email);
+        }
         updateAuthUI(session);
 
         // Listen for auth changes
         supabaseClient.auth.onAuthStateChange((_event, session) => {
+            console.log('🔄 Auth state changed:', _event, session ? 'LOGGED IN' : 'NOT LOGGED IN');
             updateAuthUI(session);
         });
     } catch (err) {
-        console.error('Session check failed:', err);
+        console.error('❌ Session check failed:', err);
     }
 }
 
