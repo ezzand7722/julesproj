@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>خدمتي - منصة الخدمات المحلية في الأردن</title>
+    <meta name="description" content="اعثر على أفضل مقدمي الخدمات في الأردن">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo"><span class="logo-icon">🛠️</span><span class="logo-text">خدمتي</span></a>
+            <div class="nav-links">
+                <a href="#services">الخدمات</a>
+                <a href="#how-it-works">كيف نعمل</a>
+                <a href="#providers">مقدمو الخدمات</a>
+                <a href="#contact">تواصل معنا</a>
+            </div>
+            <div class="nav-buttons" id="navButtons">
+                <a href="login.html" class="btn btn-ghost">تسجيل الدخول</a>
+                <a href="login.html" class="btn btn-primary">انضم كمقدم خدمة</a>
+            </div>
+            <button class="mobile-menu-btn" aria-label="القائمة"><span></span><span></span><span></span></button>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-bg">
+            <div class="hero-gradient"></div>
+            <div class="floating-shapes">
+                <div class="shape shape-1"></div>
+                <div class="shape shape-2"></div>
+                <div class="shape shape-3"></div>
+            </div>
+        </div>
+        <div class="hero-content">
+            <h1>اعثر على أفضل <span class="highlight">الخدمات المحلية</span> في الأردن</h1>
+            <p class="hero-subtitle">من الصيانة المنزلية إلى الدروس الخصوصية - نربطك بمحترفين موثوقين</p>
+            <div class="search-box">
+                <div class="search-input-wrapper">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" class="search-input" id="searchInput"
+                        placeholder="ابحث عن خدمة... سباك، كهربائي، معلم">
+                </div>
+                <div class="location-wrapper">
+                    <span class="location-icon">📍</span>
+                    <select class="location-select" id="locationSelect">
+                        <option value="">كل المناطق</option>
+                        <option value="عمّان">عمّان</option>
+                        <option value="إربد">إربد</option>
+                        <option value="الزرقاء">الزرقاء</option>
+                        <option value="العقبة">العقبة</option>
+                    </select>
+                </div>
+                <button class="search-btn" id="searchBtn">ابحث الآن</button>
+            </div>
+            <div class="hero-stats">
+                <div class="stat"><span class="stat-number" id="providerCount">0</span><span class="stat-label">مقدم
+                        خدمة</span></div>
+                <div class="stat-divider"></div>
+                <div class="stat"><span class="stat-number" id="bookingCount">0</span><span class="stat-label">حجز
+                        ناجح</span></div>
+                <div class="stat-divider"></div>
+                <div class="stat"><span class="stat-number">4.8⭐</span><span class="stat-label">تقييم متوسط</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="services" class="services">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">خدماتنا</span>
+                <h2>استكشف فئات الخدمات</h2>
+                <p>نغطي جميع احتياجاتك من الخدمات المنزلية والشخصية</p>
+            </div>
+            <div class="services-grid" id="servicesGrid">
+                <div class="loading-spinner">جاري التحميل...</div>
+            </div>
+        </div>
+    </section>
+
+    <section id="how-it-works" class="how-it-works">
+        <div class="container">
+            <div class="section-header"><span class="section-badge">كيف نعمل</span>
+                <h2>احصل على الخدمة في 3 خطوات</h2>
+            </div>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-icon">🔍</div>
+                    <h3>ابحث عن الخدمة</h3>
+                    <p>استخدم محرك البحث للعثور على الخدمة</p>
+                </div>
+                <div class="step-connector">
+                    <div class="connector-arrow">←</div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-icon">👤</div>
+                    <h3>قارن واختر</h3>
+                    <p>اطلع على التقييمات واختر الأنسب</p>
+                </div>
+                <div class="step-connector">
+                    <div class="connector-arrow">←</div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-icon">✅</div>
+                    <h3>احجز واستمتع</h3>
+                    <p>احجز موعدك واحصل على خدمة احترافية</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="providers" class="providers">
+        <div class="container">
+            <div class="section-header"><span class="section-badge">الأكثر طلباً</span>
+                <h2>مقدمو خدمات مميزون</h2>
+            </div>
+            <div class="providers-grid" id="providersGrid">
+                <div class="loading-spinner">جاري التحميل...</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonials">
+        <div class="container">
+            <div class="section-header"><span class="section-badge">آراء العملاء</span>
+                <h2>ماذا يقول عملاؤنا</h2>
+            </div>
+            <div class="testimonials-slider" id="reviewsGrid">
+                <div class="loading-spinner">جاري التحميل...</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2>هل أنت صاحب مهنة؟</h2>
+                <p>انضم إلى آلاف مقدمي الخدمات</p>
+                <ul class="cta-benefits">
+                    <li>✅ تسجيل مجاني</li>
+                    <li>✅ وصول لآلاف العملاء</li>
+                    <li>✅ أنت تحدد أسعارك</li>
+                </ul>
+                <button class="btn btn-light btn-lg" onclick="showProviderSignup()">سجل كمقدم خدمة الآن</button>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact" class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand"><a href="#" class="logo"><span class="logo-icon">🛠️</span><span
+                            class="logo-text">خدمتي</span></a>
+                    <p>منصة خدمات محلية تربط بين مقدمي الخدمات والعملاء في الأردن</p>
+                </div>
+                <div class="footer-links">
+                    <h4>روابط سريعة</h4>
+                    <ul>
+                        <li><a href="#">الرئيسية</a></li>
+                        <li><a href="#services">الخدمات</a></li>
+                        <li><a href="#how-it-works">كيف نعمل</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>للعملاء</h4>
+                    <ul>
+                        <li><a href="#">كيفية الحجز</a></li>
+                        <li><a href="#">الأسئلة الشائعة</a></li>
+                        <li><a href="#">الدعم الفني</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contact">
+                    <h4>تواصل معنا</h4>
+                    <ul>
+                        <li>📧 info@khedmati.jo</li>
+                        <li>📞 +962 6 XXX XXXX</li>
+                        <li>📍 عمّان، الأردن</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 خدمتي. جميع الحقوق محفوظة.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Booking Modal -->
+    <div class="modal-overlay" id="bookingModal">
+        <div class="modal">
+            <button class="modal-close" onclick="closeModal('bookingModal')">✕</button>
+            <h2>حجز موعد</h2>
+            <p class="modal-provider-name" id="modalProviderName"></p>
+            <form id="bookingForm">
+                <input type="hidden" id="bookingProviderId">
+                <div class="form-group">
+                    <label>اسمك الكامل</label>
+                    <input type="text" id="customerName" required placeholder="مثال: أحمد محمد">
+                </div>
+                <div class="form-group">
+                    <label>رقم الهاتف</label>
+                    <input type="tel" id="customerPhone" required placeholder="07XXXXXXXX" pattern="07[0-9]{8}">
+                </div>
+                <div class="form-group">
+                    <label>التاريخ المفضل</label>
+                    <input type="date" id="serviceDate" required>
+                </div>
+                <div class="form-group">
+                    <label>الوقت المفضل</label>
+                    <select id="preferredTime">
+                        <option value="صباحاً (9-12)">صباحاً (9-12)</option>
+                        <option value="ظهراً (12-3)">ظهراً (12-3)</option>
+                        <option value="عصراً (3-6)">عصراً (3-6)</option>
+                        <option value="مساءً (6-9)">مساءً (6-9)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>ملاحظات إضافية</label>
+                    <textarea id="bookingNotes" placeholder="وصف المشكلة أو الخدمة المطلوبة..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">تأكيد الحجز</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu-overlay">
+        <div class="mobile-menu">
+            <button class="mobile-menu-close">✕</button>
+            <div class="mobile-menu-links"><a href="#services">الخدمات</a><a href="#how-it-works">كيف نعمل</a><a
+                    href="#providers">مقدمو الخدمات</a><a href="#contact">تواصل معنا</a></div>
+            <div class="mobile-menu-buttons"><a href="login.html" class="btn btn-ghost btn-block">تسجيل الدخول</a><a
+                    href="login.html" class="btn btn-primary btn-block">انضم كمقدم خدمة</a></div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>

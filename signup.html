@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إنشاء حساب - خدمتي</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="auth.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body class="auth-page">
+    <div class="auth-container">
+        <div class="auth-card">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">🛠️</span>
+                <span class="logo-text">خدمتي</span>
+            </a>
+
+            <!-- Signup Form -->
+            <div id="signupForm" class="auth-form active">
+                <h1>إنشاء حساب</h1>
+                <p class="auth-subtitle">انضم إلى خدمتي وابدأ رحلتك</p>
+
+                <div class="user-type-toggle">
+                    <button type="button" class="type-btn active" onclick="setUserType('customer', event)">👤
+                        عميل</button>
+                    <button type="button" class="type-btn" onclick="setUserType('provider', event)">🛠️ مقدم
+                        خدمة</button>
+                </div>
+
+                <form onsubmit="handleSignup(event)">
+                    <input type="hidden" id="userType" value="customer">
+
+                    <div class="form-group">
+                        <label>الاسم الكامل</label>
+                        <input type="text" id="signupName" required placeholder="أحمد محمد">
+                    </div>
+                    <div class="form-group">
+                        <label>البريد الإلكتروني</label>
+                        <input type="email" id="signupEmail" required placeholder="example@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label>رقم الهاتف</label>
+                        <input type="tel" id="signupPhone" required placeholder="07XXXXXXXX" pattern="07[0-9]{8}">
+                    </div>
+                    <div class="form-group">
+                        <label>كلمة المرور</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="signupPassword" required placeholder="8 أحرف على الأقل"
+                                minlength="8">
+                            <button type="button" class="toggle-password"
+                                onclick="togglePassword('signupPassword')">👁️</button>
+                        </div>
+                    </div>
+
+                    <!-- Provider-specific fields -->
+                    <div id="providerFields" class="provider-fields hidden">
+                        <div class="form-group">
+                            <label>التخصص</label>
+                            <select id="providerSpecialty">
+                                <option value="">اختر تخصصك</option>
+                                <option value="سباكة">سباكة</option>
+                                <option value="كهرباء">كهرباء</option>
+                                <option value="تنظيف">تنظيف</option>
+                                <option value="تكييف">تكييف وتبريد</option>
+                                <option value="دروس خصوصية">دروس خصوصية</option>
+                                <option value="دهان">دهان وديكور</option>
+                                <option value="نقل أثاث">نقل أثاث</option>
+                                <option value="صيانة عامة">صيانة عامة</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>المدينة</label>
+                            <select id="providerCity">
+                                <option value="">اختر مدينتك</option>
+                                <option value="عمّان">عمّان</option>
+                                <option value="إربد">إربد</option>
+                                <option value="الزرقاء">الزرقاء</option>
+                                <option value="العقبة">العقبة</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>المنطقة</label>
+                            <input type="text" id="providerLocation" placeholder="مثال: خلدا، الجبيهة">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block" id="signupBtn">إنشاء الحساب</button>
+                </form>
+
+                <p class="auth-switch">
+                    لديك حساب؟ <a href="login.html">تسجيل الدخول</a>
+                </p>
+            </div>
+
+            <!-- Success Message -->
+            <div id="successMessage" class="auth-form">
+                <div class="success-icon">✅</div>
+                <h1>تم بنجاح!</h1>
+                <p class="auth-subtitle" id="successText">تم إنشاء حسابك. تحقق من بريدك الإلكتروني.</p>
+                <a href="login.html" class="btn btn-primary btn-block">العودة لتسجيل الدخول</a>
+            </div>
+        </div>
+
+        <div class="auth-decoration">
+            <div class="decoration-shape"></div>
+            <div class="decoration-text">
+                <h2>منصة الخدمات الأولى في الأردن</h2>
+                <p>أكثر من 5,000 مقدم خدمة موثوق</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Duplicate vital functions here to avoid any loading issues -->
+    <script>
+        const SUPABASE_URL = 'https://globdesovygfvvyuzrvy.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdsb2JkZXNvdnlnZnZ2eXV6cnZ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk3MDIwNDEsImV4cCI6MjA4NTI3ODA0MX0.wVdR293AFlCz2rYHWsindi8LKAaZIC4FXSYNKPD4UV0';
+
+        let supabase;
+        try {
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        } catch (e) { console.error('Supabase error:', e); }
+
+        function togglePassword(id) {
+            const x = document.getElementById(id);
+            x.type = x.type === 'password' ? 'text' : 'password';
+        }
+
+        function setUserType(type, e) {
+            document.getElementById('userType').value = type;
+            document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+            if (e && e.target) e.target.classList.add('active');
+
+            const fields = document.getElementById('providerFields');
+            if (type === 'provider') fields.classList.remove('hidden');
+            else fields.classList.add('hidden');
+        }
+
+        async function handleSignup(e) {
+            e.preventDefault();
+            const btn = document.getElementById('signupBtn');
+            btn.textContent = 'جاري المعالجة...';
+            btn.disabled = true;
+
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const name = document.getElementById('signupName').value;
+            const phone = document.getElementById('signupPhone').value;
+            const type = document.getElementById('userType').value;
+
+            try {
+                // 1. Create Auth User
+                const { data, error } = await supabase.auth.signUp({
+                    email,
+                    password,
+                    options: { data: { name, phone, user_type: type } }
+                });
+
+                if (error) throw error;
+
+                // 2. Add Provider Details (if provider)
+                if (type === 'provider') {
+                    const specialty = document.getElementById('providerSpecialty').value;
+                    const city = document.getElementById('providerCity').value;
+                    const location = document.getElementById('providerLocation').value;
+
+                    if (!specialty || !city) throw new Error('يرجى تعبئة جميع الحقول المطلوبة');
+
+                    const { error: dbError } = await supabase
+                        .from('providers')
+                        .insert([{
+                            user_id: data.user.id,
+                            name: name,
+                            phone: phone,
+                            specialty: specialty,
+                            city: city,
+                            location: location,
+                            rating: 5.0,
+                            reviews: 0
+                        }]);
+
+                    if (dbError) throw dbError;
+                }
+
+                // Show Success
+                document.getElementById('signupForm').style.display = 'none';
+                document.getElementById('successMessage').style.display = 'block';
+
+            } catch (err) {
+                alert('خطأ: ' + err.message);
+                btn.disabled = false;
+                btn.textContent = 'إنشاء الحساب';
+            }
+        }
+    </script>
+</body>
+
+</html>

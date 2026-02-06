@@ -1,0 +1,400 @@
+// Khedmati - Jordan Local Services Platform
+// Full Supabase Integration
+
+// Supabase Configuration
+const SUPABASE_URL = 'https://globdesovygfvvyuzrvy.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdsb2JkZXNvdnlnZnZ2eXV6cnZ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk3MDIwNDEsImV4cCI6MjA4NTI3ODA0MX0.wVdR293AFlCz2rYHWsindi8LKAaZIC4FXSYNKPD4UV0';
+
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// Global state
+let allProviders = [];
+let allServices = [];
+
+document.addEventListener('DOMContentLoaded', async function () {
+    // Initialize the app
+    await loadServices();
+    await loadProviders();
+    await loadReviews();
+    await loadStats();
+    setupEventListeners();
+    setupAnimations();
+    console.log('🛠️ خدمتي - تم تحميل الموقع بنجاح!');
+});
+
+// Load services from database
+async function loadServices() {
+    const grid = document.getElementById('servicesGrid');
+    try {
+        const { data: services, error } = await supabase
+            .from('services')
+            .select('*')
+            .order('provider_count', { ascending: false });
+
+        if (error) throw error;
+        allServices = services || [];
+
+        grid.innerHTML = services.map(service => `
+            <div class="service-card" data-service-id="${service.id}" onclick="filterByService('${service.name_ar}')">
+                <div class="service-icon">${service.icon}</div>
+                <h3>${service.name_ar}</h3>
+                <p>${service.description_ar || ''}</p>
+                <span class="service-count">${service.provider_count}+ مقدم خدمة</span>
+            </div>
+        `).join('');
+    } catch (err) {
+        console.error('Error loading services:', err);
+        grid.innerHTML = '<p class="error">خطأ في تحميل الخدمات</p>';
+    }
+}
+
+// Load providers from database
+async function loadProviders(filter = {}) {
+    const grid = document.getElementById('providersGrid');
+    grid.innerHTML = '<div class="loading-spinner">جاري التحميل...</div>';
+
+    try {
+        let query = supabase.from('providers').select('*');
+
+        if (filter.city) {
+            query = query.eq('city', filter.city);
+        }
+        if (filter.search) {
+            query = query.or(`name.ilike.%${filter.search}%,specialty.ilike.%${filter.search}%`);
+        }
+
+        const { data: providers, error } = await query.order('is_featured', { ascending: false }).order('rating', { ascending: false });
+
+        if (error) throw error;
+        allProviders = providers || [];
+
+        if (providers.length === 0) {
+            grid.innerHTML = '<p class="no-results">لا توجد نتائج. جرب بحث آخر.</p>';
+            return;
+        }
+
+        grid.innerHTML = providers.map(provider => `
+            <div class="provider-card" data-provider-id="${provider.id}">
+                ${provider.is_featured ? '<div class="provider-badge">⭐ مميز</div>' : ''}
+                ${provider.is_verified ? '<div class="verified-badge">✓ موثق</div>' : ''}
+                <div class="provider-avatar">
+                    <div class="avatar-placeholder">${provider.name.substring(0, 2)}</div>
+                </div>
+                <h3>${provider.name}</h3>
+                <p class="provider-specialty">${provider.specialty}</p>
+                <div class="provider-location">📍 ${provider.city} - ${provider.location}</div>
+                <div class="provider-rating">
+                    <span class="stars">${'⭐'.repeat(Math.round(provider.rating))}</span>
+                    <span>${provider.rating} (${provider.review_count} تقييم)</span>
+                </div>
+                <button class="btn btn-primary btn-block" onclick="openBookingModal('${provider.id}', '${provider.name}')">احجز الآن</button>
+            </div>
+        `).join('');
+
+        // Re-apply animations
+        applyScrollAnimations();
+    } catch (err) {
+        console.error('Error loading providers:', err);
+        grid.innerHTML = '<p class="error">خطأ في تحميل مقدمي الخدمات</p>';
+    }
+}
+
+// Load reviews from database
+async function loadReviews() {
+    const grid = document.getElementById('reviewsGrid');
+    try {
+        const { data: reviews, error } = await supabase
+            .from('reviews')
+            .select('*')
+            .order('created_at', { ascending: false })
+            .limit(6);
+
+        if (error) throw error;
+
+        if (!reviews || reviews.length === 0) {
+            grid.innerHTML = '<p>لا توجد آراء بعد</p>';
+            return;
+        }
+
+        grid.innerHTML = reviews.map(review => `
+            <div class="testimonial-card">
+                <div class="quote-icon">"</div>
+                <p class="testimonial-text">${review.comment}</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">${review.customer_name.substring(0, 2)}</div>
+                    <div class="author-info">
+                        <span class="author-name">${review.customer_name}</span>
+                        <span class="author-rating">${'⭐'.repeat(review.rating)}</span>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    } catch (err) {
+        console.error('Error loading reviews:', err);
+    }
+}
+
+// Load statistics
+async function loadStats() {
+    try {
+        // Get provider count
+        const { count: providerCount } = await supabase
+            .from('providers')
+            .select('*', { count: 'exact', head: true });
+
+        // Get booking count
+        const { count: bookingCount } = await supabase
+            .from('bookings')
+            .select('*', { count: 'exact', head: true });
+
+        animateNumber(document.getElementById('providerCount'), providerCount || 8, '+');
+        animateNumber(document.getElementById('bookingCount'), (bookingCount || 0) + 50, '+');
+    } catch (err) {
+        console.error('Error loading stats:', err);
+    }
+}
+
+// Animate number counter
+function animateNumber(element, target, suffix = '') {
+    if (!element) return;
+    let current = 0;
+    const increment = target / 40;
+    const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+            current = target;
+            clearInterval(timer);
+        }
+        element.textContent = Math.floor(current).toLocaleString() + suffix;
+    }, 30);
+}
+
+// Search functionality
+function setupEventListeners() {
+    const searchBtn = document.getElementById('searchBtn');
+    const searchInput = document.getElementById('searchInput');
+    const locationSelect = document.getElementById('locationSelect');
+
+    if (searchBtn) {
+        searchBtn.addEventListener('click', performSearch);
+    }
+    if (searchInput) {
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') performSearch();
+        });
+    }
+
+    // Booking form
+    const bookingForm = document.getElementById('bookingForm');
+    if (bookingForm) {
+        bookingForm.addEventListener('submit', handleBooking);
+    }
+
+    // Mobile menu
+    setupMobileMenu();
+
+    // Smooth scroll
+    setupSmoothScroll();
+
+    // Set minimum date for booking to today
+    const dateInput = document.getElementById('serviceDate');
+    if (dateInput) {
+        dateInput.min = new Date().toISOString().split('T')[0];
+    }
+}
+
+async function performSearch() {
+    const search = document.getElementById('searchInput').value.trim();
+    const city = document.getElementById('locationSelect').value;
+
+    showNotification('جاري البحث...', 'info');
+
+    await loadProviders({ search, city });
+
+    // Scroll to providers section
+    document.getElementById('providers').scrollIntoView({ behavior: 'smooth' });
+
+    const count = allProviders.length;
+    showNotification(`تم العثور على ${count} نتيجة! 🎉`, 'success');
+}
+
+function filterByService(serviceName) {
+    document.getElementById('searchInput').value = serviceName;
+    performSearch();
+}
+
+// Booking Modal
+function openBookingModal(providerId, providerName) {
+    document.getElementById('bookingProviderId').value = providerId;
+    document.getElementById('modalProviderName').textContent = `الحجز مع: ${providerName}`;
+    document.getElementById('bookingModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+// Handle booking submission
+async function handleBooking(e) {
+    e.preventDefault();
+
+    const providerId = document.getElementById('bookingProviderId').value;
+    const customerName = document.getElementById('customerName').value;
+    const customerPhone = document.getElementById('customerPhone').value;
+    const serviceDate = document.getElementById('serviceDate').value;
+    const preferredTime = document.getElementById('preferredTime').value;
+    const notes = document.getElementById('bookingNotes').value;
+
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'جاري الإرسال...';
+
+    try {
+        const { data, error } = await supabase
+            .from('bookings')
+            .insert([{
+                provider_id: providerId,
+                customer_name: customerName,
+                customer_phone: customerPhone,
+                service_date: serviceDate,
+                preferred_time: preferredTime,
+                notes: notes,
+                status: 'pending'
+            }])
+            .select();
+
+        if (error) throw error;
+
+        closeModal('bookingModal');
+        showNotification('تم الحجز بنجاح! سيتواصل معك مقدم الخدمة قريباً 🎉', 'success');
+
+        // Reset form
+        e.target.reset();
+
+        // Reload stats
+        loadStats();
+    } catch (err) {
+        console.error('Booking error:', err);
+        showNotification('حدث خطأ. حاول مرة أخرى.', 'error');
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'تأكيد الحجز';
+    }
+}
+
+// Provider signup - redirect to login page
+function showProviderSignup() {
+    window.location.href = 'login.html';
+}
+
+// Notification system
+function showNotification(message, type = 'info') {
+    const existing = document.querySelector('.notification');
+    if (existing) existing.remove();
+
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+
+    const icons = { success: '✅', error: '❌', warning: '⚠️', info: 'ℹ️' };
+    const colors = { success: '#22c55e', error: '#ef4444', warning: '#f59e0b', info: '#0891b2' };
+
+    notification.innerHTML = `<span>${icons[type] || 'ℹ️'}</span><span>${message}</span>`;
+
+    Object.assign(notification.style, {
+        position: 'fixed', bottom: '30px', left: '50%',
+        transform: 'translateX(-50%) translateY(100px)',
+        background: colors[type] || colors.info, color: 'white',
+        padding: '16px 28px', borderRadius: '12px',
+        boxShadow: '0 10px 40px rgba(0,0,0,0.2)',
+        display: 'flex', alignItems: 'center', gap: '12px',
+        fontSize: '1rem', fontWeight: '600', zIndex: '9999',
+        transition: 'transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+        fontFamily: 'Tajawal, sans-serif'
+    });
+
+    document.body.appendChild(notification);
+    requestAnimationFrame(() => {
+        notification.style.transform = 'translateX(-50%) translateY(0)';
+    });
+    setTimeout(() => {
+        notification.style.transform = 'translateX(-50%) translateY(100px)';
+        setTimeout(() => notification.remove(), 400);
+    }, 3000);
+}
+
+// Mobile Menu
+function setupMobileMenu() {
+    const btn = document.querySelector('.mobile-menu-btn');
+    const overlay = document.querySelector('.mobile-menu-overlay');
+    const close = document.querySelector('.mobile-menu-close');
+    const links = document.querySelectorAll('.mobile-menu-links a');
+
+    const openMenu = () => { overlay.classList.add('active'); document.body.style.overflow = 'hidden'; };
+    const closeMenu = () => { overlay.classList.remove('active'); document.body.style.overflow = ''; };
+
+    btn?.addEventListener('click', openMenu);
+    close?.addEventListener('click', closeMenu);
+    overlay?.addEventListener('click', (e) => { if (e.target === overlay) closeMenu(); });
+    links.forEach(link => link.addEventListener('click', closeMenu));
+}
+
+// Smooth scroll
+function setupSmoothScroll() {
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                const navHeight = document.querySelector('.navbar').offsetHeight;
+                window.scrollTo({ top: target.offsetTop - navHeight - 20, behavior: 'smooth' });
+            }
+        });
+    });
+}
+
+// Animations
+function setupAnimations() {
+    // Navbar scroll effect
+    window.addEventListener('scroll', () => {
+        const navbar = document.querySelector('.navbar');
+        if (window.pageYOffset > 100) {
+            navbar.style.background = 'rgba(255, 255, 255, 0.98)';
+            navbar.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.1)';
+        } else {
+            navbar.style.background = 'rgba(255, 255, 255, 0.95)';
+            navbar.style.boxShadow = '0 1px 2px rgba(0,0,0,0.05)';
+        }
+    });
+
+    applyScrollAnimations();
+}
+
+function applyScrollAnimations() {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.service-card, .step, .provider-card, .testimonial-card').forEach((el, i) => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(30px)';
+        el.style.transition = `opacity 0.6s ease ${i * 0.05}s, transform 0.6s ease ${i * 0.05}s`;
+        observer.observe(el);
+    });
+}
+
+// Close modal on escape key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        document.querySelectorAll('.modal-overlay.active').forEach(modal => {
+            modal.classList.remove('active');
+        });
+        document.body.style.overflow = '';
+    }
+});

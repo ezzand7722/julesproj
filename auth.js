@@ -1,0 +1,266 @@
+// Khedmati - Authentication System
+const SUPABASE_URL = 'https://globdesovygfvvyuzrvy.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdsb2JkZXNvdnlnZnZ2eXV6cnZ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk3MDIwNDEsImV4cCI6MjA4NTI3ODA0MX0.wVdR293AFlCz2rYHWsindi8LKAaZIC4FXSYNKPD4UV0';
+
+let supabaseClient;
+
+// Initialize Supabase safely
+try {
+    if (window.supabase) {
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        console.log('✅ Supabase initialized successfully');
+    } else {
+        console.error('❌ Supabase library not found! Check your internet connection.');
+        showNotification('فشل تحميل النظام. تأكد من الاتصال بالإنترنت', 'error');
+    }
+} catch (err) {
+    console.error('❌ Error initializing Supabase:', err);
+}
+
+// Ensure functions are global
+window.showForm = showForm;
+window.setUserType = setUserType;
+window.handleLogin = handleLogin;
+window.handleSignup = handleSignup;
+window.signInWithGoogle = signInWithGoogle;
+window.togglePassword = togglePassword;
+
+// Check Login State
+document.addEventListener('DOMContentLoaded', async () => {
+    console.log('🚀 Auth page loaded');
+    if (!supabaseClient) return;
+
+    try {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        if (session) {
+            console.log('👤 User already logged in, checking profile...');
+            const { data: profile } = await supabaseClient
+                .from('profiles')
+                .select('role')
+                .eq('id', session.user.id)
+                .single();
+
+            if (profile && profile.role === 'provider') {
+                window.location.href = 'dashboard.html';
+            } else {
+                window.location.href = 'index.html';
+            }
+        }
+    } catch (err) {
+        console.error('⚠️ Error checking session:', err);
+    }
+});
+
+// UI Functions (Defined outside try/catch to ensure availability)
+
+function showForm(formId) {
+    console.log('Show form:', formId);
+    document.querySelectorAll('.auth-form').forEach(form => form.classList.remove('active'));
+    document.getElementById(formId).classList.add('active');
+}
+
+function togglePassword(inputId) {
+    const input = document.getElementById(inputId);
+    input.type = input.type === 'password' ? 'text' : 'password';
+}
+
+function setUserType(type, e) {
+    console.log('Set user type:', type);
+    document.getElementById('userType').value = type;
+    document.querySelectorAll('.type-btn').forEach(btn => btn.classList.remove('active'));
+
+    if (e && e.target) {
+        e.target.classList.add('active');
+    } else {
+        // Fallback if event is missing
+        const buttons = document.querySelectorAll('.type-btn');
+        if (type === 'customer') buttons[0].classList.add('active');
+        if (type === 'provider') buttons[1].classList.add('active');
+    }
+
+    const providerFields = document.getElementById('providerFields');
+    if (type === 'provider') {
+        providerFields.classList.remove('hidden');
+    } else {
+        providerFields.classList.add('hidden');
+    }
+}
+
+// Handlers
+
+async function handleLogin(e) {
+    e.preventDefault();
+    if (!supabaseClient) {
+        showNotification('النظام غير متصل. يرجى تحديث الصفحة.', 'error');
+        return;
+    }
+
+    const btn = document.getElementById('loginBtn');
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+
+    btn.disabled = true;
+    btn.textContent = 'جاري تسجيل الدخول...';
+
+    try {
+        const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+
+        if (error) throw error;
+
+        // Check Profile Role
+        const { data: profile } = await supabaseClient
+            .from('profiles')
+            .select('role')
+            .eq('id', data.user.id)
+            .single();
+
+        if (profile && profile.role === 'provider') {
+            window.location.href = 'dashboard.html';
+        } else {
+            window.location.href = 'index.html';
+        }
+    } catch (err) {
+        console.error('Login error:', err);
+        showNotification(err.message || 'خطأ في تسجيل الدخول', 'error');
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'تسجيل الدخول';
+    }
+}
+
+async function handleSignup(e) {
+    e.preventDefault();
+    if (!supabaseClient) {
+        showNotification('النظام غير متصل. يرجى تحديث الصفحة.', 'error');
+        return;
+    }
+
+    const btn = document.getElementById('signupBtn');
+    const userType = document.getElementById('userType').value;
+    const name = document.getElementById('signupName').value;
+    const email = document.getElementById('signupEmail').value;
+    const phone = document.getElementById('signupPhone').value;
+    const password = document.getElementById('signupPassword').value;
+
+    btn.disabled = true;
+    btn.textContent = 'جاري إنشاء الحساب...';
+
+    try {
+        // Sign up user
+        const { data: authData, error: authError } = await supabaseClient.auth.signUp({
+            email,
+            password,
+            options: {
+                data: { name, phone, user_type: userType }
+            }
+        });
+
+        if (authError) throw authError;
+
+        // If provider, create provider record
+        if (userType === 'provider') {
+            const specialty = document.getElementById('providerSpecialty').value;
+            const city = document.getElementById('providerCity').value;
+            const location = document.getElementById('providerLocation').value;
+
+            if (!specialty || !city) {
+                throw new Error('الرجاء اختيار التخصص والمدينة');
+            }
+
+            const { error: providerError } = await supabaseClient
+                .from('providers')
+                .insert([{
+                    user_id: authData.user.id,
+                    name: name,
+                    specialty: specialty,
+                    city: city,
+                    location: location || city,
+                    phone: phone,
+                    rating: 4.0,
+                    review_count: 0,
+                    is_featured: false,
+                    is_verified: false
+                }]);
+
+            if (providerError) throw providerError;
+        }
+
+        document.getElementById('successText').textContent =
+            userType === 'provider'
+                ? 'تم إنشاء حسابك كمقدم خدمة! تحقق من بريدك الإلكتروني للتفعيل.'
+                : 'تم إنشاء حسابك! تحقق من بريدك الإلكتروني للتفعيل.';
+        showForm('successMessage');
+
+    } catch (err) {
+        console.error('Signup error:', err);
+        showNotification(err.message || 'خطأ في إنشاء الحساب', 'error');
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'إنشاء الحساب';
+    }
+}
+
+async function signInWithGoogle() {
+    if (window.location.protocol === 'file:') {
+        alert('⚠️ تنبيه: تسجيل الدخول بـ Google لا يعمل عند فتح الملف مباشرة.\n\nيجب تشغيل الموقع باستخدام خادم محلي (Local Server) مثل "Live Server" في VS Code.\n\nالبروتوكول الحالي: file://');
+        return;
+    }
+
+    if (!supabaseClient) {
+        showNotification('النظام غير متصل. يرجى تحديث الصفحة.', 'error');
+        return;
+    }
+
+    try {
+        const { data, error } = await supabaseClient.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+                redirectTo: new URL('index.html', window.location.href).href,
+                queryParams: {
+                    access_type: 'offline',
+                    prompt: 'consent',
+                },
+            }
+        });
+
+        if (error) throw error;
+        console.log('Google sign-in initiated:', data);
+    } catch (err) {
+        console.error('Error logging in:', err.message);
+        showNotification('خطأ في تسجيل الدخول بحساب Google', 'error');
+    }
+}
+
+function showNotification(message, type = 'info') {
+    const existing = document.querySelector('.notification');
+    if (existing) existing.remove();
+
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+
+    const icons = { success: '✅', error: '❌', warning: '⚠️', info: 'ℹ️' };
+    const colors = { success: '#22c55e', error: '#ef4444', warning: '#f59e0b', info: '#0891b2' };
+
+    notification.innerHTML = `<span>${icons[type]}</span><span>${message}</span>`;
+
+    Object.assign(notification.style, {
+        position: 'fixed', bottom: '30px', left: '50%',
+        transform: 'translateX(-50%) translateY(100px)',
+        background: colors[type], color: 'white',
+        padding: '16px 28px', borderRadius: '12px',
+        boxShadow: '0 10px 40px rgba(0,0,0,0.2)',
+        display: 'flex', alignItems: 'center', gap: '12px',
+        fontSize: '1rem', fontWeight: '600', zIndex: '9999',
+        transition: 'transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+        fontFamily: 'Tajawal, sans-serif'
+    });
+
+    document.body.appendChild(notification);
+    requestAnimationFrame(() => {
+        notification.style.transform = 'translateX(-50%) translateY(0)';
+    });
+    setTimeout(() => {
+        notification.style.transform = 'translateX(-50%) translateY(100px)';
+        setTimeout(() => notification.remove(), 400);
+    }, 4000);
+}
