@@ -34,6 +34,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         const { data: { session } } = await supabaseClient.auth.getSession();
         if (session) {
             console.log('👤 User already logged in, checking profile...');
+
+            // Check if user selected 'provider' before Google OAuth redirect
+            const pendingUserType = localStorage.getItem('pendingUserType');
+            if (pendingUserType === 'provider') {
+                console.log('📝 Updating role to provider...');
+                await supabaseClient
+                    .from('profiles')
+                    .update({ role: 'provider' })
+                    .eq('id', session.user.id);
+                localStorage.removeItem('pendingUserType');
+                window.location.href = 'dashboard.html';
+                return;
+            }
+            localStorage.removeItem('pendingUserType');
+
             const { data: profile } = await supabaseClient
                 .from('profiles')
                 .select('role')
@@ -214,11 +229,17 @@ async function signInWithGoogle() {
         return;
     }
 
+    // Save user type selection to localStorage before redirect
+    const userTypeElement = document.getElementById('userType');
+    const selectedUserType = userTypeElement ? userTypeElement.value : 'customer';
+    localStorage.setItem('pendingUserType', selectedUserType);
+    console.log('💾 Saved pending user type:', selectedUserType);
+
     try {
         const { data, error } = await supabaseClient.auth.signInWithOAuth({
             provider: 'google',
             options: {
-                redirectTo: new URL('index.html', window.location.href).href,
+                redirectTo: new URL('login.html', window.location.href).href, // Return to login to process
                 queryParams: {
                     access_type: 'offline',
                     prompt: 'consent',

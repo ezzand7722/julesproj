@@ -1,3 +1,6 @@
+-- KHEDMATI DATABASE SETUP
+-- Run this ONCE in Supabase SQL Editor
+
 -- 1. Create Public Profiles Table
 create table if not exists public.profiles (
   id uuid references auth.users on delete cascade not null primary key,
@@ -8,29 +11,16 @@ create table if not exists public.profiles (
   created_at timestamptz default now()
 );
 
--- 2. Enable Security (RLS)
+-- 2. Enable Security (RLS) for Profiles
 alter table public.profiles enable row level security;
-
--- Allow everyone to read profiles (needed for checking user role on login)
 drop policy if exists "Public profiles are viewable by everyone." on public.profiles;
-create policy "Public profiles are viewable by everyone." 
-  on public.profiles for select 
-  using (true);
-
--- Allow users to insert their own profile (for signup)
+create policy "Public profiles are viewable by everyone." on public.profiles for select using (true);
 drop policy if exists "Users can insert their own profile." on public.profiles;
-create policy "Users can insert their own profile." 
-  on public.profiles for insert 
-  with check (auth.uid() = id);
-
--- Allow users to update their own profile
+create policy "Users can insert their own profile." on public.profiles for insert with check (auth.uid() = id);
 drop policy if exists "Users can update own profile." on public.profiles;
-create policy "Users can update own profile." 
-  on public.profiles for update 
-  using (auth.uid() = id);
+create policy "Users can update own profile." on public.profiles for update using (auth.uid() = id);
 
--- 3. Create Trigger Function
--- This automatically doubles the user info into the profiles table when they sign up
+-- 3. Create Trigger Function (Auto-saves user on signup)
 create or replace function public.handle_new_user()
 returns trigger as $$
 begin
@@ -38,7 +28,7 @@ begin
   values (
     new.id,
     new.email,
-    new.raw_user_meta_data->>'full_name', -- Corrected key for Google Auth
+    new.raw_user_meta_data->>'full_name',
     new.raw_user_meta_data->>'phone',
     coalesce(new.raw_user_meta_data->>'user_type', 'customer')
   );
@@ -52,7 +42,7 @@ create trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
 
--- 5. Additional Tables (Services, Providers, Bookings, Reviews)
+-- 5. Services Table
 create table if not exists public.services (
   id uuid default gen_random_uuid() primary key,
   name_ar text not null,
@@ -62,10 +52,14 @@ create table if not exists public.services (
   provider_count int default 0,
   created_at timestamptz default now()
 );
+alter table public.services enable row level security;
+drop policy if exists "Services are viewable by everyone." on public.services;
+create policy "Services are viewable by everyone." on public.services for select using (true);
 
+-- 6. Providers Table
 create table if not exists public.providers (
   id uuid default gen_random_uuid() primary key,
-  user_id uuid references public.profiles(id) on delete cascade not null,
+  user_id uuid references public.profiles(id) on delete cascade,
   name text not null,
   specialty text,
   city text,
@@ -77,9 +71,41 @@ create table if not exists public.providers (
   is_verified boolean default false,
   created_at timestamptz default now()
 );
-
-alter table public.services enable row level security;
-create policy "Services are viewable by everyone." on public.services for select using (true);
-
 alter table public.providers enable row level security;
+drop policy if exists "Providers are viewable by everyone." on public.providers;
 create policy "Providers are viewable by everyone." on public.providers for select using (true);
+
+-- 7. Bookings Table
+create table if not exists public.bookings (
+  id uuid default gen_random_uuid() primary key,
+  provider_id uuid references public.providers(id) on delete cascade,
+  customer_name text not null,
+  customer_phone text,
+  service_date date,
+  preferred_time text,
+  notes text,
+  status text default 'pending' check (status in ('pending', 'confirmed', 'completed', 'cancelled')),
+  created_at timestamptz default now()
+);
+alter table public.bookings enable row level security;
+drop policy if exists "Bookings are viewable by everyone." on public.bookings;
+create policy "Bookings are viewable by everyone." on public.bookings for select using (true);
+drop policy if exists "Anyone can insert bookings." on public.bookings;
+create policy "Anyone can insert bookings." on public.bookings for insert with check (true);
+
+-- 8. Reviews Table
+create table if not exists public.reviews (
+  id uuid default gen_random_uuid() primary key,
+  provider_id uuid references public.providers(id) on delete cascade,
+  customer_name text not null,
+  rating int check (rating >= 1 and rating <= 5),
+  comment text,
+  created_at timestamptz default now()
+);
+alter table public.reviews enable row level security;
+drop policy if exists "Reviews are viewable by everyone." on public.reviews;
+create policy "Reviews are viewable by everyone." on public.reviews for select using (true);
+drop policy if exists "Anyone can insert reviews." on public.reviews;
+create policy "Anyone can insert reviews." on public.reviews for insert with check (true);
+
+-- DONE! All tables created successfully.
