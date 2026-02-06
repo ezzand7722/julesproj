@@ -185,10 +185,13 @@ async function handleSignup(e) {
             if (providerError) throw providerError;
         }
 
-        document.getElementById('successText').textContent =
-            userType === 'provider'
-                ? 'تم إنشاء حسابك كمقدم خدمة! تحقق من بريدك الإلكتروني للتفعيل.'
-                : 'تم إنشاء حسابك! تحقق من بريدك الإلكتروني للتفعيل.';
+        if (authData.user && !authData.session) {
+            console.log('✅ Signup successful, confirmation email sent');
+            document.getElementById('successText').textContent = 'تم إنشاء الحساب بنجاح! يرجى الذهاب لبريدك الإلكتروني وتفعيل الحساب للدخول.';
+        } else {
+            console.log('✅ Signup successful, session created');
+            document.getElementById('successText').textContent = 'تم إنشاء الحساب بنجاح!';
+        }
         showForm('successMessage');
 
     } catch (err) {

@@ -5,7 +5,7 @@
 const SUPABASE_URL = 'https://globdesovygfvvyuzrvy.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdsb2JkZXNvdnlnZnZ2eXV6cnZ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk3MDIwNDEsImV4cCI6MjA4NTI3ODA0MX0.wVdR293AFlCz2rYHWsindi8LKAaZIC4FXSYNKPD4UV0';
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Global state
 let allProviders = [];
@@ -13,6 +13,7 @@ let allServices = [];
 
 document.addEventListener('DOMContentLoaded', async function () {
     // Initialize the app
+    await checkSession();
     await loadServices();
     await loadProviders();
     await loadReviews();
@@ -22,11 +23,72 @@ document.addEventListener('DOMContentLoaded', async function () {
     console.log('🛠️ خدمتي - تم تحميل الموقع بنجاح!');
 });
 
+// Check Session & Update UI
+async function checkSession() {
+    try {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        updateAuthUI(session);
+
+        // Listen for auth changes
+        supabaseClient.auth.onAuthStateChange((_event, session) => {
+            updateAuthUI(session);
+        });
+    } catch (err) {
+        console.error('Session check failed:', err);
+    }
+}
+
+async function updateAuthUI(session) {
+    const guestButtons = document.querySelector('.guest-buttons');
+    const userMenu = document.getElementById('userMenu');
+
+    if (session) {
+        guestButtons.classList.add('hidden');
+        userMenu.classList.remove('hidden');
+
+        // Get profile to check simple info & role
+        try {
+            const { data: profile } = await supabaseClient
+                .from('profiles')
+                .select('*')
+                .eq('id', session.user.id)
+                .single();
+
+            if (profile) {
+                document.getElementById('userName').textContent = profile.full_name || session.user.email.split('@')[0];
+                if (profile.role === 'provider') {
+                    document.getElementById('dashboardBtn').classList.remove('hidden');
+                }
+            } else {
+                document.getElementById('userName').textContent = session.user.email.split('@')[0];
+            }
+        } catch (e) {
+            console.error('Error fetching profile:', e);
+            document.getElementById('userName').textContent = session.user.email.split('@')[0];
+        }
+    } else {
+        guestButtons.classList.remove('hidden');
+        userMenu.classList.add('hidden');
+    }
+}
+
+async function handleLogout() {
+    try {
+        await supabaseClient.auth.signOut();
+        window.location.reload();
+    } catch (err) {
+        console.error('Logout failed:', err);
+    }
+}
+
+// Make logout global
+window.handleLogout = handleLogout;
+
 // Load services from database
 async function loadServices() {
     const grid = document.getElementById('servicesGrid');
     try {
-        const { data: services, error } = await supabase
+        const { data: services, error } = await supabaseClient
             .from('services')
             .select('*')
             .order('provider_count', { ascending: false });
@@ -54,7 +116,7 @@ async function loadProviders(filter = {}) {
     grid.innerHTML = '<div class="loading-spinner">جاري التحميل...</div>';
 
     try {
-        let query = supabase.from('providers').select('*');
+        let query = supabaseClient.from('providers').select('*');
 
         if (filter.city) {
             query = query.eq('city', filter.city);
@@ -103,7 +165,7 @@ async function loadProviders(filter = {}) {
 async function loadReviews() {
     const grid = document.getElementById('reviewsGrid');
     try {
-        const { data: reviews, error } = await supabase
+        const { data: reviews, error } = await supabaseClient
             .from('reviews')
             .select('*')
             .order('created_at', { ascending: false })
@@ -138,12 +200,12 @@ async function loadReviews() {
 async function loadStats() {
     try {
         // Get provider count
-        const { count: providerCount } = await supabase
+        const { count: providerCount } = await supabaseClient
             .from('providers')
             .select('*', { count: 'exact', head: true });
 
         // Get booking count
-        const { count: bookingCount } = await supabase
+        const { count: bookingCount } = await supabaseClient
             .from('bookings')
             .select('*', { count: 'exact', head: true });
 
@@ -252,7 +314,7 @@ async function handleBooking(e) {
     submitBtn.textContent = 'جاري الإرسال...';
 
     try {
-        const { data, error } = await supabase
+        const { data, error } = await supabaseClient
             .from('bookings')
             .insert([{
                 provider_id: providerId,
