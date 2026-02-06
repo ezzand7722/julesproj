@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Check if user selected 'provider' before Google OAuth redirect
             const pendingUserType = localStorage.getItem('pendingUserType');
             if (pendingUserType === 'provider') {
-                console.log('📝 Updating role to provider...');
+                console.log('📝 Updating role to provider from Google OAuth...');
                 await supabaseClient
                     .from('profiles')
                     .update({ role: 'provider' })
@@ -48,6 +48,44 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return;
             }
             localStorage.removeItem('pendingUserType');
+
+            // Check if there's pending provider data from email signup
+            const pendingProviderData = localStorage.getItem('pendingProviderData');
+            if (pendingProviderData) {
+                console.log('📝 Creating provider record from email signup...');
+                const providerData = JSON.parse(pendingProviderData);
+
+                // First update profile role
+                await supabaseClient
+                    .from('profiles')
+                    .update({ role: 'provider' })
+                    .eq('id', session.user.id);
+
+                // Then create provider record
+                const { error: providerError } = await supabaseClient
+                    .from('providers')
+                    .insert([{
+                        user_id: session.user.id,
+                        name: providerData.name,
+                        specialty: providerData.specialty,
+                        city: providerData.city,
+                        location: providerData.location,
+                        phone: providerData.phone,
+                        rating: 4.0,
+                        review_count: 0,
+                        is_featured: false,
+                        is_verified: false
+                    }]);
+
+                if (providerError) {
+                    console.error('Provider insert error:', providerError);
+                } else {
+                    console.log('✅ Provider record created successfully');
+                }
+                localStorage.removeItem('pendingProviderData');
+                window.location.href = 'dashboard.html';
+                return;
+            }
 
             const { data: profile } = await supabaseClient
                 .from('profiles')
@@ -166,13 +204,13 @@ async function handleSignup(e) {
             email,
             password,
             options: {
-                data: { name, phone, user_type: userType }
+                data: { full_name: name, phone, user_type: userType }
             }
         });
 
         if (authError) throw authError;
 
-        // If provider, create provider record
+        // If provider, save provider data to localStorage for later processing
         if (userType === 'provider') {
             const specialty = document.getElementById('providerSpecialty').value;
             const city = document.getElementById('providerCity').value;
@@ -182,22 +220,10 @@ async function handleSignup(e) {
                 throw new Error('الرجاء اختيار التخصص والمدينة');
             }
 
-            const { error: providerError } = await supabaseClient
-                .from('providers')
-                .insert([{
-                    user_id: authData.user.id,
-                    name: name,
-                    specialty: specialty,
-                    city: city,
-                    location: location || city,
-                    phone: phone,
-                    rating: 4.0,
-                    review_count: 0,
-                    is_featured: false,
-                    is_verified: false
-                }]);
-
-            if (providerError) throw providerError;
+            // Store provider data for after email verification/first login
+            localStorage.setItem('pendingProviderData', JSON.stringify({
+                specialty, city, location: location || city, phone, name
+            }));
         }
 
         if (authData.user && !authData.session) {
