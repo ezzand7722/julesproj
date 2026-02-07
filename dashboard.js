@@ -1,6 +1,6 @@
 // Khedmati - Provider Dashboard
-const SUPABASE_URL = 'https://globdesovygfvvyuzrvy.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdsb2JkZXNvdnlnZnZ2eXV6cnZ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk3MDIwNDEsImV4cCI6MjA4NTI3ODA0MX0.wVdR293AFlCz2rYHWsindi8LKAaZIC4FXSYNKPD4UV0';
+const SUPABASE_URL = 'https://rkhkvmcnjuwoxammhsqn.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJraGt2bWNuanV3b3hhbW1oc3FuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAzODk0MjcsImV4cCI6MjA4NTk2NTQyN30.iGTVKa7iap8MLZ8v0efCvzsqzviNBbacVfEDxQGDsZQ';
 
 // Check if supabase is already defined to avoid errors
 const supabaseDashboard = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
