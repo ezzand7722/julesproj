@@ -324,3 +324,11 @@ function showNotification(message, type = 'info') {
         setTimeout(() => notification.remove(), 400);
     }, 3000);
 }
+
+// Make functions globally accessible
+window.switchTab = switchTab;
+window.openReviewModal = openReviewModal;
+window.closeReviewModal = closeReviewModal;
+window.setRating = setRating;
+window.submitReview = submitReview;
+window.logout = logout;
