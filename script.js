@@ -396,13 +396,25 @@ const keywordMap = {
 };
 
 function openAIModal() {
-    document.getElementById('aiModal').style.display = 'flex';
+    const modal = document.getElementById('aiModal');
+    modal.style.display = 'flex';
+    // Force visibility to override CSS class
+    setTimeout(() => {
+        modal.style.opacity = '1';
+        modal.style.visibility = 'visible';
+    }, 10);
     document.body.style.overflow = 'hidden';
 }
 
 function closeAIModal() {
-    document.getElementById('aiModal').style.display = 'none';
-    document.body.style.overflow = '';
+    const modal = document.getElementById('aiModal');
+    modal.style.opacity = '0';
+    modal.style.visibility = 'hidden';
+
+    setTimeout(() => {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }, 300); // Wait for transition
 }
 
 function analyzeProblem() {
