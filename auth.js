@@ -94,7 +94,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 .single();
 
             if (profile && profile.role === 'provider') {
-                window.location.href = 'dashboard.html';
+                // Providers stay on homepage too (manual navigation to dashboard)
+                window.location.href = 'index.html';
             } else {
                 // Customers stay on homepage
                 window.location.href = 'index.html';
