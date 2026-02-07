@@ -1,18 +1,17 @@
--- Cleanup Duplicate Services
+-- Cleanup Duplicate Services (Fixed UUID Error)
 -- Merges duplicate service names into a single entry and cleans up references
 
 begin;
 
--- 1. Identify duplicates and keep the one with the oldest ID (or just one of them)
--- We will use a temporary table to map duplicates to the 'master' service id.
-
-create temp table service_mapping as
+-- 1. Identify duplicates and keep one ID (using cast to text for min function)
+create temp table service_mapping on commit drop as
 select 
   s.id as bad_id,
   keep.id as good_id
 from public.services s
 join (
-  select min(id) as id, name_ar
+  -- Cast UUID to text to allow min() aggregation, then cast back
+  select min(id::text)::uuid as id, name_ar
   from public.services
   group by name_ar
   having count(*) > 1
@@ -36,17 +35,16 @@ set service_id = sm.good_id
 from service_mapping sm
 where ps.service_id = sm.bad_id;
 
--- 3. Update references in bookings (if service_id is used there, though usually it's just text or provider_id)
--- Checking schema... bookings has service_type (text) usually. 
--- If bookings has service_id FK:
--- update public.bookings b set service_id = sm.good_id from service_mapping sm where b.service_id = sm.bad_id;
-
--- 4. Delete the duplicate services
+-- 3. Delete the duplicate services
 delete from public.services
 where id in (select bad_id from service_mapping);
 
--- 5. Add Unique Constraint to prevent future duplicates
-alter table public.services 
-add constraint services_name_ar_key unique (name_ar);
+-- 4. Add Unique Constraint to prevent future duplicates (if not exists)
+do $$ 
+begin
+  if not exists (select 1 from pg_constraint where conname = 'services_name_ar_key') then
+    alter table public.services add constraint services_name_ar_key unique (name_ar);
+  end if;
+end $$;
 
 commit;
