@@ -30,17 +30,55 @@ async function checkAuth() {
     currentUser = session.user;
 
     // Get provider record
-    const { data: provider, error } = await supabaseDashboard
+    let { data: provider, error } = await supabaseDashboard
         .from('providers')
         .select('*')
         .eq('user_id', currentUser.id)
         .single();
 
+    // If no provider record exists but user has session, check if they're a provider
     if (error || !provider) {
-        // Not a provider, redirect
-        showNotification('هذه الصفحة لمقدمي الخدمات فقط', 'warning');
-        setTimeout(() => window.location.href = 'index.html', 2000);
-        return;
+        console.log('⚠️ No provider record found, checking profile...');
+
+        // Check if user's profile role is 'provider'
+        const { data: profile } = await supabaseDashboard
+            .from('profiles')
+            .select('role, full_name, phone')
+            .eq('id', currentUser.id)
+            .single();
+
+        if (profile && profile.role === 'provider') {
+            // User is marked as provider but record doesn't exist - create it
+            console.log('📝 Creating missing provider record...');
+            const { data: newProvider, error: createError } = await supabaseDashboard
+                .from('providers')
+                .insert([{
+                    user_id: currentUser.id,
+                    name: profile.full_name || currentUser.email?.split('@')[0] || 'مقدم خدمة',
+                    specialty: 'صيانة عامة',
+                    city: 'عمّان',
+                    phone: profile.phone || '',
+                    rating: 4.0,
+                    review_count: 0
+                }])
+                .select()
+                .single();
+
+            if (createError) {
+                console.error('❌ Failed to create provider record:', createError);
+                showNotification('خطأ في إنشاء حساب مقدم الخدمة', 'error');
+                setTimeout(() => window.location.href = 'index.html', 2000);
+                return;
+            }
+
+            provider = newProvider;
+            showNotification('تم إنشاء حساب مقدم الخدمة بنجاح! 🎉', 'success');
+        } else {
+            // Not a provider at all
+            showNotification('هذه الصفحة لمقدمي الخدمات فقط', 'warning');
+            setTimeout(() => window.location.href = 'index.html', 2000);
+            return;
+        }
     }
 
     currentProvider = provider;
