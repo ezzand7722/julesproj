@@ -207,33 +207,55 @@ async function loadProviderData() {
 }
 
 // Load Bookings
+// Load Bookings
 async function loadBookings() {
     console.log('Loading bookings...');
     const list = document.getElementById('allBookingsList');
     const pendingList = document.getElementById('pendingBookingsList');
 
+    // 1. Fetch Bookings (straight select, no join to avoid 400 error)
     const { data: bookings, error } = await supabaseDashboard
         .from('bookings')
-        .select('*, customers(full_name, phone)')
+        .select('*')
         .eq('provider_id', currentProvider.id)
         .order('created_at', { ascending: false });
 
     if (error) {
         console.error('Error loading bookings:', error);
+        if (list) list.innerHTML = '<div class="error-state">فشل تحميل الحجوزات</div>';
         return;
     }
 
-    // Update stats
-    const pending = bookings.filter(b => b.status === 'pending');
-    const completed = bookings.filter(b => b.status === 'completed');
+    // 2. Fetch Customer Details Manually
+    const customerIds = [...new Set(bookings.map(b => b.customer_id).filter(Boolean))];
+    const profilesMap = {};
 
-    document.getElementById('totalBookings').textContent = bookings.length;
-    document.getElementById('pendingBookings').textContent = pending.length;
-    document.getElementById('completedBookings').textContent = completed.length;
+    if (customerIds.length > 0) {
+        const { data: profiles } = await supabaseDashboard
+            .from('profiles')
+            .select('id, full_name, phone')
+            .in('id', customerIds);
+
+        profiles?.forEach(p => profilesMap[p.id] = p);
+    }
+
+    // 3. Attach Profiles
+    const enrichedBookings = bookings.map(b => ({
+        ...b,
+        profiles: profilesMap[b.customer_id] || null
+    }));
+
+    // Update stats
+    const pending = enrichedBookings.filter(b => b.status === 'pending');
+    const completed = enrichedBookings.filter(b => b.status === 'completed');
+
+    if (document.getElementById('totalBookings')) document.getElementById('totalBookings').textContent = enrichedBookings.length;
+    if (document.getElementById('pendingBookings')) document.getElementById('pendingBookings').textContent = pending.length;
+    if (document.getElementById('completedBookings')) document.getElementById('completedBookings').textContent = completed.length;
 
     // Render lists
     if (list) {
-        list.innerHTML = bookings.length ? bookings.map(b => renderBookingItem(b)).join('') : '<p class="empty-state">لا توجد حجوزات</p>';
+        list.innerHTML = enrichedBookings.length ? enrichedBookings.map(b => renderBookingItem(b)).join('') : '<p class="empty-state">لا توجد حجوزات</p>';
     }
     if (pendingList) {
         pendingList.innerHTML = pending.length ? pending.map(b => renderBookingItem(b)).join('') : '<p class="empty-state">لا توجد طلبات جديدة</p>';
