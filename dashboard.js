@@ -114,10 +114,6 @@ async function updateUI() {
     await loadServices();
 }
 
-// Load services
-await loadServices();
-}
-
 // Load Services
 async function loadServices() {
     const selector = document.getElementById('servicesSelector');
