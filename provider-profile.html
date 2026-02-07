@@ -243,7 +243,7 @@
     <script>
         const SUPABASE_URL = 'https://rkhkvmcnjuwoxammhsqn.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJraGt2bWNuanV3b3hhbW1oc3FuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAzODk0MjcsImV4cCI6MjA4NTk2NTQyN30.iGTVKa7iap8MLZ8v0efCvzsqzviNBbacVfEDxQGDsZQ';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const supabaseProfile = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // Get provider ID from URL
         const urlParams = new URLSearchParams(window.location.search);
@@ -256,7 +256,7 @@
             }
 
             // Load provider data
-            const { data: provider, error } = await supabase
+            const { data: provider, error } = await supabaseProfile
                 .from('providers')
                 .select('*')
                 .eq('id', providerId)
@@ -282,7 +282,7 @@
             };
 
             // Load services
-            const { data: providerServices } = await supabase
+            const { data: providerServices } = await supabaseProfile
                 .from('provider_services')
                 .select('services(name_ar, icon)')
                 .eq('provider_id', providerId);
@@ -297,7 +297,7 @@
             }
 
             // Load reviews
-            const { data: reviews } = await supabase
+            const { data: reviews } = await supabaseProfile
                 .from('reviews')
                 .select('*')
                 .eq('provider_id', providerId)
