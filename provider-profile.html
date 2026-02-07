@@ -237,7 +237,55 @@
         </div>
 
         <!-- Book Now -->
-        <a href="#" class="book-now-btn" id="bookNowBtn">📅 احجز موعدك الآن</a>
+        <button class="book-now-btn" id="bookNowBtn" onclick="openBookingModal()">📅 احجز موعدك الآن</button>
+    </div>
+
+    <!-- Booking Modal (same as homepage) -->
+    <div class="modal-overlay" id="bookingModal"
+        style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+        <div class="modal"
+            style="background: white; padding: 30px; border-radius: 16px; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto;">
+            <button class="modal-close" onclick="closeBookingModal()"
+                style="position: absolute; top: 15px; left: 15px; background: none; border: none; font-size: 1.5rem; cursor: pointer;">✕</button>
+            <h2 style="margin-bottom: 10px;">حجز موعد</h2>
+            <p id="modalProviderName" style="color: #6b7280; margin-bottom: 20px;"></p>
+            <form id="bookingForm" onsubmit="handleBooking(event)">
+                <input type="hidden" id="bookingProviderId">
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label style="display: block; margin-bottom: 6px; font-weight: 500;">اسمك الكامل</label>
+                    <input type="text" id="customerName" required placeholder="مثال: أحمد محمد"
+                        style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem;">
+                </div>
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label style="display: block; margin-bottom: 6px; font-weight: 500;">رقم الهاتف</label>
+                    <input type="tel" id="customerPhone" required placeholder="07XXXXXXXX" pattern="07[0-9]{8}"
+                        style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem;">
+                </div>
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label style="display: block; margin-bottom: 6px; font-weight: 500;">التاريخ المفضل</label>
+                    <input type="date" id="serviceDate" required
+                        style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem;">
+                </div>
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label style="display: block; margin-bottom: 6px; font-weight: 500;">الوقت المفضل</label>
+                    <select id="preferredTime"
+                        style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem;">
+                        <option value="صباحاً (9-12)">صباحاً (9-12)</option>
+                        <option value="ظهراً (12-3)">ظهراً (12-3)</option>
+                        <option value="عصراً (3-6)">عصراً (3-6)</option>
+                        <option value="مساءً (6-9)">مساءً (6-9)</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 6px; font-weight: 500;">ملاحظات إضافية</label>
+                    <textarea id="bookingNotes" placeholder="وصف المشكلة أو الخدمة المطلوبة..."
+                        style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; min-height: 80px;"></textarea>
+                </div>
+                <button type="submit" id="submitBookingBtn"
+                    style="width: 100%; padding: 14px; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: white; border: none; border-radius: 10px; font-size: 1.1rem; font-weight: 600; cursor: pointer;">تأكيد
+                    الحجز</button>
+            </form>
+        </div>
     </div>
 
     <script>
@@ -248,6 +296,7 @@
         // Get provider ID from URL
         const urlParams = new URLSearchParams(window.location.search);
         const providerId = urlParams.get('id');
+        let currentProvider = null;
 
         async function loadProfile() {
             if (!providerId) {
@@ -267,6 +316,8 @@
                 return;
             }
 
+            currentProvider = provider;
+
             // Populate header
             document.getElementById('providerAvatar').textContent = provider.name.substring(0, 2);
             document.getElementById('providerName').textContent = provider.name;
@@ -276,20 +327,26 @@
             document.getElementById('providerLocation').textContent = `${provider.city} - ${provider.location}`;
             document.getElementById('providerPhone').textContent = provider.phone;
 
-            // Update book now button
-            document.getElementById('bookNowBtn').onclick = () => {
-                window.location.href = `index.html?book=${providerId}`;
-            };
-
-            // Load services
+            // Load services with UNIQUE filter
             const { data: providerServices } = await supabaseProfile
                 .from('provider_services')
-                .select('services(name_ar, icon)')
+                .select('services(id, name_ar, icon)')
                 .eq('provider_id', providerId);
 
             const servicesGrid = document.getElementById('servicesGrid');
             if (providerServices && providerServices.length > 0) {
-                servicesGrid.innerHTML = providerServices.map(ps => `
+                // Remove duplicates by service ID
+                const uniqueServices = [];
+                const seenIds = new Set();
+                providerServices.forEach(ps => {
+                    const serviceId = ps.services?.id;
+                    if (serviceId && !seenIds.has(serviceId)) {
+                        seenIds.add(serviceId);
+                        uniqueServices.push(ps);
+                    }
+                });
+
+                servicesGrid.innerHTML = uniqueServices.map(ps => `
                     <span class="service-tag">${ps.services?.icon || '🔧'} ${ps.services?.name_ar || provider.specialty}</span>
                 `).join('');
             } else {
@@ -320,6 +377,65 @@
                 reviewsList.innerHTML = '<p style="color: #6b7280; text-align: center;">لا توجد تقييمات بعد</p>';
             }
         }
+
+        // Booking Modal Functions
+        function openBookingModal() {
+            if (!currentProvider) return;
+            document.getElementById('bookingProviderId').value = providerId;
+            document.getElementById('modalProviderName').textContent = `الحجز مع: ${currentProvider.name}`;
+            document.getElementById('bookingModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+
+            // Set min date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('serviceDate').min = today;
+        }
+
+        function closeBookingModal() {
+            document.getElementById('bookingModal').style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+        async function handleBooking(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBookingBtn');
+            btn.disabled = true;
+            btn.textContent = 'جاري الإرسال...';
+
+            try {
+                const { data: { user } } = await supabaseProfile.auth.getUser();
+                const customerId = user ? user.id : null;
+
+                const { error } = await supabaseProfile
+                    .from('bookings')
+                    .insert([{
+                        provider_id: document.getElementById('bookingProviderId').value,
+                        customer_id: customerId,
+                        customer_name: document.getElementById('customerName').value,
+                        customer_phone: document.getElementById('customerPhone').value,
+                        service_date: document.getElementById('serviceDate').value,
+                        preferred_time: document.getElementById('preferredTime').value,
+                        notes: document.getElementById('bookingNotes').value,
+                        status: 'pending'
+                    }]);
+
+                if (error) throw error;
+
+                alert('✅ تم إرسال طلب الحجز بنجاح!\nسيتواصل معك مقدم الخدمة قريباً.');
+                closeBookingModal();
+                document.getElementById('bookingForm').reset();
+            } catch (err) {
+                alert('❌ حدث خطأ: ' + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'تأكيد الحجز';
+            }
+        }
+
+        // Close modal on overlay click
+        document.getElementById('bookingModal').addEventListener('click', (e) => {
+            if (e.target.id === 'bookingModal') closeBookingModal();
+        });
 
         loadProfile();
     </script>
