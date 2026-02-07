@@ -242,7 +242,16 @@ async function loadBookings() {
 
 // Render Booking Item
 function renderBookingItem(booking) {
-    const customerName = booking.customer_name || 'عميل'; // Fallback
+    // Prefer joined profile data, fallback to stored name/phone
+    const profile = booking.profiles || {}; // profiles array or object depending on One-to-One
+    // If One-to-Many returns array. If One-to-One returns object.
+    // Assuming linked by ID is One-to-One usually.
+    // Safely handle both
+    const profileData = Array.isArray(profile) ? profile[0] : profile;
+
+    const customerName = profileData?.full_name || booking.customer_name || 'عميل';
+    let customerPhone = profileData?.phone || booking.customer_phone || ''; // Assuming customer_phone might exist
+
     const date = new Date(booking.booking_date || booking.service_date).toLocaleDateString('ar-JO');
     const statusLabels = { pending: 'قيد الانتظار', confirmed: 'مؤكد', completed: 'مكتمل', cancelled: 'ملغي' };
     const statusColors = { pending: 'orange', confirmed: 'green', completed: 'blue', cancelled: 'red' };
@@ -255,6 +264,7 @@ function renderBookingItem(booking) {
         </div>
         <div class="booking-details">
             <p><strong>العميل:</strong> ${escapeHtml(customerName)}</p>
+            ${customerPhone ? `<p><strong>الهاتف:</strong> ${escapeHtml(customerPhone)}</p>` : ''}
             <p><strong>التاريخ:</strong> ${date} - ${booking.booking_time || booking.preferred_time}</p>
             ${booking.notes ? `<p><strong>ملاحظات:</strong> ${escapeHtml(booking.notes)}</p>` : ''}
         </div>
