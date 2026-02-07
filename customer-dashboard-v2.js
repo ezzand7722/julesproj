@@ -67,7 +67,15 @@ async function loadBookings() {
 
     console.log('Loading bookings for user:', currentUser.id);
 
+    // Get user profile for legacy matching
+    const { data: profile } = await supabaseClient
+        .from('profiles')
+        .select('phone, full_name')
+        .eq('id', currentUser.id)
+        .single();
+
     // Get all bookings for this customer
+    // Match by customer_id OR phone number (for legacy bookings)
     const { data: allBookings, error } = await supabaseClient
         .from('bookings')
         .select(`
@@ -81,7 +89,7 @@ async function loadBookings() {
                 rating
             )
         `)
-        .eq('customer_id', currentUser.id)
+        .or(`customer_id.eq.${currentUser.id},customer_phone.eq.${profile?.phone}`)
         .order('created_at', { ascending: false });
 
     if (error) {
