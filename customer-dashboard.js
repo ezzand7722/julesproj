@@ -27,7 +27,7 @@ async function checkAuth() {
     currentUser = session.user;
 
     // Get user profile
-    const { data: profile } = await supabase
+    const { data: profile } = await supabaseClient
         .from('profiles')
         .select('full_name, email')
         .eq('id', currentUser.id)
@@ -146,13 +146,13 @@ function renderBookingsList(containerId, bookings, type) {
 async function loadReviews() {
     if (!currentUser) return;
 
-    const { data: profile } = await supabase
+    const { data: profile } = await supabaseClient
         .from('profiles')
         .select('full_name')
         .eq('id', currentUser.id)
         .single();
 
-    const { data: reviews } = await supabase
+    const { data: reviews } = await supabaseClient
         .from('reviews')
         .select(`
             *,
@@ -239,14 +239,14 @@ async function submitReview(e) {
 
     try {
         // Get current user's name
-        const { data: profile } = await supabase
+        const { data: profile } = await supabaseClient
             .from('profiles')
             .select('full_name')
             .eq('id', currentUser.id)
             .single();
 
         // Insert review
-        const { error } = await supabase
+        const { error } = await supabaseClient
             .from('reviews')
             .insert([{
                 provider_id: providerId,
@@ -258,14 +258,14 @@ async function submitReview(e) {
         if (error) throw error;
 
         // Update provider's rating and review count
-        const { data: allReviews } = await supabase
+        const { data: allReviews } = await supabaseClient
             .from('reviews')
             .select('rating')
             .eq('provider_id', providerId);
 
         const avgRating = allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length;
 
-        await supabase
+        await supabaseClient
             .from('providers')
             .update({
                 rating: avgRating.toFixed(1),
