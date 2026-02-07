@@ -160,6 +160,20 @@ function updateNeighborhoods() {
 // Make updateNeighborhoods global
 window.updateNeighborhoods = updateNeighborhoods;
 
+// Utility to prevent XSS
+function escapeHtml(text) {
+    if (!text) return '';
+    return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+// Make escapeHtml global
+window.escapeHtml = escapeHtml;
+
 // Load services from database
 async function loadServices() {
     const grid = document.getElementById('servicesGrid');
@@ -174,10 +188,10 @@ async function loadServices() {
         allServices = services || [];
 
         grid.innerHTML = services.map(service => `
-            <div class="service-card" data-service-id="${service.id}" onclick="filterByService('${service.name_ar}')">
+            <div class="service-card" data-service-id="${escapeHtml(service.id)}" onclick="filterByService('${escapeHtml(service.name_ar)}')">
                 <div class="service-icon">${service.icon}</div>
-                <h3>${service.name_ar}</h3>
-                <p>${service.description_ar || ''}</p>
+                <h3>${escapeHtml(service.name_ar)}</h3>
+                <p>${escapeHtml(service.description_ar || '')}</p>
                 <span class="service-count">${service.provider_count || 0}+ مقدم خدمة</span>
             </div>
         `).join('');
@@ -216,20 +230,20 @@ async function loadProviders(filter = {}) {
         }
 
         grid.innerHTML = providers.map(provider => `
-            <div class="provider-card" data-provider-id="${provider.id}" onclick="window.location.href='provider-profile.html?id=${provider.id}'" style="cursor: pointer;">
+            <div class="provider-card" data-provider-id="${escapeHtml(provider.id)}" onclick="window.location.href='provider-profile.html?id=${escapeHtml(provider.id)}'" style="cursor: pointer;">
                 ${provider.is_featured ? '<div class="provider-badge">⭐ مميز</div>' : ''}
                 ${provider.is_verified ? '<div class="verified-badge">✓ موثق</div>' : ''}
                 <div class="provider-avatar">
-                    <div class="avatar-placeholder">${provider.name.substring(0, 2)}</div>
+                    <div class="avatar-placeholder">${escapeHtml(provider.name).substring(0, 2)}</div>
                 </div>
-                <h3>${provider.name}</h3>
-                <p class="provider-specialty">${provider.specialty}</p>
-                <div class="provider-location">📍 ${provider.city}${provider.neighborhood ? ' - ' + provider.neighborhood : ''} - ${provider.location}</div>
+                <h3>${escapeHtml(provider.name)}</h3>
+                <p class="provider-specialty">${escapeHtml(provider.specialty)}</p>
+                <div class="provider-location">📍 ${escapeHtml(provider.city)}${provider.neighborhood ? ' - ' + escapeHtml(provider.neighborhood) : ''} - ${escapeHtml(provider.location)}</div>
                 <div class="provider-rating">
                     <span class="stars">${'⭐'.repeat(Math.round(provider.rating))}</span>
                     <span>${provider.rating} (${provider.review_count} تقييم)</span>
                 </div>
-                <button class="btn btn-primary btn-block" onclick="event.stopPropagation(); openBookingModal('${provider.id}', '${provider.name}')">احجز الآن</button>
+                <button class="btn btn-primary btn-block" onclick="event.stopPropagation(); openBookingModal('${escapeHtml(provider.id)}', '${escapeHtml(provider.name)}')">احجز الآن</button>
             </div>
         `).join('');
 
@@ -261,11 +275,11 @@ async function loadReviews() {
         grid.innerHTML = reviews.map(review => `
             <div class="testimonial-card">
                 <div class="quote-icon">"</div>
-                <p class="testimonial-text">${review.comment}</p>
+                <p class="testimonial-text">${escapeHtml(review.comment)}</p>
                 <div class="testimonial-author">
-                    <div class="author-avatar">${review.customer_name.substring(0, 2)}</div>
+                    <div class="author-avatar">${escapeHtml(review.customer_name).substring(0, 2)}</div>
                     <div class="author-info">
-                        <span class="author-name">${review.customer_name}</span>
+                        <span class="author-name">${escapeHtml(review.customer_name)}</span>
                         <span class="author-rating">${'⭐'.repeat(review.rating)}</span>
                     </div>
                 </div>
