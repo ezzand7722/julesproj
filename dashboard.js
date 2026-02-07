@@ -128,7 +128,17 @@ async function loadServices() {
         return;
     }
 
-    container.innerHTML = allServices.map(service => `
+    // Generic unique filter (based on name or id)
+    const uniqueServices = allServices.reduce((acc, current) => {
+        const x = acc.find(item => item.name_ar === current.name_ar);
+        if (!x) {
+            return acc.concat([current]);
+        } else {
+            return acc;
+        }
+    }, []);
+
+    container.innerHTML = uniqueServices.map(service => `
         <label class="service-checkbox">
             <input 
                 type="checkbox" 
