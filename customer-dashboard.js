@@ -45,15 +45,10 @@ async function checkAuth() {
 async function loadBookings() {
     if (!currentUser) return;
 
-    // Get customer's name/phone from their bookings or profile
-    const { data: profile } = await supabase
-        .from('profiles')
-        .select('full_name, phone')
-        .eq('id', currentUser.id)
-        .single();
+    console.log('Loading bookings for user:', currentUser.id);
 
-    // Get all bookings (match by phone or email)
-    const { data: allBookings } = await supabase
+    // Get all bookings for this customer
+    const { data: allBookings, error } = await supabaseClient
         .from('bookings')
         .select(`
             *,
@@ -66,13 +61,15 @@ async function loadBookings() {
                 rating
             )
         `)
-        .or(`customer_phone.eq.${profile?.phone},customer_name.ilike.%${profile?.full_name}%`)
+        .eq('customer_id', currentUser.id)
         .order('created_at', { ascending: false });
 
-    if (!allBookings) {
-        console.error('Failed to load bookings');
+    if (error) {
+        console.error('Failed to load bookings:', error);
         return;
     }
+
+    console.log('Loaded bookings:', allBookings);
 
     // Separate by status
     const pending = allBookings.filter(b => b.status === 'pending');
