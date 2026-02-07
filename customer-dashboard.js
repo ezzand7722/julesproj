@@ -1,7 +1,6 @@
 // Khedmati - Customer Dashboard
-// Use the global supabase client from admin-config.js
-const supabaseClient = window.supabaseClient.createClient(
-    'https://rkhkvmcnjuwoxammhsqn.supabaseClient.co',
+const supabaseClient = window.supabase.createClient(
+    'https://rkhkvmcnjuwoxammhsqn.supabase.co',
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJraGt2bWNuanV3b3hhbW1oc3FuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAzODk0MjcsImV4cCI6MjA4NTk2NTQyN30.iGTVKa7iap8MLZ8v0efCvzsqzviNBbacVfEDxQGDsZQ'
 );
 
