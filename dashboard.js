@@ -300,7 +300,19 @@ function renderBookingItem(booking) {
             <button class="btn-small btn-complete" onclick="updateBookingStatus('${booking.id}', 'completed')">إكمال الخدمة</button>
         </div>` : ''}
     </div>
+    </div>
     `;
+}
+
+// Utility: Escape HTML to prevent XSS
+function escapeHtml(text) {
+    if (!text) return '';
+    return text.toString()
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 
 // Update Booking Status
