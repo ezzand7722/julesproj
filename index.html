@@ -89,24 +89,7 @@
                 <button type="button" class="ai-search-btn" onclick="openAIModal()" title="بحث ذكي">🤖</button>
             </div>
 
-            <!-- AI Matchmaking Modal -->
-            <div class="modal-overlay" id="aiModal"
-                style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 2000; justify-content: center; align-items: center;">
-                <div class="modal"
-                    style="background: white; padding: 30px; border-radius: 16px; max-width: 500px; width: 90%; text-align: center;">
-                    <button class="modal-close" onclick="closeAIModal()"
-                        style="position: absolute; top: 15px; left: 15px; background: none; border: none; font-size: 1.5rem; cursor: pointer;">✕</button>
-                    <div style="font-size: 3rem; margin-bottom: 10px;">🤖</div>
-                    <h3 style="margin-bottom: 10px; color: var(--dark);">المساعد الذكي</h3>
-                    <p style="color: var(--gray-500); margin-bottom: 20px;">صف مشكلتك وسنقترح عليك الخدمة المناسبة</p>
 
-                    <textarea id="aiProblemInput" placeholder="مثال: عندي ماسورة مكسورة في المطبخ..."
-                        style="width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 12px; min-height: 100px; margin-bottom: 20px; font-family: inherit;"></textarea>
-
-                    <button class="btn btn-primary" onclick="analyzeProblem()" style="width: 100%;">اقترح لي
-                        خدمة</button>
-                </div>
-            </div>
             <div class="hero-stats">
                 <div class="stat"><span class="stat-number" id="providerCount">0</span><span class="stat-label">مقدم
                         خدمة</span></div>
@@ -319,6 +302,24 @@
                 </div>
                 <button type="submit" class="btn btn-primary btn-block">تأكيد الحجز</button>
             </form>
+        </div>
+    </div>
+
+    <!-- AI Matchmaking Modal -->
+    <div class="modal-overlay" id="aiModal"
+        style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9999; justify-content: center; align-items: center;">
+        <div class="modal"
+            style="background: white; padding: 30px; border-radius: 16px; max-width: 500px; width: 90%; text-align: center; position: relative; pointer-events: auto;">
+            <button class="modal-close" onclick="closeAIModal()"
+                style="position: absolute; top: 15px; left: 15px; background: none; border: none; font-size: 1.5rem; cursor: pointer;">✕</button>
+            <div style="font-size: 3rem; margin-bottom: 10px;">🤖</div>
+            <h3 style="margin-bottom: 10px; color: var(--dark);">المساعد الذكي</h3>
+            <p style="color: var(--gray-500); margin-bottom: 20px;">صف مشكلتك وسنقترح عليك الخدمة المناسبة</p>
+
+            <textarea id="aiProblemInput" placeholder="مثال: عندي ماسورة مكسورة في المطبخ..."
+                style="width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 12px; min-height: 100px; margin-bottom: 20px; font-family: inherit;"></textarea>
+
+            <button class="btn btn-primary" onclick="analyzeProblem()" style="width: 100%;">اقترح لي خدمة</button>
         </div>
     </div>
 
