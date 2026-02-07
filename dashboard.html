@@ -13,6 +13,8 @@
     <link rel="stylesheet" href="auth.css">
     <link rel="stylesheet" href="dashboard-extra.css">
     <link rel="stylesheet" href="dashboard-redesign.css">
+    <link rel="stylesheet" href="dashboard-social.css">
+    <link rel="stylesheet" href="chat.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
@@ -74,6 +76,61 @@
             </div>
         </div>
 
+        <!-- Messages Section -->
+        <div class="dashboard-card" style="margin-bottom: 20px;">
+            <style>
+                /* Provider Chat Layout Overrides */
+                .chat-container {
+                    display: flex !important;
+                    height: 500px !important;
+                    border: none !important;
+                    box-shadow: none !important;
+                    margin-top: 0 !important;
+                }
+
+                .chat-sidebar {
+                    border-radius: 8px 0 0 8px;
+                }
+            </style>
+            <div class="chat-container">
+                <!-- Sidebar -->
+                <div class="chat-sidebar">
+                    <div class="chat-header">
+                        <h3>💬 المحادثات</h3>
+                    </div>
+                    <div id="conversationsList" class="conversations-list">
+                        <!-- Conversations loaded by JS -->
+                    </div>
+                </div>
+
+                <!-- Main Chat -->
+                <div class="chat-main">
+                    <div id="noChatSelected" class="no-chat-selected">
+                        <div class="no-chat-icon">👋</div>
+                        <h3>مرحباً بك في المحادثات</h3>
+                        <p>تواصل مع عملائك لتأكيد الحجوزات</p>
+                    </div>
+
+                    <div id="activeChat" style="display: none; flex-direction: column; height: 100%;">
+                        <div class="chat-header">
+                            <button class="back-btn" onclick="backToConversations()"
+                                style="display:none; background:none; border:none; font-size:1.5rem; cursor:pointer;">←</button>
+                            <h3 id="chatHeaderName">اسم المستخدم</h3>
+                        </div>
+
+                        <div id="chatMessages" class="chat-messages">
+                            <!-- JS loads messages -->
+                        </div>
+
+                        <div class="chat-input-area">
+                            <input type="text" id="messageInput" placeholder="اكتب رسالتك هنا...">
+                            <button class="btn-send" onclick="sendMessage()">➤</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Main Grid -->
         <div class="dashboard-grid">
             <!-- Bookings Section -->
@@ -123,6 +180,26 @@
                                 <input type="text" id="profileLocation">
                             </div>
                         </div>
+
+                        <!-- Social Media Links -->
+                        <div class="form-group">
+                            <label>روابط التواصل الاجتماعي (اختياري)</label>
+                            <div class="social-inputs">
+                                <div class="input-with-icon">
+                                    <span class="input-icon">📘</span>
+                                    <input type="url" id="socialFacebook" placeholder="رابط فيسبوك">
+                                </div>
+                                <div class="input-with-icon">
+                                    <span class="input-icon">📷</span>
+                                    <input type="url" id="socialInstagram" placeholder="رابط انستغرام">
+                                </div>
+                                <div class="input-with-icon">
+                                    <span class="input-icon">🌐</span>
+                                    <input type="url" id="socialWebsite" placeholder="موقع إلكتروني">
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="form-group">
                             <label>نبذة عنك</label>
                             <textarea id="profileBio" placeholder="اكتب نبذة قصيرة عن خبراتك..."></textarea>
@@ -143,6 +220,7 @@
     </div>
 
     <script src="admin-config.js"></script>
+    <script src="chat.js"></script>
     <script src="dashboard.js"></script>
 </body>
 

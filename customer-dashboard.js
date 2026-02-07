@@ -18,6 +18,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     await checkAuth();
     await loadBookings();
     await loadReviews();
+
+    // Initialize Chat
+    if (window.initChat) {
+        await window.initChat();
+    }
 });
 
 // Check authentication
@@ -134,7 +139,13 @@ function renderBookingsList(containerId, bookings, type) {
                 </div>
                 <div class="booking-details">
                     <p>📅 ${date} ${booking.preferred_time ? '- ' + booking.preferred_time : ''}</p>
-                    <p>📞 ${provider?.phone || ''}</p>
+                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:5px;">
+                        <span>📞 ${provider?.phone || ''}</span>
+                        ${provider?.phone ? `
+                        <a href="https://wa.me/962${provider.phone.replace(/^0/, '')}" target="_blank" class="btn-whatsapp-small" title="تواصل عبر واتساب">
+                            💬 واتساب
+                        </a>` : ''}
+                    </div>
                     ${booking.notes ? `<p>📝 ${booking.notes}</p>` : ''}
                 </div>
                 ${type === 'completed' ? `

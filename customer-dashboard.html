@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="auth.css">
     <link rel="stylesheet" href="dashboard-extra.css">
     <link rel="stylesheet" href="dashboard-redesign.css">
+    <link rel="stylesheet" href="chat.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
@@ -80,6 +81,7 @@
             <button class="tab-btn" onclick="switchTab('confirmed')">مؤكدة</button>
             <button class="tab-btn" onclick="switchTab('completed')">مكتملة</button>
             <button class="tab-btn" onclick="switchTab('reviews')">تقييماتي</button>
+            <button class="tab-btn" onclick="switchTab('messages')">💬 الرسائل</button>
         </div>
 
         <!-- Tab Content -->
@@ -106,6 +108,71 @@
             <div id="reviewsTab" class="tab-content">
                 <h2>تقييماتي السابقة</h2>
                 <div id="myReviewsList"></div>
+            </div>
+
+            <!-- Messages Tab -->
+            <div id="messagesTab" class="tab-content">
+                <style>
+                    /* Inline strict override for chat layout */
+                    .chat-container {
+                        display: flex !important;
+                        height: 600px !important;
+                        flex-direction: row !important;
+                    }
+
+                    .chat-sidebar {
+                        width: 300px !important;
+                        display: flex !important;
+                        flex-direction: column !important;
+                    }
+
+                    .chat-main {
+                        flex: 1 !important;
+                        display: flex !important;
+                        flex-direction: column !important;
+                    }
+
+                    .tab-content.active {
+                        display: block !important;
+                    }
+                </style>
+                <div class="chat-container">
+                    <!-- Sidebar -->
+                    <div class="chat-sidebar">
+                        <div class="chat-header">
+                            <h3>المحادثات</h3>
+                        </div>
+                        <div id="conversationsList" class="conversations-list">
+                            <!-- Conversations loaded by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Main Chat -->
+                    <div class="chat-main">
+                        <div id="noChatSelected" class="no-chat-selected">
+                            <div class="no-chat-icon">💬</div>
+                            <h3>اختر محادثة للبدء</h3>
+                            <p>تواصل مع مقدمي الخدمات مباشرة</p>
+                        </div>
+
+                        <div id="activeChat" style="display: none; flex-direction: column; height: 100%;">
+                            <div class="chat-header">
+                                <button class="back-btn" onclick="backToConversations()"
+                                    style="display:none; background:none; border:none; font-size:1.5rem; cursor:pointer;">←</button>
+                                <h3 id="chatHeaderName">اسم المستخدم</h3>
+                            </div>
+
+                            <div id="chatMessages" class="chat-messages">
+                                <!-- Messages loaded by JS -->
+                            </div>
+
+                            <div class="chat-input-area">
+                                <input type="text" id="messageInput" placeholder="اكتب رسالتك هنا...">
+                                <button class="btn-send" onclick="sendMessage()">➤</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -149,6 +216,7 @@
         </div>
     </div>
 
+    <script src="chat.js"></script>
     <script src="customer-dashboard-v3.js"></script>
 </body>
 

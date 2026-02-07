@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khedmati Feature Debugger</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+
+        .log {
+            background: white;
+            padding: 10px;
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+
+        .success {
+            color: green;
+            border-left: 5px solid green;
+        }
+
+        .error {
+            color: red;
+            border-left: 5px solid red;
+            font-weight: bold;
+        }
+
+        .warning {
+            color: orange;
+            border-left: 5px solid orange;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🛠️ Khedmati Feature Debugger</h1>
+    <div id="logs"></div>
+
+    <script>
+        const SUPABASE_URL = 'https://rkhkvmcnjuwoxammhsqn.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJraGt2bWNuanV3b3hhbW1oc3FuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAzODk0MjcsImV4cCI6MjA4NTk2NTQyN30.iGTVKa7iap8MLZ8v0efCvzsqzviNBbacVfEDxQGDsZQ';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        function log(message, type = 'log') {
+            const div = document.createElement('div');
+            div.className = `log ${type}`;
+            div.textContent = message;
+            document.getElementById('logs').appendChild(div);
+        }
+
+        async function checkFeatures() {
+            log('Starting checks...', 'warning');
+
+            // 1. Check Database Columns for Social Media
+            try {
+                const { data, error } = await supabase
+                    .from('providers')
+                    .select('social_facebook, social_instagram, social_website')
+                    .limit(1);
+
+                if (error) {
+                    log(`❌ Social Media Columns Check Failed: ${error.message}`, 'error');
+                    log(`👉 DIAGNOSIS: The database migration '13_add_social_links.sql' was NOT run. You must run it in Supabase SQL Editor to add these columns.`, 'error');
+                } else {
+                    log('✅ Social Media Columns Exist!', 'success');
+                }
+            } catch (e) {
+                log(`❌ Unexpected Error checking DB: ${e.message}`, 'error');
+            }
+
+            // 2. Check Provider Phone for WhatsApp
+            try {
+                const { data: providers, error } = await supabase
+                    .from('providers')
+                    .select('id, name, phone')
+                    .limit(5);
+
+                if (error) {
+                    log(`❌ Failed to fetch providers: ${error.message}`, 'error');
+                } else {
+                    log(`✅ Fetched ${providers.length} providers. Checking phones...`, 'success');
+                    providers.forEach(p => {
+                        if (p.phone) {
+                            log(`   - Provider '${p.name}' has phone: ${p.phone} (WhatsApp ready ✅)`);
+                        } else {
+                            log(`   - Provider '${p.name}' has NO phone ❌ (WhatsApp button will NOT show)`);
+                        }
+                    });
+                }
+            } catch (e) {
+                log(`❌ Unexpected fetch error: ${e.message}`, 'error');
+            }
+        }
+
+        checkFeatures();
+    </script>
+</body>
+
+</html>

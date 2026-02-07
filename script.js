@@ -245,7 +245,13 @@ async function loadProviders(filter = {}) {
                     <span class="stars">${'⭐'.repeat(Math.round(provider.rating))}</span>
                     <span>${provider.rating} (${provider.review_count} تقييم)</span>
                 </div>
-                <button class="btn btn-primary btn-block" onclick="event.stopPropagation(); openBookingModal('${escapeHtml(provider.id)}', '${escapeHtml(provider.name)}')">احجز الآن</button>
+                <div class="provider-actions" style="display: flex; gap: 8px; margin-top: 10px;">
+                    <button class="btn btn-primary" style="flex: 1;" onclick="event.stopPropagation(); openBookingModal('${escapeHtml(provider.id)}', '${escapeHtml(provider.name)}')">احجز الآن</button>
+                    ${provider.user_id ? `
+                    <button onclick="event.stopPropagation(); window.location.href='customer-dashboard.html?tab=messages&chat_with=${provider.user_id}&name=${encodeURIComponent(provider.name)}'" class="btn btn-outline" style="display: flex; align-items: center; justify-content: center; width: 40px; padding: 0; border: 1px solid var(--primary); color: var(--primary);" title="مراسلة">
+                        💬
+                    </button>` : ''}
+                </div>
             </div>
         `).join('');
 

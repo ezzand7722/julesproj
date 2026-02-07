@@ -216,7 +216,13 @@
                 <div class="contact-item">
                     <span class="contact-icon">📞</span>
                     <span id="providerPhone">-</span>
+                    <a id="whatsappBtn" href="#" target="_blank"
+                        style="display:none; margin-right:10px; text-decoration:none; color:#25D366; font-weight:bold;">
+                        💬 واتساب
+                    </a>
                 </div>
+                <!-- Social Links Container -->
+                <div id="socialLinks" style="display: flex; gap: 15px; margin-top: 10px; flex-wrap: wrap;"></div>
             </div>
         </div>
 
@@ -427,7 +433,34 @@
             document.getElementById('providerRating').textContent = provider.rating || '0';
             document.getElementById('providerReviews').textContent = provider.review_count || '0';
             document.getElementById('providerLocation').textContent = `${provider.city} - ${provider.location}`;
+            document.getElementById('providerLocation').textContent = `${provider.city} - ${provider.location}`;
             document.getElementById('providerPhone').textContent = provider.phone;
+
+            if (provider.phone) {
+                const waBtn = document.getElementById('whatsappBtn');
+                waBtn.href = `https://wa.me/962${provider.phone.replace(/^0/, '')}`;
+                waBtn.style.display = 'inline-block';
+            }
+
+            // Render Social Links
+            const socialContainer = document.getElementById('socialLinks');
+            const socialLinks = [];
+
+            if (provider.social_facebook) {
+                socialLinks.push(`<a href="${escapeHtml(provider.social_facebook)}" target="_blank" style="text-decoration:none; font-size:1.5rem;" title="فيسبوك">📘</a>`);
+            }
+            if (provider.social_instagram) {
+                socialLinks.push(`<a href="${escapeHtml(provider.social_instagram)}" target="_blank" style="text-decoration:none; font-size:1.5rem;" title="انستغرام">📷</a>`);
+            }
+            if (provider.social_website) {
+                socialLinks.push(`<a href="${escapeHtml(provider.social_website)}" target="_blank" style="text-decoration:none; font-size:1.5rem;" title="الموقع الإلكتروني">🌐</a>`);
+            }
+
+            if (socialLinks.length > 0) {
+                socialContainer.innerHTML = socialLinks.join('');
+            } else {
+                socialContainer.style.display = 'none';
+            }
 
             // Load services with UNIQUE filter
             const { data: providerServices } = await supabaseProfile

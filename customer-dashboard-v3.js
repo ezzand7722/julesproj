@@ -29,7 +29,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     showStatus('تم الاتصال. جاري جلب البيانات...', 'info');
 
     // Start App
-    checkAuth();
+    await checkAuth();
+
+    // Check URL tabs
+    const params = new URLSearchParams(window.location.search);
+    const tab = params.get('tab');
+    if (tab) {
+        setTimeout(() => switchTab(tab), 500);
+    }
 });
 
 let currentUser = null;
@@ -98,6 +105,11 @@ async function checkAuth() {
     // Load bookings immediately after auth
     loadBookings();
     loadReviews();
+
+    // Initialize Chat
+    if (window.initChat) {
+        setTimeout(() => window.initChat(), 1000); // Small delay to ensure DOM is ready
+    }
 }
 
 // Load bookings
