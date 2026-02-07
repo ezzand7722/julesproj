@@ -100,8 +100,9 @@ window.handleLogout = handleLogout;
 async function loadServices() {
     const grid = document.getElementById('servicesGrid');
     try {
+        // Use service_stats view which has dynamic provider_count
         const { data: services, error } = await supabaseClient
-            .from('services')
+            .from('service_stats')
             .select('*')
             .order('provider_count', { ascending: false });
 
@@ -113,7 +114,7 @@ async function loadServices() {
                 <div class="service-icon">${service.icon}</div>
                 <h3>${service.name_ar}</h3>
                 <p>${service.description_ar || ''}</p>
-                <span class="service-count">${service.provider_count}+ مقدم خدمة</span>
+                <span class="service-count">${service.provider_count || 0}+ مقدم خدمة</span>
             </div>
         `).join('');
     } catch (err) {
