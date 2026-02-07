@@ -121,13 +121,21 @@
 
                 <div class="form-group">
                     <label>التقييم</label>
-                    <div class="rating-input" id="ratingStars">
-                        <span onclick="setRating(1)">⭐</span>
-                        <span onclick="setRating(2)">⭐</span>
-                        <span onclick="setRating(3)">⭐</span>
-                        <span onclick="setRating(4)">⭐</span>
-                        <span onclick="setRating(5)">⭐</span>
+                    <div class="rating-scale"
+                        style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.8rem; color: #666;">
+                        <span>سيء جداً (1)</span>
+                        <span>ممتاز (5)</span>
                     </div>
+                    <div class="rating-input" id="ratingStars"
+                        style="display: flex; gap: 8px; font-size: 2rem; cursor: pointer;">
+                        <span data-value="1" onclick="setRating(1)" title="1 - سيء جداً">⭐</span>
+                        <span data-value="2" onclick="setRating(2)" title="2 - سيء">⭐</span>
+                        <span data-value="3" onclick="setRating(3)" title="3 - متوسط">⭐</span>
+                        <span data-value="4" onclick="setRating(4)" title="4 - جيد">⭐</span>
+                        <span data-value="5" onclick="setRating(5)" title="5 - ممتاز">⭐</span>
+                    </div>
+                    <div id="ratingLabel"
+                        style="text-align: center; margin-top: 8px; font-weight: bold; color: #f59e0b;">ممتاز</div>
                     <input type="hidden" id="ratingValue" value="5">
                 </div>
 

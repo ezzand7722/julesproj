@@ -151,7 +151,7 @@ async function loadProviders(filter = {}) {
         }
 
         grid.innerHTML = providers.map(provider => `
-            <div class="provider-card" data-provider-id="${provider.id}">
+            <div class="provider-card" data-provider-id="${provider.id}" onclick="window.location.href='provider-profile.html?id=${provider.id}'" style="cursor: pointer;">
                 ${provider.is_featured ? '<div class="provider-badge">⭐ مميز</div>' : ''}
                 ${provider.is_verified ? '<div class="verified-badge">✓ موثق</div>' : ''}
                 <div class="provider-avatar">
@@ -164,7 +164,7 @@ async function loadProviders(filter = {}) {
                     <span class="stars">${'⭐'.repeat(Math.round(provider.rating))}</span>
                     <span>${provider.rating} (${provider.review_count} تقييم)</span>
                 </div>
-                <button class="btn btn-primary btn-block" onclick="openBookingModal('${provider.id}', '${provider.name}')">احجز الآن</button>
+                <button class="btn btn-primary btn-block" onclick="event.stopPropagation(); openBookingModal('${provider.id}', '${provider.name}')">احجز الآن</button>
             </div>
         `).join('');
 

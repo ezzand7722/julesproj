@@ -229,11 +229,16 @@ function renderBookingsList(elementId, bookings, type) {
                     </div>
                 </div>` : ''}
 
-                ${type === 'completed' ? `
+                ${type === 'completed' && !booking.reviewed ? `
                 <div class="booking-footer">
                     <button class="btn-action btn-primary-action" onclick="openReviewModal('${booking.id}', '${booking.provider_id}')">
                         <span>⭐</span> تقييم الخدمة
                     </button>
+                </div>` : ''}
+                
+                ${type === 'completed' && booking.reviewed ? `
+                <div class="booking-footer">
+                    <div style="font-size: 0.9rem; color: #10b981;">✅ تم التقييم - شكراً لك!</div>
                 </div>` : ''}
                 
                 ${type === 'pending' ? `
@@ -338,6 +343,13 @@ function switchTab(tabName) {
 
 // Review Modal Globals
 let selectedRating = 5;
+const ratingLabels = {
+    1: 'سيء جداً 😞',
+    2: 'سيء',
+    3: 'متوسط',
+    4: 'جيد 👍',
+    5: 'ممتاز 🌟'
+};
 
 // Global Functions
 window.switchTab = switchTab;
@@ -364,26 +376,40 @@ window.setRating = function (rating) {
             star.style.opacity = '0.5';
         }
     });
+    // Update label
+    const labelEl = document.getElementById('ratingLabel');
+    if (labelEl) labelEl.textContent = ratingLabels[rating] || '';
 };
 window.submitReview = async function (event) {
     event.preventDefault();
+    const bookingId = document.getElementById('reviewBookingId').value;
     const providerId = document.getElementById('reviewProviderId').value;
     const rating = parseInt(document.getElementById('ratingValue').value);
     const comment = document.getElementById('reviewComment').value;
 
     try {
-        const { error } = await supabaseClient
+        // 1. Insert the review (with booking_id for tracking)
+        const { error: reviewError } = await supabaseClient
             .from('reviews')
             .insert([{
                 provider_id: providerId,
+                booking_id: bookingId,
                 customer_name: document.getElementById('userName').textContent,
                 rating: rating,
                 comment: comment
             }]);
 
-        if (error) throw error;
-        showStatus('تم إرسال التقييم بنجاح', 'success');
+        if (reviewError) throw reviewError;
+
+        // 2. Mark booking as reviewed (prevent duplicate reviews)
+        await supabaseClient
+            .from('bookings')
+            .update({ reviewed: true })
+            .eq('id', bookingId);
+
+        showStatus('تم إرسال التقييم بنجاح! شكراً لك ⭐', 'success');
         window.closeReviewModal();
+        loadBookings(); // Reload to hide review button
         loadReviews();
     } catch (e) {
         showStatus('خطأ: ' + e.message, 'error');

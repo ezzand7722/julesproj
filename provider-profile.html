@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الملف الشخصي - خدمتي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="auth.css">
+    <link rel="stylesheet" href="dashboard-redesign.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .profile-header {
+            background: linear-gradient(135deg, #1e3a5f 0%, #0d1b2a 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .profile-avatar-large {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 0 auto 20px;
+            border: 4px solid white;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .profile-name {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        .profile-specialty {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 16px;
+        }
+
+        .profile-stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .profile-container {
+            max-width: 900px;
+            margin: -40px auto 40px;
+            padding: 0 20px;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            color: #1f2937;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #f3f4f6;
+            padding-bottom: 10px;
+        }
+
+        .services-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .service-tag {
+            background: #eff6ff;
+            color: #1e40af;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .review-item {
+            padding: 20px;
+            background: #f9fafb;
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .reviewer-name {
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .review-date {
+            color: #6b7280;
+            font-size: 0.85rem;
+        }
+
+        .review-stars {
+            color: #f59e0b;
+            margin-bottom: 8px;
+        }
+
+        .review-text {
+            color: #4b5563;
+            line-height: 1.6;
+        }
+
+        .contact-info {
+            display: grid;
+            gap: 16px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1rem;
+            color: #374151;
+        }
+
+        .contact-icon {
+            font-size: 1.3rem;
+        }
+
+        .book-now-btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .book-now-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(37, 99, 235, 0.3);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Simple Nav -->
+    <nav style="background: white; padding: 15px 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+        <div
+            style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
+            <a href="index.html"
+                style="font-size: 1.5rem; font-weight: bold; color: #1e3a5f; text-decoration: none;">🛠️ خدمتي</a>
+            <a href="index.html" style="color: #6b7280;">← العودة للرئيسية</a>
+        </div>
+    </nav>
+
+    <!-- Profile Header -->
+    <div class="profile-header">
+        <div class="profile-avatar-large" id="providerAvatar">--</div>
+        <h1 class="profile-name" id="providerName">جاري التحميل...</h1>
+        <p class="profile-specialty" id="providerSpecialty">-</p>
+        <div class="profile-stats">
+            <div class="stat-item">
+                <div class="stat-number" id="providerRating">-</div>
+                <div class="stat-label">التقييم ⭐</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="providerReviews">-</div>
+                <div class="stat-label">التقييمات</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-container">
+        <!-- About Card -->
+        <div class="profile-card">
+            <h3 class="section-title">📍 معلومات التواصل</h3>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <span class="contact-icon">📍</span>
+                    <span id="providerLocation">-</span>
+                </div>
+                <div class="contact-item">
+                    <span class="contact-icon">📞</span>
+                    <span id="providerPhone">-</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Services Card -->
+        <div class="profile-card">
+            <h3 class="section-title">🔧 الخدمات المقدمة</h3>
+            <div class="services-grid" id="servicesGrid">
+                <span class="service-tag">جاري التحميل...</span>
+            </div>
+        </div>
+
+        <!-- Reviews Card -->
+        <div class="profile-card">
+            <h3 class="section-title">⭐ آراء العملاء</h3>
+            <div id="reviewsList">
+                <p>جاري تحميل التقييمات...</p>
+            </div>
+        </div>
+
+        <!-- Book Now -->
+        <a href="#" class="book-now-btn" id="bookNowBtn">📅 احجز موعدك الآن</a>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://rkhkvmcnjuwoxammhsqn.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJraGt2bWNuanV3b3hhbW1oc3FuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAzODk0MjcsImV4cCI6MjA4NTk2NTQyN30.iGTVKa7iap8MLZ8v0efCvzsqzviNBbacVfEDxQGDsZQ';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Get provider ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const providerId = urlParams.get('id');
+
+        async function loadProfile() {
+            if (!providerId) {
+                document.body.innerHTML = '<div style="text-align:center; padding: 100px;"><h2>لم يتم العثور على مقدم الخدمة</h2><a href="index.html">العودة للرئيسية</a></div>';
+                return;
+            }
+
+            // Load provider data
+            const { data: provider, error } = await supabase
+                .from('providers')
+                .select('*')
+                .eq('id', providerId)
+                .single();
+
+            if (error || !provider) {
+                document.body.innerHTML = '<div style="text-align:center; padding: 100px;"><h2>لم يتم العثور على مقدم الخدمة</h2><a href="index.html">العودة للرئيسية</a></div>';
+                return;
+            }
+
+            // Populate header
+            document.getElementById('providerAvatar').textContent = provider.name.substring(0, 2);
+            document.getElementById('providerName').textContent = provider.name;
+            document.getElementById('providerSpecialty').textContent = provider.specialty;
+            document.getElementById('providerRating').textContent = provider.rating || '0';
+            document.getElementById('providerReviews').textContent = provider.review_count || '0';
+            document.getElementById('providerLocation').textContent = `${provider.city} - ${provider.location}`;
+            document.getElementById('providerPhone').textContent = provider.phone;
+
+            // Update book now button
+            document.getElementById('bookNowBtn').onclick = () => {
+                window.location.href = `index.html?book=${providerId}`;
+            };
+
+            // Load services
+            const { data: providerServices } = await supabase
+                .from('provider_services')
+                .select('services(name_ar, icon)')
+                .eq('provider_id', providerId);
+
+            const servicesGrid = document.getElementById('servicesGrid');
+            if (providerServices && providerServices.length > 0) {
+                servicesGrid.innerHTML = providerServices.map(ps => `
+                    <span class="service-tag">${ps.services?.icon || '🔧'} ${ps.services?.name_ar || provider.specialty}</span>
+                `).join('');
+            } else {
+                servicesGrid.innerHTML = `<span class="service-tag">🔧 ${provider.specialty}</span>`;
+            }
+
+            // Load reviews
+            const { data: reviews } = await supabase
+                .from('reviews')
+                .select('*')
+                .eq('provider_id', providerId)
+                .order('created_at', { ascending: false })
+                .limit(10);
+
+            const reviewsList = document.getElementById('reviewsList');
+            if (reviews && reviews.length > 0) {
+                reviewsList.innerHTML = reviews.map(r => `
+                    <div class="review-item">
+                        <div class="review-header">
+                            <span class="reviewer-name">${r.customer_name}</span>
+                            <span class="review-date">${new Date(r.created_at).toLocaleDateString('ar-EG')}</span>
+                        </div>
+                        <div class="review-stars">${'⭐'.repeat(r.rating)} <span style="color:#666; font-size:0.85rem;">(${r.rating}/5)</span></div>
+                        <p class="review-text">${r.comment || 'لا يوجد تعليق'}</p>
+                    </div>
+                `).join('');
+            } else {
+                reviewsList.innerHTML = '<p style="color: #6b7280; text-align: center;">لا توجد تقييمات بعد</p>';
+            }
+        }
+
+        loadProfile();
+    </script>
+</body>
+
+</html>
