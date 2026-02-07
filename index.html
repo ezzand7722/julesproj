@@ -251,10 +251,22 @@
     <div class="mobile-menu-overlay">
         <div class="mobile-menu">
             <button class="mobile-menu-close">✕</button>
-            <div class="mobile-menu-links"><a href="#services">الخدمات</a><a href="#how-it-works">كيف نعمل</a><a
-                    href="#providers">مقدمو الخدمات</a><a href="#contact">تواصل معنا</a></div>
-            <div class="mobile-menu-buttons"><a href="login.html" class="btn btn-ghost btn-block">تسجيل الدخول</a><a
-                    href="login.html" class="btn btn-primary btn-block">انضم كمقدم خدمة</a></div>
+            <div class="mobile-menu-links">
+                <a href="#services">الخدمات</a>
+                <a href="#how-it-works">كيف نعمل</a>
+                <a href="#providers">مقدمو الخدمات</a>
+                <a href="#contact">تواصل معنا</a>
+            </div>
+            <div class="mobile-menu-buttons" id="mobileMenuButtons">
+                <a href="login.html" class="btn btn-ghost btn-block" id="mobileLoginBtn">تسجيل الدخول</a>
+                <a href="login.html" class="btn btn-primary btn-block" id="mobileSignupBtn">انضم كمقدم خدمة</a>
+                <a href="customer-dashboard.html" class="btn btn-primary btn-block hidden"
+                    id="mobileCustomerDashboardBtn">📋 لوحتي</a>
+                <a href="dashboard.html" class="btn btn-primary btn-block hidden" id="mobileProviderDashboardBtn">📊
+                    لوحة التحكم</a>
+                <button class="btn btn-ghost btn-block hidden" id="mobileLogoutBtn" onclick="handleLogout()">تسجيل
+                    الخروج</button>
+            </div>
         </div>
     </div>
     <script src="script.js"></script>

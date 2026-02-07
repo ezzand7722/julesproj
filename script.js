@@ -49,9 +49,21 @@ async function updateAuthUI(session) {
     const guestButtons = document.querySelector('.guest-buttons');
     const userMenu = document.getElementById('userMenu');
 
+    // Mobile menu elements
+    const mobileLoginBtn = document.getElementById('mobileLoginBtn');
+    const mobileSignupBtn = document.getElementById('mobileSignupBtn');
+    const mobileCustomerDashboardBtn = document.getElementById('mobileCustomerDashboardBtn');
+    const mobileProviderDashboardBtn = document.getElementById('mobileProviderDashboardBtn');
+    const mobileLogoutBtn = document.getElementById('mobileLogoutBtn');
+
     if (session) {
         guestButtons.classList.add('hidden');
         userMenu.classList.remove('hidden');
+
+        // Update mobile menu for logged in users
+        if (mobileLoginBtn) mobileLoginBtn.classList.add('hidden');
+        if (mobileSignupBtn) mobileSignupBtn.classList.add('hidden');
+        if (mobileLogoutBtn) mobileLogoutBtn.classList.remove('hidden');
 
         // 1. Immediate Display (from Google/Metadata)
         const metadata = session.user.user_metadata || {};
@@ -73,8 +85,10 @@ async function updateAuthUI(session) {
 
             if (profile && profile.role === 'provider') {
                 document.getElementById('dashboardBtn').classList.remove('hidden');
+                if (mobileProviderDashboardBtn) mobileProviderDashboardBtn.classList.remove('hidden');
             } else if (profile && profile.role === 'customer') {
                 document.getElementById('customerDashboardBtn').classList.remove('hidden');
+                if (mobileCustomerDashboardBtn) mobileCustomerDashboardBtn.classList.remove('hidden');
             }
         } catch (e) {
             // Ignore low-priority error for profile fetch
@@ -83,6 +97,13 @@ async function updateAuthUI(session) {
     } else {
         guestButtons.classList.remove('hidden');
         userMenu.classList.add('hidden');
+
+        // Show login buttons on mobile
+        if (mobileLoginBtn) mobileLoginBtn.classList.remove('hidden');
+        if (mobileSignupBtn) mobileSignupBtn.classList.remove('hidden');
+        if (mobileLogoutBtn) mobileLogoutBtn.classList.add('hidden');
+        if (mobileCustomerDashboardBtn) mobileCustomerDashboardBtn.classList.add('hidden');
+        if (mobileProviderDashboardBtn) mobileProviderDashboardBtn.classList.add('hidden');
     }
 }
 
