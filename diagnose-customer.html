@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تشخيص الحساب</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            padding: 40px;
+            background: #f5f5f5;
+            direction: rtl;
+        }
+
+        .result {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .status {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+
+        .success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        pre {
+            background: #f3f4f6;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🔍 تشخيص حساب العميل</h1>
+    <div id="results"></div>
+
+    <script>
+        const SUPABASE_URL = 'https://rkhkvmcnjuwoxammhsqn.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJraGt2bWNuanV3b3hhbW1oc3FuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAzODk0MjcsImV4cCI6MjA4NTk2NTQyN30.iGTVKa7iap8MLZ8v0efCvzsqzviNBbacVfEDxQGDsZQ';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        async function diagnose() {
+            const results = document.getElementById('results');
+            let html = '';
+
+            // 1. Check session
+            const { data: { session } } = await supabase.auth.getSession();
+
+            if (!session) {
+                html += `<div class="result">
+                    <div class="status error">❌ غير مسجل الدخول</div>
+                    <p>الرجاء تسجيل الدخول أولاً</p>
+                </div>`;
+                results.innerHTML = html;
+                return;
+            }
+
+            html += `<div class="result">
+                <div class="status success">✅ مسجل الدخول</div>
+                <p><strong>Email:</strong> ${session.user.email}</p>
+                <p><strong>User ID:</strong> ${session.user.id}</p>
+            </div>`;
+
+            // 2. Check profile
+            const { data: profile, error: profileError } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', session.user.id)
+                .single();
+
+            if (profileError) {
+                html += `<div class="result">
+                    <div class="status error">❌ خطأ في قراءة البروفايل</div>
+                    <pre>${JSON.stringify(profileError, null, 2)}</pre>
+                </div>`;
+            } else {
+                html += `<div class="result">
+                    <div class="status ${profile.role === 'customer' ? 'success' : 'warning'}">
+                        ${profile.role === 'customer' ? '✅' : '⚠️'} Role: ${profile.role || 'غير محدد'}
+                    </div>
+                    <p><strong>Full Name:</strong> ${profile.full_name || 'غير محدد'}</p>
+                    <p><strong>Phone:</strong> ${profile.phone || 'غير محدد'}</p>
+                    <pre>${JSON.stringify(profile, null, 2)}</pre>
+                </div>`;
+
+                // 3. Suggest fix
+                if (profile.role !== 'customer') {
+                    html += `<div class="result">
+                        <div class="status warning">⚠️ يجب تحديث الـ Role</div>
+                        <p>حسابك الحالي role = "${profile.role || 'null'}"</p>
+                        <p><strong>الحل:</strong> يجب تغيير role إلى "customer" في جدول profiles</p>
+                        <button onclick="fixRole()" style="padding: 10px 20px; background: #0891b2; color: white; border: none; border-radius: 8px; cursor: pointer; margin-top: 10px;">
+                            إصلاح تلقائي ✨
+                        </button>
+                    </div>`;
+                }
+            }
+
+            // 4. Check bookings
+            const { data: bookings, error: bookingsError } = await supabase
+                .from('bookings')
+                .select('*')
+                .or(`customer_phone.eq.${profile?.phone},customer_name.ilike.%${profile?.full_name}%`)
+                .limit(5);
+
+            if (!bookingsError && bookings) {
+                html += `<div class="result">
+                    <div class="status success">📋 عدد الحجوزات: ${bookings.length}</div>
+                    ${bookings.length > 0 ? `<pre>${JSON.stringify(bookings, null, 2)}</pre>` : '<p>لا توجد حجوزات</p>'}
+                </div>`;
+            }
+
+            results.innerHTML = html;
+        }
+
+        async function fixRole() {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) return;
+
+            const { error } = await supabase
+                .from('profiles')
+                .update({ role: 'customer' })
+                .eq('id', session.user.id);
+
+            if (error) {
+                alert('خطأ: ' + error.message);
+            } else {
+                alert('✅ تم تحديث الـ role بنجاح!');
+                window.location.reload();
+            }
+        }
+
+        window.fixRole = fixRole;
+        diagnose();
+    </script>
+</body>
+
+</html>
