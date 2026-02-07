@@ -73,6 +73,8 @@ async function updateAuthUI(session) {
 
             if (profile && profile.role === 'provider') {
                 document.getElementById('dashboardBtn').classList.remove('hidden');
+            } else if (profile && profile.role === 'customer') {
+                document.getElementById('customerDashboardBtn').classList.remove('hidden');
             }
         } catch (e) {
             // Ignore low-priority error for profile fetch
