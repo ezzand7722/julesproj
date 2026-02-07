@@ -329,10 +329,15 @@ async function handleBooking(e) {
     submitBtn.textContent = 'جاري الإرسال...';
 
     try {
+        // Check if user is logged in
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        const customerId = user ? user.id : null;
+
         const { data, error } = await supabaseClient
             .from('bookings')
             .insert([{
                 provider_id: providerId,
+                customer_id: customerId, // Link to user account if logged in
                 customer_name: customerName,
                 customer_phone: customerPhone,
                 service_date: serviceDate,
