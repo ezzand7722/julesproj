@@ -20,6 +20,7 @@ async function initChat(containerId) {
 
 // Subscribe to Realtime messages
 function subscribeToMessages() {
+    // Realtime Subscription
     chatSubscription = supabaseClient
         .channel('public:messages')
         .on('postgres_changes', {
@@ -29,6 +30,15 @@ function subscribeToMessages() {
             filter: `receiver_id=eq.${myId}`
         }, payload => {
             console.log('New message received:', payload);
+            handleNewMessage(payload.new);
+        })
+        .on('postgres_changes', {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'messages',
+            filter: `sender_id=eq.${myId}`
+        }, payload => {
+            // Also handle my own messages if sent from another tab
             handleNewMessage(payload.new);
         })
         .subscribe();

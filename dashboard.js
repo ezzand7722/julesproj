@@ -129,14 +129,55 @@ async function loadServices() {
         return;
     }
 
-    selector.innerHTML = services.map(service => `
-        <div class="service-option ${currentProvider.specialty === service.name_ar ? 'selected' : ''}" 
-             onclick="selectService('${service.name_ar}')">
-            <span class="service-icon">${service.icon}</span>
-            <span>${service.name_ar}</span>
+    // Current specialty logic (simple string match for now)
+    // If we want multiple services, we need to change DB schema or store as comma-separated.
+    // For now, let's assume single specialty but visualized better.
+    // Or if user wants checkboxes, I'll style them as such.
+
+    selector.innerHTML = `
+        <div class="services-grid-selection">
+            ${services.map(service => `
+                <label class="service-checkbox-item">
+                    <input type="radio" name="specialty" value="${service.name_ar}" 
+                        ${currentProvider.specialty === service.name_ar ? 'checked' : ''}
+                        onchange="updateSpecialty('${service.name_ar}')">
+                    <span class="service-content">
+                        <span class="service-icon">${service.icon}</span>
+                        <span class="service-name">${service.name_ar}</span>
+                    </span>
+                </label>
+            `).join('')}
         </div>
-    `).join('');
+    `;
+
+    // Add some styles if not present
+    if (!document.getElementById('service-selection-styles')) {
+        const style = document.createElement('style');
+        style.id = 'service-selection-styles';
+        style.textContent = `
+            .services-grid-selection { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+            .service-checkbox-item { cursor: pointer; position: relative; }
+            .service-checkbox-item input { position: absolute; opacity: 0; }
+            .service-checkbox-item .service-content { 
+                display: flex; flex-direction: column; align-items: center; 
+                padding: 10px; border: 2px solid #eee; border-radius: 8px; transition: all 0.2s;
+            }
+            .service-checkbox-item input:checked + .service-content {
+                border-color: var(--primary); background: rgba(var(--primary-rgb), 0.05); color: var(--primary);
+            }
+            .service-icon { font-size: 1.5rem; margin-bottom: 5px; }
+        `;
+        document.head.appendChild(style);
+    }
 }
+
+// Update Specialty
+window.updateSpecialty = function (val) {
+    currentProvider.specialty = val;
+}
+
+// Select Service (Deprecated)
+function selectService(serviceName) { }
 
 // Select Service
 function selectService(serviceName) {
@@ -191,8 +232,12 @@ async function loadBookings() {
     document.getElementById('completedBookings').textContent = completed.length;
 
     // Render lists
-    if (list) list.innerHTML = bookings.map(b => renderBookingItem(b)).join('') || '<p class="empty-state">لا توجد حجوزات</p>';
-    if (pendingList) pendingList.innerHTML = pending.map(b => renderBookingItem(b)).join('') || '<p class="empty-state">لا توجد طلبات جديدة</p>';
+    if (list) {
+        list.innerHTML = bookings.length ? bookings.map(b => renderBookingItem(b)).join('') : '<p class="empty-state">لا توجد حجوزات</p>';
+    }
+    if (pendingList) {
+        pendingList.innerHTML = pending.length ? pending.map(b => renderBookingItem(b)).join('') : '<p class="empty-state">لا توجد طلبات جديدة</p>';
+    }
 }
 
 // Render Booking Item
