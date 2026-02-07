@@ -86,20 +86,94 @@ async function checkAuth() {
 }
 
 // Update UI with provider data
-function updateUI() {
+async function updateUI() {
     if (!currentProvider) return;
 
     document.getElementById('userAvatar').textContent = currentProvider.name.substring(0, 2);
     document.getElementById('userName').textContent = currentProvider.name;
     document.getElementById('welcomeName').textContent = currentProvider.name.split(' ')[0];
 
-    // Profile form
     document.getElementById('profileName').value = currentProvider.name;
-    document.getElementById('profileSpecialty').value = currentProvider.specialty;
     document.getElementById('profileCity').value = currentProvider.city;
     document.getElementById('profileLocation').value = currentProvider.location || '';
     document.getElementById('profileBio').value = currentProvider.bio || '';
     document.getElementById('avgRating').textContent = currentProvider.rating || '4.0';
+
+    // Load services
+    await loadServices();
+}
+
+// Load all available services
+async function loadServices() {
+    if (!currentProvider) return;
+
+    // Get all available services
+    const { data: allServices } = await supabaseDashboard
+        .from('services')
+        .select('*')
+        .order('name_ar');
+
+    // Get provider's selected services
+    const { data: providerServices } = await supabaseDashboard
+        .from('provider_services')
+        .select('service_id')
+        .eq('provider_id', currentProvider.id);
+
+    const selectedServiceIds = (providerServices || []).map(ps => ps.service_id);
+
+    // Render service checkboxes
+    const container = document.getElementById('servicesSelector');
+    if (!allServices || allServices.length === 0) {
+        container.innerHTML = '<p>لا توجد خدمات متاحة</p>';
+        return;
+    }
+
+    container.innerHTML = allServices.map(service => `
+        <label class="service-checkbox">
+            <input 
+                type="checkbox" 
+                value="${service.id}" 
+                ${selectedServiceIds.includes(service.id) ? 'checked' : ''}
+                onchange="handleServiceToggle(this)"
+            >
+            <span>${service.icon || '🔧'} ${service.name_ar}</span>
+        </label>
+    `).join('');
+}
+
+// Handle service toggle
+async function handleServiceToggle(checkbox) {
+    const serviceId = checkbox.value;
+    const isChecked = checkbox.checked;
+
+    try {
+        if (isChecked) {
+            // Add service
+            const { error } = await supabaseDashboard
+                .from('provider_services')
+                .insert([{
+                    provider_id: currentProvider.id,
+                    service_id: serviceId
+                }]);
+
+            if (error) throw error;
+            showNotification('تمت إضافة الخدمة ✅', 'success');
+        } else {
+            // Remove service
+            const { error } = await supabaseDashboard
+                .from('provider_services')
+                .delete()
+                .eq('provider_id', currentProvider.id)
+                .eq('service_id', serviceId);
+
+            if (error) throw error;
+            showNotification('تمت إزالة الخدمة ✅', 'success');
+        }
+    } catch (err) {
+        console.error('Failed to update service:', err);
+        checkbox.checked = !isChecked; // Revert checkbox
+        showNotification('خطأ في تحديث الخدمة', 'error');
+    }
 }
 
 // Load provider data
@@ -274,24 +348,22 @@ async function updateProfile(e) {
     try {
         // Get form values
         const name = document.getElementById('profileName').value.trim();
-        const specialty = document.getElementById('profileSpecialty').value.trim();
         const city = document.getElementById('profileCity').value.trim();
         const location = document.getElementById('profileLocation').value.trim();
         const bio = document.getElementById('profileBio').value.trim();
 
         // Validate required fields
-        if (!name || !specialty || !city) {
+        if (!name || !city) {
             showNotification('الرجاء ملء جميع الحقول المطلوبة', 'warning');
             return;
         }
 
-        console.log('Updating provider:', currentProvider.id, { name, specialty, city, location, bio });
+        console.log('Updating provider:', currentProvider.id, { name, city, location, bio });
 
         const { error } = await supabaseDashboard
             .from('providers')
             .update({
                 name,
-                specialty,
                 city,
                 location,
                 bio

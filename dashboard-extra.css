@@ -1,0 +1,194 @@
+/* Service Selector Styles */
+.services-selector {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.service-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: var(--gray-50);
+    border: 2px solid transparent;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 500;
+}
+
+.service-checkbox:hover {
+    background: var(--gray-100);
+    transform: translateY(-2px);
+}
+
+.service-checkbox input[type="checkbox"] {
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary);
+}
+
+.service-checkbox input[type="checkbox"]:checked+span {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.service-checkbox:has(input:checked) {
+    background: var(--primary-light);
+    border-color: var(--primary);
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: white;
+    padding: 40px;
+    border-radius: var(--radius-xl);
+    max-width: 500px;
+    width: 90%;
+    position: relative;
+}
+
+.modal-close {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    font-size: 28px;
+    cursor: pointer;
+    color: var(--gray-400);
+    transition: color 0.2s;
+}
+
+.modal-close:hover {
+    color: var(--gray-700);
+}
+
+.rating-input {
+    display: flex;
+    gap: 8px;
+    font-size: 32px;
+}
+
+.rating-input span {
+    cursor: pointer;
+    transition: all 0.2s;
+    opacity: 0.3;
+}
+
+.rating-input span:hover {
+    transform: scale(1.1);
+}
+
+/* Booking Item Styles */
+.booking-item {
+    padding: 20px;
+    background: var(--gray-50);
+    border-radius: var(--radius-lg);
+    margin-bottom: 16px;
+}
+
+.booking-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 12px;
+}
+
+.provider-info h3 {
+    margin: 0 0 8px 0;
+    color: var(--gray-900);
+}
+
+.provider-info p {
+    margin: 4px 0;
+    color: var(--gray-600);
+    font-size: 0.9rem;
+}
+
+.booking-status {
+    padding: 6px 16px;
+    border-radius: var(--radius-full);
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.booking-status.pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.booking-status.confirmed {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.booking-status.completed {
+    background: #e0e7ff;
+    color: #3730a3;
+}
+
+.booking-status.cancelled {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.booking-details {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--gray-200);
+}
+
+.booking-details p {
+    margin: 6px 0;
+    color: var(--gray-700);
+}
+
+/* Review Item Styles */
+.review-item {
+    padding: 20px;
+    background: var(--gray-50);
+    border-radius: var(--radius-lg);
+    margin-bottom: 16px;
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.review-header h3 {
+    margin: 0;
+}
+
+.review-rating {
+    font-size: 1.2rem;
+}
+
+.review-comment {
+    color: var(--gray-700);
+    margin: 10px 0;
+    line-height: 1.6;
+}
+
+.review-date {
+    color: var(--gray-500);
+    font-size: 0.85rem;
+}

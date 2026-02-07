@@ -101,8 +101,10 @@
                             <input type="text" id="profileName" required>
                         </div>
                         <div class="form-group">
-                            <label>التخصص</label>
-                            <input type="text" id="profileSpecialty" required>
+                            <label>الخدمات التي تقدمها</label>
+                            <div class="services-selector" id="servicesSelector">
+                                <div class="loading-spinner">جاري تحميل الخدمات...</div>
+                            </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group">
@@ -138,6 +140,7 @@
         </div>
     </div>
 
+    <script src="admin-config.js"></script>
     <script src="dashboard.js"></script>
 </body>
 
