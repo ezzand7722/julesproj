@@ -253,12 +253,6 @@ async function sendMessage() {
     }
 }
 
-if (error) {
-    console.error('Send failed:', error);
-    showNotification('فشل إرسال الرسالة', 'error');
-}
-}
-
 // Mark message as read
 async function markAsRead(messageId) {
     if (!messageId) return;
