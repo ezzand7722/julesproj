@@ -272,18 +272,36 @@ async function updateProfile(e) {
     btn.textContent = 'جاري الحفظ...';
 
     try {
+        // Get form values
+        const name = document.getElementById('profileName').value.trim();
+        const specialty = document.getElementById('profileSpecialty').value.trim();
+        const city = document.getElementById('profileCity').value.trim();
+        const location = document.getElementById('profileLocation').value.trim();
+        const bio = document.getElementById('profileBio').value.trim();
+
+        // Validate required fields
+        if (!name || !specialty || !city) {
+            showNotification('الرجاء ملء جميع الحقول المطلوبة', 'warning');
+            return;
+        }
+
+        console.log('Updating provider:', currentProvider.id, { name, specialty, city, location, bio });
+
         const { error } = await supabaseDashboard
             .from('providers')
             .update({
-                name: document.getElementById('profileName').value,
-                specialty: document.getElementById('profileSpecialty').value,
-                city: document.getElementById('profileCity').value,
-                location: document.getElementById('profileLocation').value,
-                bio: document.getElementById('profileBio').value
+                name,
+                specialty,
+                city,
+                location,
+                bio
             })
             .eq('id', currentProvider.id);
 
-        if (error) throw error;
+        if (error) {
+            console.error('Update error details:', error);
+            throw error;
+        }
 
         showNotification('تم حفظ التغييرات بنجاح ✅', 'success');
 
@@ -297,7 +315,8 @@ async function updateProfile(e) {
         currentProvider = provider;
         updateUI();
     } catch (err) {
-        showNotification('خطأ في حفظ التغييرات', 'error');
+        console.error('Failed to update profile:', err);
+        showNotification('خطأ: ' + (err.message || 'خطأ في حفظ التغييرات'), 'error');
     } finally {
         btn.disabled = false;
         btn.textContent = 'حفظ التغييرات';
