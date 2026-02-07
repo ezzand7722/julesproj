@@ -71,12 +71,18 @@
                 </div>
                 <div class="location-wrapper">
                     <span class="location-icon">📍</span>
-                    <select class="location-select" id="locationSelect">
+                    <select class="location-select" id="locationSelect" onchange="updateNeighborhoods()">
                         <option value="">كل المناطق</option>
-                        <option value="عمّان">عمّان</option>
-                        <option value="إربد">إربد</option>
+                        <option value="عمان">عمّان</option>
+                        <option value="اربد">إربد</option>
                         <option value="الزرقاء">الزرقاء</option>
                         <option value="العقبة">العقبة</option>
+                    </select>
+                </div>
+                <div class="location-wrapper" id="neighborhoodWrapper" style="display: none;">
+                    <span class="location-icon">🏘️</span>
+                    <select class="location-select" id="neighborhoodSelect">
+                        <option value="">كل الأحياء</option>
                     </select>
                 </div>
                 <button class="search-btn" id="searchBtn">ابحث الآن</button>

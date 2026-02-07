@@ -126,6 +126,40 @@ async function handleLogout() {
 // Make logout global
 window.handleLogout = handleLogout;
 
+// Jordan Neighborhoods Data
+const neighborhoodsByCity = {
+    'عمان': ['عبدون', 'الصويفية', 'مرج الحمام', 'الهاشمي الشمالي', 'طبربور', 'الجبيهة', 'خلدا', 'الرابية', 'تلاع العلي', 'شفا بدران'],
+    'اربد': ['حي الحسين', 'النزهة', 'الحي الشرقي', 'المدينة الصناعية', 'الرمثا', 'بيت راس'],
+    'الزرقاء': ['الزرقاء الجديدة', 'المدينة الصناعية', 'الرصيفة', 'جبل طارق', 'الأمير محمد'],
+    'العقبة': ['وسط المدينة', 'الشاطئ الجنوبي', 'السكة الحديد', 'العقبة الصناعية']
+};
+
+// Update neighborhoods dropdown based on selected city
+function updateNeighborhoods() {
+    const citySelect = document.getElementById('locationSelect');
+    const neighborhoodWrapper = document.getElementById('neighborhoodWrapper');
+    const neighborhoodSelect = document.getElementById('neighborhoodSelect');
+
+    const selectedCity = citySelect.value;
+
+    if (selectedCity && neighborhoodsByCity[selectedCity]) {
+        // Show neighborhood dropdown
+        neighborhoodWrapper.style.display = 'flex';
+
+        // Populate neighborhoods
+        const neighborhoods = neighborhoodsByCity[selectedCity];
+        neighborhoodSelect.innerHTML = '<option value="">كل الأحياء</option>' +
+            neighborhoods.map(n => `<option value="${n}">${n}</option>`).join('');
+    } else {
+        // Hide neighborhood dropdown if no city selected
+        neighborhoodWrapper.style.display = 'none';
+        neighborhoodSelect.innerHTML = '<option value="">كل الأحياء</option>';
+    }
+}
+
+// Make updateNeighborhoods global
+window.updateNeighborhoods = updateNeighborhoods;
+
 // Load services from database
 async function loadServices() {
     const grid = document.getElementById('servicesGrid');
@@ -164,6 +198,9 @@ async function loadProviders(filter = {}) {
         if (filter.city) {
             query = query.eq('city', filter.city);
         }
+        if (filter.neighborhood) {
+            query = query.eq('neighborhood', filter.neighborhood);
+        }
         if (filter.search) {
             query = query.or(`name.ilike.%${filter.search}%,specialty.ilike.%${filter.search}%`);
         }
@@ -187,7 +224,7 @@ async function loadProviders(filter = {}) {
                 </div>
                 <h3>${provider.name}</h3>
                 <p class="provider-specialty">${provider.specialty}</p>
-                <div class="provider-location">📍 ${provider.city} - ${provider.location}</div>
+                <div class="provider-location">📍 ${provider.city}${provider.neighborhood ? ' - ' + provider.neighborhood : ''} - ${provider.location}</div>
                 <div class="provider-rating">
                     <span class="stars">${'⭐'.repeat(Math.round(provider.rating))}</span>
                     <span>${provider.rating} (${provider.review_count} تقييم)</span>
@@ -311,10 +348,12 @@ function setupEventListeners() {
 async function performSearch() {
     const search = document.getElementById('searchInput').value.trim();
     const city = document.getElementById('locationSelect').value;
+    const neighborhoodSelect = document.getElementById('neighborhoodSelect');
+    const neighborhood = neighborhoodSelect ? neighborhoodSelect.value : '';
 
     showNotification('جاري البحث...', 'info');
 
-    await loadProviders({ search, city });
+    await loadProviders({ search, city, neighborhood });
 
     // Scroll to providers section
     document.getElementById('providers').scrollIntoView({ behavior: 'smooth' });
