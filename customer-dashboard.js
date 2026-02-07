@@ -1,8 +1,14 @@
 // Khedmati - Customer Dashboard
-const supabaseClient = window.supabase.createClient(
-    'https://rkhkvmcnjuwoxammhsqn.supabase.co',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJraGt2bWNuanV3b3hhbW1oc3FuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAzODk0MjcsImV4cCI6MjA4NTk2NTQyN30.iGTVKa7iap8MLZ8v0efCvzsqzviNBbacVfEDxQGDsZQ'
-);
+const SUPABASE_URL = 'https://rkhkvmcnjuwoxammhsqn.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJraGt2bWNuanV3b3hhbW1oc3FuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAzODk0MjcsImV4cCI6MjA4NTk2NTQyN30.iGTVKa7iap8MLZ8v0efCvzsqzviNBbacVfEDxQGDsZQ';
+
+// Ensure Supabase is loaded
+if (typeof window.supabase === 'undefined') {
+    console.error('CRITICAL: Supabase library not loaded! Checking fallback...');
+}
+
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+window.supabaseClient = supabaseClient; // Expose globally like dashboard.js
 
 let currentUser = null;
 let currentBooking = null;
