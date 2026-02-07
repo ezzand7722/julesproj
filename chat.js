@@ -41,7 +41,16 @@ function subscribeToMessages() {
             // Also handle my own messages if sent from another tab
             handleNewMessage(payload.new);
         })
-        .subscribe();
+        .subscribe((status) => {
+            console.log(`📡 Realtime Connection Status: ${status}`);
+            if (status === 'SUBSCRIBED') {
+                console.log('✅ Listening for new messages...');
+            } else if (status === 'CHANNEL_ERROR') {
+                console.error('❌ Realtime Channel Error - Check Policies or Network');
+            } else if (status === 'TIMED_OUT') {
+                console.error('⚠️ Realtime Connection Timed Out');
+            }
+        });
 }
 
 // Handle incoming message
