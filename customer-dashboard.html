@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم - خدمتي</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="auth.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body class="dashboard-page">
+    <!-- Dashboard Navigation -->
+    <nav class="dashboard-nav">
+        <div class="nav-container container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">🛠️</span>
+                <span class="logo-text">خدمتي</span>
+            </a>
+            <div class="nav-user">
+                <div class="nav-user-avatar" id="userAvatar">--</div>
+                <div class="nav-user-info">
+                    <span class="nav-user-name" id="userName">جاري التحميل...</span>
+                    <span class="nav-user-role">عميل</span>
+                </div>
+                <button class="btn btn-ghost" onclick="logout()">تسجيل الخروج</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container container">
+        <!-- Welcome Header -->
+        <div class="dashboard-header">
+            <h1>مرحباً <span id="welcomeName">--</span>! 👋</h1>
+            <p>إدارة طلباتك وتقييم مقدمي الخدمات</p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">📋</div>
+                <div class="stat-info">
+                    <span class="stat-label">إجمالي الحجوزات</span>
+                    <span class="stat-value" id="totalBookings">0</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⏳</div>
+                <div class="stat-info">
+                    <span class="stat-label">بانتظار الرد</span>
+                    <span class="stat-value" id="pendingBookings">0</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-info">
+                    <span class="stat-label">حجوزات مؤكدة</span>
+                    <span class="stat-value" id="confirmedBookings">0</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⭐</div>
+                <div class="stat-info">
+                    <span class="stat-label">تقييماتي</span>
+                    <span class="stat-value" id="myReviews">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="dashboard-tabs">
+            <button class="tab-btn active" onclick="switchTab('pending')">بانتظار الرد</button>
+            <button class="tab-btn" onclick="switchTab('confirmed')">مؤكدة</button>
+            <button class="tab-btn" onclick="switchTab('completed')">مكتملة</button>
+            <button class="tab-btn" onclick="switchTab('reviews')">تقييماتي</button>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="dashboard-content">
+            <!-- Pending Bookings -->
+            <div id="pendingTab" class="tab-content active">
+                <h2>الحجوزات بانتظار رد مقدم الخدمة</h2>
+                <div id="pendingBookingsList"></div>
+            </div>
+
+            <!-- Confirmed Bookings -->
+            <div id="confirmedTab" class="tab-content">
+                <h2>الحجوزات المؤكدة</h2>
+                <div id="confirmedBookingsList"></div>
+            </div>
+
+            <!-- Completed Bookings -->
+            <div id="completedTab" class="tab-content">
+                <h2>الحجوزات المكتملة - قيّم الخدمة!</h2>
+                <div id="completedBookingsList"></div>
+            </div>
+
+            <!-- My Reviews -->
+            <div id="reviewsTab" class="tab-content">
+                <h2>تقييماتي السابقة</h2>
+                <div id="myReviewsList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Review Modal -->
+    <div id="reviewModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeReviewModal()">&times;</span>
+            <h2>تقييم الخدمة</h2>
+            <form onsubmit="submitReview(event)">
+                <input type="hidden" id="reviewBookingId">
+                <input type="hidden" id="reviewProviderId">
+
+                <div class="form-group">
+                    <label>التقييم</label>
+                    <div class="rating-input" id="ratingStars">
+                        <span onclick="setRating(1)">⭐</span>
+                        <span onclick="setRating(2)">⭐</span>
+                        <span onclick="setRating(3)">⭐</span>
+                        <span onclick="setRating(4)">⭐</span>
+                        <span onclick="setRating(5)">⭐</span>
+                    </div>
+                    <input type="hidden" id="ratingValue" value="5">
+                </div>
+
+                <div class="form-group">
+                    <label>تعليق (اختياري)</label>
+                    <textarea id="reviewComment" rows="4" placeholder="اكتب تجربتك مع مقدم الخدمة..."></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary">إرسال التقييم</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="admin-config.js"></script>
+    <script src="customer-dashboard.js"></script>
+</body>
+
+</html>

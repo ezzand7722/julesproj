@@ -95,6 +95,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             if (profile && profile.role === 'provider') {
                 window.location.href = 'dashboard.html';
+            } else if (profile && profile.role === 'customer') {
+                window.location.href = 'customer-dashboard.html';
             } else {
                 window.location.href = 'index.html';
             }
