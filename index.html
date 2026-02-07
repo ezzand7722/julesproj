@@ -5,7 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>خدمتي - منصة الخدمات المحلية في الأردن</title>
-    <meta name="description" content="اعثر على أفضل مقدمي الخدمات في الأردن">
+    <meta name="description" content="اعثر على أفضل مقدمي الخدمات في الأردن - سباكة، كهرباء، تكييف، نجارة والمزيد">
+    <meta name="theme-color" content="#0891b2">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="خدمتي">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap"
@@ -140,7 +146,28 @@
                 <h2>مقدمو خدمات مميزون</h2>
             </div>
             <div class="providers-grid" id="providersGrid">
-                <div class="loading-spinner">جاري التحميل...</div>
+                <!-- Skeleton Loading Cards -->
+                <div class="skeleton-card">
+                    <div class="skeleton skeleton-avatar"></div>
+                    <div class="skeleton skeleton-title"></div>
+                    <div class="skeleton skeleton-text"></div>
+                    <div class="skeleton skeleton-text" style="width: 60%;"></div>
+                    <div class="skeleton skeleton-btn"></div>
+                </div>
+                <div class="skeleton-card">
+                    <div class="skeleton skeleton-avatar"></div>
+                    <div class="skeleton skeleton-title"></div>
+                    <div class="skeleton skeleton-text"></div>
+                    <div class="skeleton skeleton-text" style="width: 60%;"></div>
+                    <div class="skeleton skeleton-btn"></div>
+                </div>
+                <div class="skeleton-card">
+                    <div class="skeleton skeleton-avatar"></div>
+                    <div class="skeleton skeleton-title"></div>
+                    <div class="skeleton skeleton-text"></div>
+                    <div class="skeleton skeleton-text" style="width: 60%;"></div>
+                    <div class="skeleton skeleton-btn"></div>
+                </div>
             </div>
         </div>
     </section>
@@ -151,7 +178,27 @@
                 <h2>ماذا يقول عملاؤنا</h2>
             </div>
             <div class="testimonials-slider" id="reviewsGrid">
-                <div class="loading-spinner">جاري التحميل...</div>
+                <!-- Skeleton Loading Cards -->
+                <div class="skeleton-card" style="min-width: 300px;">
+                    <div class="skeleton skeleton-text" style="height: 60px; margin-bottom: 16px;"></div>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div class="skeleton" style="width: 50px; height: 50px; border-radius: 50%;"></div>
+                        <div style="flex: 1;">
+                            <div class="skeleton skeleton-text" style="width: 100px; margin-bottom: 4px;"></div>
+                            <div class="skeleton skeleton-text" style="width: 80px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="skeleton-card" style="min-width: 300px;">
+                    <div class="skeleton skeleton-text" style="height: 60px; margin-bottom: 16px;"></div>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div class="skeleton" style="width: 50px; height: 50px; border-radius: 50%;"></div>
+                        <div style="flex: 1;">
+                            <div class="skeleton skeleton-text" style="width: 100px; margin-bottom: 4px;"></div>
+                            <div class="skeleton skeleton-text" style="width: 80px;"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -189,9 +236,9 @@
                 <div class="footer-links">
                     <h4>للعملاء</h4>
                     <ul>
-                        <li><a href="#">كيفية الحجز</a></li>
-                        <li><a href="#">الأسئلة الشائعة</a></li>
-                        <li><a href="#">الدعم الفني</a></li>
+                        <li><a href="#how-it-works">كيفية الحجز</a></li>
+                        <li><a href="privacy.html">سياسة الخصوصية</a></li>
+                        <li><a href="#contact">الدعم الفني</a></li>
                     </ul>
                 </div>
                 <div class="footer-contact">
@@ -204,7 +251,8 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>© 2026 خدمتي. جميع الحقوق محفوظة.</p>
+                <p>© 2026 خدمتي. جميع الحقوق محفوظة. | <a href="privacy.html" style="color: inherit;">سياسة الخصوصية</a>
+                </p>
             </div>
         </div>
     </footer>

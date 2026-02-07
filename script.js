@@ -12,6 +12,13 @@ let allProviders = [];
 let allServices = [];
 
 document.addEventListener('DOMContentLoaded', async function () {
+    // Register Service Worker for PWA
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js')
+            .then(() => console.log('✅ Service Worker registered'))
+            .catch(err => console.log('SW registration failed:', err));
+    }
+
     // Initialize the app
     await checkSession();
     await loadServices();
