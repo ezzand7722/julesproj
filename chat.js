@@ -253,10 +253,32 @@ async function sendMessage() {
     }
 }
 
+if (error) {
+    console.error('Send failed:', error);
+    showNotification('فشل إرسال الرسالة', 'error');
+}
+}
+
+// Mark message as read
+async function markAsRead(messageId) {
+    if (!messageId) return;
+
+    // Optimistic check? No need, just fire and forget.
+    const { error } = await supabaseClient
+        .from('messages')
+        .update({ is_read: true })
+        .eq('id', messageId)
+        .eq('receiver_id', myId); // Security: only receiver can mark as read
+
+    if (error) {
+        console.error('Error marking message as read:', error);
+    }
+}
+
 // Utils
 function scrollToBottom() {
     const container = document.getElementById('chatMessages');
-    container.scrollTop = container.scrollHeight;
+    if (container) container.scrollTop = container.scrollHeight;
 }
 
 function backToConversations() {
