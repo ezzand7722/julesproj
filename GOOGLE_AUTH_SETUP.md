@@ -24,11 +24,11 @@
    ```
    http://localhost
    http://127.0.0.1
-   https://globdesovygfvvyuzrvy.supabase.co
+   https://rkhkvmcnjuwoxammhsqn.supabase.co
    ```
 6. في **Authorized redirect URIs** أضف:
    ```
-   https://globdesovygfvvyuzrvy.supabase.co/auth/v1/callback
+   https://rkhkvmcnjuwoxammhsqn.supabase.co/auth/v1/callback
    ```
 7. اضغط **CREATE**
 8. **احفظ Client ID و Client Secret** - ستحتاجهم للخطوة التالية
@@ -36,7 +36,7 @@
 ### 3. تفعيل Google في Supabase Dashboard
 
 1. اذهب إلى [Supabase Dashboard](https://supabase.com/dashboard)
-2. اختر مشروعك `globdesovygfvvyuzrvy`
+2. اختر مشروعك `rkhkvmcnjuwoxammhsqn`
 3. من القائمة الجانبية اختر **Authentication** > **Providers**
 4. ابحث عن **Google** واضغط عليه
 5. فعّل **Enable Sign in with Google**
@@ -78,4 +78,4 @@
 
 - [Supabase Google Auth Docs](https://supabase.com/docs/guides/auth/social-login/auth-google)
 - [Google Cloud Console](https://console.cloud.google.com/)
-- [Supabase Dashboard](https://supabase.com/dashboard/project/globdesovygfvvyuzrvy/auth/providers)
+- [Supabase Dashboard](https://supabase.com/dashboard/project/rkhkvmcnjuwoxammhsqn/auth/providers)
