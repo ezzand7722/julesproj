@@ -167,42 +167,92 @@ function renderBookingsList(elementId, bookings, type) {
         return;
     }
 
-    list.innerHTML = bookings.map(booking => `
-        <div class="booking-card">
-            <div class="booking-header">
-                <div>
-                    <div class="provider-name">${booking.providers?.name || 'مقدم خدمة'}</div>
-                    <div class="service-type">${booking.service_type || booking.providers?.specialty || 'خدمة عامة'}</div>
-                </div>
-                <div class="booking-status status-${booking.status}">
-                    ${getStatusText(booking.status)}
-                </div>
-            </div>
-            
-            <div class="booking-details">
-                <div class="detail-item">
-                    <span>📅 التاريخ:</span>
-                    <span>${new Date(booking.booking_date || booking.service_date).toLocaleDateString('ar-EG')}</span>
-                </div>
-                <div class="detail-item">
-                    <span>⏰ الوقت:</span>
-                    <span>${booking.booking_time || booking.preferred_time}</span>
-                </div>
-                <div class="detail-item">
-                    <span>📝 ملاحظات:</span>
-                    <span>${booking.notes || 'لا يوجد'}</span>
-                </div>
-            </div>
+    list.innerHTML = bookings.map(booking => {
+        const dateObj = new Date(booking.booking_date || booking.service_date);
+        const dateStr = dateObj.toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        const providerName = booking.providers?.name || 'مقدم خدمة';
+        const initial = providerName.charAt(0);
+        const statusText = getStatusText(booking.status);
+        const statusIcon = getStatusIcon(booking.status);
 
-            ${type === 'completed' ? `
-                <div class="booking-actions">
-                    <button class="btn btn-primary btn-sm" onclick="openReviewModal('${booking.id}', '${booking.provider_id}')">
-                        ⭐ تقييم الخدمة
-                    </button>
+        return `
+        <div class="booking-card status-${booking.status}">
+            <div class="booking-content">
+                <div class="booking-header">
+                    <div class="booking-id">#${booking.id.slice(0, 8)}</div>
+                    <div class="booking-status-badge">
+                        <span>${statusIcon}</span>
+                        <span>${statusText}</span>
+                    </div>
                 </div>
-            ` : ''}
+
+                <div class="counterparty-info">
+                    <div class="avatar-circle">${initial}</div>
+                    <div class="party-details">
+                        <h4>${providerName}</h4>
+                        <p>${booking.service_type || booking.providers?.specialty || 'خدمة عامة'}</p>
+                    </div>
+                </div>
+
+                <div class="booking-grid">
+                    <div class="info-group">
+                        <span class="info-label">الموعد</span>
+                        <div class="info-value">
+                            <span class="icon">📅</span>
+                            ${dateStr}
+                        </div>
+                    </div>
+                    
+                    <div class="info-group">
+                        <span class="info-label">الوقت</span>
+                        <div class="info-value">
+                            <span class="icon">⏰</span>
+                            ${booking.booking_time || booking.preferred_time}
+                        </div>
+                    </div>
+
+                    ${booking.customer_location ? `
+                    <div class="info-group">
+                        <span class="info-label">الموقع</span>
+                        <div class="info-value">
+                            <span class="icon">📍</span>
+                            ${booking.customer_location}
+                        </div>
+                    </div>` : ''}
+                </div>
+
+                ${booking.notes ? `
+                <div class="info-group">
+                    <span class="info-label">ملاحظات</span>
+                    <div class="info-value" style="font-size: 0.9rem; color: #666;">
+                        ${booking.notes}
+                    </div>
+                </div>` : ''}
+
+                ${type === 'completed' ? `
+                <div class="booking-footer">
+                    <button class="btn-action btn-primary-action" onclick="openReviewModal('${booking.id}', '${booking.provider_id}')">
+                        <span>⭐</span> تقييم الخدمة
+                    </button>
+                </div>` : ''}
+                
+                ${type === 'pending' ? `
+                <div class="booking-footer">
+                   <div style="font-size: 0.85rem; color: #f59e0b;">⏳ بانتظار موافقة مقدم الخدمة</div>
+                </div>` : ''}
+            </div>
         </div>
-    `).join('');
+    `}).join('');
+}
+
+function getStatusIcon(status) {
+    switch (status) {
+        case 'pending': return '⏳';
+        case 'confirmed': return '✅';
+        case 'completed': return '🎉';
+        case 'cancelled': return '❌';
+        default: return '🔹';
+    }
 }
 
 function getStatusText(status) {
