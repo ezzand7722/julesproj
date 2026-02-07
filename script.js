@@ -381,6 +381,70 @@ function filterByService(serviceName) {
     performSearch();
 }
 
+// AI Matchmaking Logic
+const keywordMap = {
+    'سباكة': ['ماء', 'تسرب', 'حنفية', 'مغسلة', 'ماسورة', 'سباك', 'تنفيس', 'بالوعة', 'مجاري', 'مواسير', 'ليك', 'خراب'],
+    'كهرباء': ['ضوء', 'لمبة', 'فيش', 'شورت', 'كهرباء', 'قاطع', 'أسلاك', 'بريز', 'انقطاع', 'فيوز'],
+    'نجارة': ['باب', 'شباك', 'خشب', 'خزانة', 'تركيب', 'مفصلات', 'قفل', 'يد', 'طاولة', 'كرسي', 'أثاث'],
+    'تنظيف': ['تنظيف', 'غسيل', 'سجاد', 'كنب', 'ستائر', 'جلي', 'شطف', 'تعقيم', 'موكيت'],
+    'تكييف': ['مكيف', 'حامي', 'بارد', 'صيانة', 'فلاتر', 'تعبئة غاز', 'تنقيط', 'تبريد', 'تدفئة'],
+    'دهان': ['دهان', 'بوية', 'تقشير', 'رطوبة', 'لون', 'طلاء', 'معجون'],
+    'ستلايت': ['ستلايت', 'رسيفر', 'اشارة', 'قنوات', 'دش', 'صحن', 'نايل سات', 'عرب سات'],
+    'نقل عفش': ['نقل', 'ترحيل', 'عفش', 'اثاث', 'فك وتركيب', 'ونش', 'ديانا']
+};
+
+function openAIModal() {
+    document.getElementById('aiModal').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+
+function closeAIModal() {
+    document.getElementById('aiModal').style.display = 'none';
+    document.body.style.overflow = '';
+}
+
+function analyzeProblem() {
+    const userInput = document.getElementById('aiProblemInput').value.toLowerCase();
+
+    if (userInput.length < 3) {
+        showNotification('الرجاء وصف المشكلة بشكل أوضح', 'error');
+        return;
+    }
+
+    let bestMatch = null;
+    let maxMatches = 0;
+
+    // Check keywords
+    for (const [category, keywords] of Object.entries(keywordMap)) {
+        let matches = 0;
+        keywords.forEach(keyword => {
+            if (userInput.includes(keyword)) matches++;
+        });
+
+        if (matches > maxMatches) {
+            maxMatches = matches;
+            bestMatch = category;
+        }
+    }
+
+    closeAIModal();
+
+    if (bestMatch) {
+        showNotification(`💡 يبدو أنك تبحث عن خدمات ${bestMatch}!`, 'success');
+        document.getElementById('searchInput').value = bestMatch;
+        performSearch();
+    } else {
+        showNotification('🤔 لم أستطع تحديد الخدمة بدقة، جاري البحث عن النص...', 'info');
+        document.getElementById('searchInput').value = userInput;
+        performSearch();
+    }
+}
+
+// Make functions global
+window.openAIModal = openAIModal;
+window.closeAIModal = closeAIModal;
+window.analyzeProblem = analyzeProblem;
+
 // Booking Modal
 function openBookingModal(providerId, providerName) {
     document.getElementById('bookingProviderId').value = providerId;
