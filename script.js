@@ -639,3 +639,27 @@ document.addEventListener('keydown', (e) => {
         document.body.style.overflow = '';
     }
 });
+
+// Provider Signup Logic
+async function showProviderSignup() {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+
+    if (session) {
+        // Check current role
+        const { data: profile } = await supabaseClient
+            .from('profiles')
+            .select('role')
+            .eq('id', session.user.id)
+            .single();
+
+        if (profile?.role === 'provider') {
+            window.location.href = 'dashboard.html';
+        } else {
+            // Logged in as customer -> redirect to upgrade flow
+            window.location.href = 'become-provider.html';
+        }
+    } else {
+        // Not logged in -> Go to signup with provider flag
+        window.location.href = 'signup.html?type=provider';
+    }
+}
