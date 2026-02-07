@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>لوحة التحكم العامة (Admin)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard-redesign.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .admin-header {
+            background: #1f2937;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .admin-container {
+            padding: 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 15px;
+            text-align: right;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .data-table th {
+            background: #f3f4f6;
+            font-weight: 700;
+        }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        .badge-admin {
+            background: #4b5563;
+            color: white;
+        }
+
+        .badge-provider {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .badge-customer {
+            background: #10b981;
+            color: white;
+        }
+
+        .action-btn {
+            padding: 5px 10px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .btn-delete {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #111827;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="admin-header">
+        <h2>🛡️ لوحة الإدارة العليا (OP Admin)</h2>
+        <button onclick="logout()" class="btn btn-ghost" style="color:white; border-color:white;">تسجيل خروج</button>
+    </div>
+
+    <div class="admin-container">
+        <!-- Users Management -->
+        <h3 class="section-title">👥 إدارة المستخدمين</h3>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>الاسم</th>
+                    <th>الدور (Role)</th>
+                    <th>الهاتف</th>
+                    <th>إجراءات</th>
+                </tr>
+            </thead>
+            <tbody id="usersTable">
+                <tr>
+                    <td colspan="5">جاري التحميل...</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Bookings Management -->
+        <h3 class="section-title">📅 إدارة الحجوزات</h3>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>رقم الحجز</th>
+                    <th>العميل</th>
+                    <th>مقدم الخدمة</th>
+                    <th>الحالة</th>
+                    <th>التاريخ</th>
+                    <th>إجراءات</th>
+                </tr>
+            </thead>
+            <tbody id="bookingsTable">
+                <tr>
+                    <td colspan="6">جاري التحميل...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://rkhkvmcnjuwoxammhsqn.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJraGt2bWNuanV3b3hhbW1oc3FuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAzODk0MjcsImV4cCI6MjA4NTk2NTQyN30.iGTVKa7iap8MLZ8v0efCvzsqzviNBbacVfEDxQGDsZQ';
+        const searchParams = new URLSearchParams(window.location.search);
+
+        // Simple security check (in real app, use RLS)
+        // This is a client-side dashboard, essentially a "God Mode" viewer
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        async function init() {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Check if user is admin (using the special column we will add)
+            const { data: profile } = await supabase.from('profiles').select('is_admin').eq('id', session.user.id).single();
+            if (!profile?.is_admin) {
+                alert('⛔ ليس لديك صلاحيات الأدمن!');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            loadUsers();
+            loadBookings();
+        }
+
+        async function loadUsers() {
+            const { data: users } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
+            const tbody = document.getElementById('usersTable');
+            tbody.innerHTML = users.map(u => `
+                <tr>
+                    <td>${u.id.slice(0, 8)}...</td>
+                    <td>${u.full_name || 'بدون اسم'}</td>
+                    <td><span class="badge badge-${u.role}">${u.role}</span> ${u.is_admin ? '👑' : ''}</td>
+                    <td>${u.phone || '-'}</td>
+                    <td>
+                        
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function loadBookings() {
+            const { data: bookings } = await supabase.from('bookings').select('*, providers(name)').order('created_at', { ascending: false });
+            const tbody = document.getElementById('bookingsTable');
+            tbody.innerHTML = bookings.map(b => `
+                <tr>
+                    <td>${b.id.slice(0, 8)}</td>
+                    <td>${b.customer_name}</td>
+                    <td>${b.providers?.name}</td>
+                    <td>${b.status}</td>
+                    <td>${new Date(b.created_at).toLocaleDateString()}</td>
+                    <td>
+                        <button class="action-btn btn-delete" onclick="deleteBooking('${b.id}')">حذف</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function deleteBooking(id) {
+            if (!confirm('هل أنت متأكد من حذف هذا الحجز نهائياً؟')) return;
+            const { error } = await supabase.from('bookings').delete().eq('id', id);
+            if (error) alert('خطأ: ' + error.message);
+            else loadBookings();
+        }
+
+        async function logout() {
+            await supabase.auth.signOut();
+            window.location.href = 'index.html';
+        }
+
+        init();
+    </script>
+</body>
+
+</html>

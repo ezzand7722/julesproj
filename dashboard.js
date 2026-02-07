@@ -286,8 +286,14 @@ function renderBookingItem(booking, showActions) {
                 <span class="booking-status ${booking.status}">${statusLabels[booking.status] || booking.status}</span>
                 ${showActions ? `
                     <div class="booking-actions">
-                        <button class="btn btn-primary" onclick="updateBookingStatus('${booking.id}', 'confirmed')">تأكيد</button>
-                        <button class="btn btn-ghost" onclick="updateBookingStatus('${booking.id}', 'cancelled')">رفض</button>
+                        ${booking.status === 'pending' ? `
+                            <button class="btn btn-primary" onclick="updateBookingStatus('${booking.id}', 'confirmed')">تأكيد</button>
+                            <button class="btn btn-ghost" onclick="updateBookingStatus('${booking.id}', 'cancelled')">رفض</button>
+                        ` : ''}
+                        
+                        ${booking.status === 'confirmed' ? `
+                            <button class="btn btn-success" style="background:#10b981; color:white;" onclick="updateBookingStatus('${booking.id}', 'completed')">✅ تم الإنجاز</button>
+                        ` : ''}
                     </div>
                 ` : ''}
             </div>
