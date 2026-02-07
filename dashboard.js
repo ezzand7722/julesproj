@@ -1,7 +1,11 @@
 // Khedmati - Provider Dashboard
-const SUPABASE_URL = 'https://rkhkvmcnjuwoxammhsqn.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJraGt2bWNuanV3b3hhbW1oc3FuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAzODk0MjcsImV4cCI6MjA4NTk2NTQyN30.iGTVKa7iap8MLZ8v0efCvzsqzviNBbacVfEDxQGDsZQ';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const SUPABASE_URL = 'https://globdesovygfvvyuzrvy.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdsb2JkZXNvdnlnZnZ2eXV6cnZ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk3MDIwNDEsImV4cCI6MjA4NTI3ODA0MX0.wVdR293AFlCz2rYHWsindi8LKAaZIC4FXSYNKPD4UV0';
+
+// Check if supabase is already defined to avoid errors
+const supabaseDashboard = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Use supabaseDashboard internally or assign to window if safe
+window.supabaseClient = supabaseDashboard;
 
 let currentUser = null;
 let currentProvider = null;
@@ -16,7 +20,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 // Check authentication
 async function checkAuth() {
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { session } } = await supabaseDashboard.auth.getSession();
 
     if (!session) {
         window.location.href = 'login.html';
@@ -26,7 +30,7 @@ async function checkAuth() {
     currentUser = session.user;
 
     // Get provider record
-    const { data: provider, error } = await supabase
+    const { data: provider, error } = await supabaseDashboard
         .from('providers')
         .select('*')
         .eq('user_id', currentUser.id)
@@ -65,18 +69,18 @@ async function loadProviderData() {
     if (!currentProvider) return;
 
     // Get booking counts
-    const { count: total } = await supabase
+    const { count: total } = await supabaseDashboard
         .from('bookings')
         .select('*', { count: 'exact', head: true })
         .eq('provider_id', currentProvider.id);
 
-    const { count: pending } = await supabase
+    const { count: pending } = await supabaseDashboard
         .from('bookings')
         .select('*', { count: 'exact', head: true })
         .eq('provider_id', currentProvider.id)
         .eq('status', 'pending');
 
-    const { count: completed } = await supabase
+    const { count: completed } = await supabaseDashboard
         .from('bookings')
         .select('*', { count: 'exact', head: true })
         .eq('provider_id', currentProvider.id)
@@ -92,7 +96,7 @@ async function loadBookings() {
     if (!currentProvider) return;
 
     // Pending bookings
-    const { data: pending } = await supabase
+    const { data: pending } = await supabaseDashboard
         .from('bookings')
         .select('*')
         .eq('provider_id', currentProvider.id)
@@ -112,7 +116,7 @@ async function loadBookings() {
     }
 
     // All bookings
-    const { data: all } = await supabase
+    const { data: all } = await supabaseDashboard
         .from('bookings')
         .select('*')
         .eq('provider_id', currentProvider.id)
@@ -172,7 +176,7 @@ function renderBookingItem(booking, showActions) {
 // Update booking status
 async function updateBookingStatus(bookingId, status) {
     try {
-        const { error } = await supabase
+        const { error } = await supabaseDashboard
             .from('bookings')
             .update({ status })
             .eq('id', bookingId);
@@ -192,7 +196,7 @@ async function updateBookingStatus(bookingId, status) {
 async function loadReviews() {
     if (!currentProvider) return;
 
-    const { data: reviews } = await supabase
+    const { data: reviews } = await supabaseDashboard
         .from('reviews')
         .select('*')
         .eq('provider_id', currentProvider.id)
@@ -230,7 +234,7 @@ async function updateProfile(e) {
     btn.textContent = 'جاري الحفظ...';
 
     try {
-        const { error } = await supabase
+        const { error } = await supabaseDashboard
             .from('providers')
             .update({
                 name: document.getElementById('profileName').value,
@@ -246,7 +250,7 @@ async function updateProfile(e) {
         showNotification('تم حفظ التغييرات بنجاح ✅', 'success');
 
         // Reload data
-        const { data: provider } = await supabase
+        const { data: provider } = await supabaseDashboard
             .from('providers')
             .select('*')
             .eq('id', currentProvider.id)
@@ -264,7 +268,7 @@ async function updateProfile(e) {
 
 // Logout
 async function logout() {
-    await supabase.auth.signOut();
+    await supabaseDashboard.auth.signOut();
     window.location.href = 'index.html';
 }
 

@@ -174,7 +174,14 @@ async function handleLogin(e) {
         }
     } catch (err) {
         console.error('Login error:', err);
-        showNotification(err.message || 'خطأ في تسجيل الدخول', 'error');
+        // Check for specific error types
+        if (err.message && err.message.includes('Email not confirmed')) {
+            showNotification('يرجى تفعيل حسابك من البريد الإلكتروني أولاً', 'warning');
+        } else if (err.message && err.message.includes('Invalid login credentials')) {
+            showNotification('البريد الإلكتروني أو كلمة المرور غير صحيحة', 'error');
+        } else {
+            showNotification(err.message || 'خطأ في تسجيل الدخول', 'error');
+        }
     } finally {
         btn.disabled = false;
         btn.textContent = 'تسجيل الدخول';
@@ -199,6 +206,28 @@ async function handleSignup(e) {
     btn.textContent = 'جاري إنشاء الحساب...';
 
     try {
+        // Check for duplicate email in profiles
+        const { data: existingEmail } = await supabaseClient
+            .from('profiles')
+            .select('email')
+            .eq('email', email)
+            .maybeSingle();
+
+        if (existingEmail) {
+            throw new Error('هذا البريد الإلكتروني مسجل بالفعل. جرب تسجيل الدخول.');
+        }
+
+        // Check for duplicate phone in profiles
+        const { data: existingPhone } = await supabaseClient
+            .from('profiles')
+            .select('phone')
+            .eq('phone', phone)
+            .maybeSingle();
+
+        if (existingPhone) {
+            throw new Error('رقم الهاتف مسجل بالفعل. استخدم رقم هاتف آخر.');
+        }
+
         // Sign up user
         const { data: authData, error: authError } = await supabaseClient.auth.signUp({
             email,
