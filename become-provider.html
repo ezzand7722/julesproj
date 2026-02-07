@@ -15,69 +15,71 @@
 </head>
 
 <body>
-    <div class="auth-container">
-        <div class="auth-card">
-            <div class="auth-header">
-                <a href="index.html" class="logo">
-                    <span class="logo-icon">🛠️</span>
-                    <span class="logo-text">خدمتي</span>
-                </a>
-                <h2>انضم كمقدم خدمة</h2>
-                <p>قم بترقية حسابك وابدأ باستقبال الطلبات</p>
-            </div>
-
-            <form id="upgradeForm" onsubmit="handleUpgrade(event)">
-                <div class="form-group">
-                    <label>الاسم الكامل</label>
-                    <input type="text" id="fullName" required readonly class="readonly-input">
+    <div class="auth-page">
+        <div class="auth-container">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <a href="index.html" class="logo">
+                        <span class="logo-icon">🛠️</span>
+                        <span class="logo-text">خدمتي</span>
+                    </a>
+                    <h2>انضم كمقدم خدمة</h2>
+                    <p>قم بترقية حسابك وابدأ باستقبال الطلبات</p>
                 </div>
 
-                <div class="form-group">
-                    <label>رقم الهاتف</label>
-                    <div class="phone-input-wrapper">
-                        <input type="tel" id="phone" placeholder="790000000" pattern="[0-9]{9}" required>
-                        <span class="country-code">+962</span>
+                <form id="upgradeForm" onsubmit="handleUpgrade(event)">
+                    <div class="form-group">
+                        <label>الاسم الكامل</label>
+                        <input type="text" id="fullName" required readonly class="readonly-input">
                     </div>
-                </div>
 
-                <div class="form-group">
-                    <label>المهنة / التخصص</label>
-                    <select id="specialty" required>
-                        <option value="">اختر التخصص...</option>
-                        <option value="سباكة">سباكة</option>
-                        <option value="كهرباء">كهرباء</option>
-                        <option value="نجارة">نجارة</option>
-                        <option value="تنظيف">تنظيف</option>
-                        <option value="تكييف">تكييف</option>
-                        <option value="دهان">دهان</option>
-                        <option value="نقل عفش">نقل عفش</option>
-                        <option value="ستلايت">ستلايت</option>
-                    </select>
-                </div>
+                    <div class="form-group">
+                        <label>رقم الهاتف</label>
+                        <div class="phone-input-wrapper">
+                            <input type="tel" id="phone" placeholder="790000000" pattern="[0-9]{9}" required>
+                            <span class="country-code">+962</span>
+                        </div>
+                    </div>
 
-                <div class="form-group">
-                    <label>المدينة</label>
-                    <select id="city" required>
-                        <option value="">اختر المدينة...</option>
-                        <option value="عمّان">عمّان</option>
-                        <option value="الزرقة">الزرقة</option>
-                        <option value="إربد">إربد</option>
-                        <option value="العقبة">العقبة</option>
-                        <option value="السلط">السلط</option>
-                        <option value="مادبا">مادبا</option>
-                    </select>
-                </div>
+                    <div class="form-group">
+                        <label>المهنة / التخصص</label>
+                        <select id="specialty" required>
+                            <option value="">اختر التخصص...</option>
+                            <option value="سباكة">سباكة</option>
+                            <option value="كهرباء">كهرباء</option>
+                            <option value="نجارة">نجارة</option>
+                            <option value="تنظيف">تنظيف</option>
+                            <option value="تكييف">تكييف</option>
+                            <option value="دهان">دهان</option>
+                            <option value="نقل عفش">نقل عفش</option>
+                            <option value="ستلايت">ستلايت</option>
+                        </select>
+                    </div>
 
-                <div class="form-group">
-                    <label>نبذة عنك (اختياري)</label>
-                    <textarea id="bio" placeholder="اكتب نبذة مختصرة عن خبرتك وخدماتك..."></textarea>
-                </div>
+                    <div class="form-group">
+                        <label>المدينة</label>
+                        <select id="city" required>
+                            <option value="">اختر المدينة...</option>
+                            <option value="عمّان">عمّان</option>
+                            <option value="الزرقة">الزرقة</option>
+                            <option value="إربد">إربد</option>
+                            <option value="العقبة">العقبة</option>
+                            <option value="السلط">السلط</option>
+                            <option value="مادبا">مادبا</option>
+                        </select>
+                    </div>
 
-                <button type="submit" class="btn btn-primary btn-block">ترقية الحساب</button>
-                <div class="auth-footer">
-                    <a href="customer-dashboard.html">تراجع للوحة التحكم</a>
-                </div>
-            </form>
+                    <div class="form-group">
+                        <label>نبذة عنك (اختياري)</label>
+                        <textarea id="bio" placeholder="اكتب نبذة مختصرة عن خبرتك وخدماتك..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">ترقية الحساب</button>
+                    <div class="auth-footer">
+                        <a href="customer-dashboard.html">تراجع للوحة التحكم</a>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
