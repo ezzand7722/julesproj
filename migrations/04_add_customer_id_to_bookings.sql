@@ -11,15 +11,13 @@ alter table public.bookings
 create index if not exists idx_bookings_customer_id 
   on public.bookings(customer_id);
 
--- Migrate existing bookings: try to match by email
+-- Migrate existing bookings: try to match by name
+-- Note: This is best-effort matching. New bookings will automatically have customer_id
 update public.bookings b
 set customer_id = p.id
 from public.profiles p
 where b.customer_id is null
-  and (
-    lower(b.customer_email) = lower(p.email)
-    or lower(b.customer_name) = lower(p.full_name)
-  );
+  and lower(b.customer_name) = lower(p.full_name);
 
 -- =============================================
 -- DONE! Bookings now linked to customer accounts
