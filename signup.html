@@ -94,6 +94,12 @@
                     <button type="submit" class="btn btn-primary btn-block" id="signupBtn">إنشاء الحساب</button>
                 </form>
 
+                <div class="auth-divider"><span>أو</span></div>
+
+                <button class="btn btn-outline btn-block" onclick="signInWithGoogle()">
+                    <span>🔵</span> المتابعة بحساب Google
+                </button>
+
                 <p class="auth-switch">
                     لديك حساب؟ <a href="login.html">تسجيل الدخول</a>
                 </p>
@@ -117,88 +123,8 @@
         </div>
     </div>
 
-    <!-- Duplicate vital functions here to avoid any loading issues -->
-    <script>
-        const SUPABASE_URL = 'https://globdesovygfvvyuzrvy.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdsb2JkZXNvdnlnZnZ2eXV6cnZ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk3MDIwNDEsImV4cCI6MjA4NTI3ODA0MX0.wVdR293AFlCz2rYHWsindi8LKAaZIC4FXSYNKPD4UV0';
-
-        let supabase;
-        try {
-            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        } catch (e) { console.error('Supabase error:', e); }
-
-        function togglePassword(id) {
-            const x = document.getElementById(id);
-            x.type = x.type === 'password' ? 'text' : 'password';
-        }
-
-        function setUserType(type, e) {
-            document.getElementById('userType').value = type;
-            document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
-            if (e && e.target) e.target.classList.add('active');
-
-            const fields = document.getElementById('providerFields');
-            if (type === 'provider') fields.classList.remove('hidden');
-            else fields.classList.add('hidden');
-        }
-
-        async function handleSignup(e) {
-            e.preventDefault();
-            const btn = document.getElementById('signupBtn');
-            btn.textContent = 'جاري المعالجة...';
-            btn.disabled = true;
-
-            const email = document.getElementById('signupEmail').value;
-            const password = document.getElementById('signupPassword').value;
-            const name = document.getElementById('signupName').value;
-            const phone = document.getElementById('signupPhone').value;
-            const type = document.getElementById('userType').value;
-
-            try {
-                // 1. Create Auth User
-                const { data, error } = await supabase.auth.signUp({
-                    email,
-                    password,
-                    options: { data: { name, phone, user_type: type } }
-                });
-
-                if (error) throw error;
-
-                // 2. Add Provider Details (if provider)
-                if (type === 'provider') {
-                    const specialty = document.getElementById('providerSpecialty').value;
-                    const city = document.getElementById('providerCity').value;
-                    const location = document.getElementById('providerLocation').value;
-
-                    if (!specialty || !city) throw new Error('يرجى تعبئة جميع الحقول المطلوبة');
-
-                    const { error: dbError } = await supabase
-                        .from('providers')
-                        .insert([{
-                            user_id: data.user.id,
-                            name: name,
-                            phone: phone,
-                            specialty: specialty,
-                            city: city,
-                            location: location,
-                            rating: 5.0,
-                            reviews: 0
-                        }]);
-
-                    if (dbError) throw dbError;
-                }
-
-                // Show Success
-                document.getElementById('signupForm').style.display = 'none';
-                document.getElementById('successMessage').style.display = 'block';
-
-            } catch (err) {
-                alert('خطأ: ' + err.message);
-                btn.disabled = false;
-                btn.textContent = 'إنشاء الحساب';
-            }
-        }
-    </script>
+    <!-- Use the shared auth.js file! -->
+    <script src="auth.js"></script>
 </body>
 
 </html>
