@@ -242,11 +242,11 @@
 
     <!-- Booking Modal (same as homepage) -->
     <div class="modal-overlay" id="bookingModal"
-        style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+        style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center;">
         <div class="modal"
-            style="background: white; padding: 30px; border-radius: 16px; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto;">
-            <button class="modal-close" onclick="closeBookingModal()"
-                style="position: absolute; top: 15px; left: 15px; background: none; border: none; font-size: 1.5rem; cursor: pointer;">✕</button>
+            style="background: white; padding: 30px; border-radius: 16px; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto; position: relative;">
+            <button type="button" class="modal-close" onclick="closeBookingModal()"
+                style="position: absolute; top: 10px; left: 10px; background: #f3f4f6; border: none; font-size: 1.2rem; cursor: pointer; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">✕</button>
             <h2 style="margin-bottom: 10px;">حجز موعد</h2>
             <p id="modalProviderName" style="color: #6b7280; margin-bottom: 20px;"></p>
             <form id="bookingForm" onsubmit="handleBooking(event)">
@@ -380,15 +380,22 @@
 
         // Booking Modal Functions
         function openBookingModal() {
-            if (!currentProvider) return;
+            console.log('openBookingModal called, currentProvider:', currentProvider);
+            if (!currentProvider) {
+                alert('يرجى الانتظار حتى يتم تحميل البيانات...');
+                return;
+            }
             document.getElementById('bookingProviderId').value = providerId;
             document.getElementById('modalProviderName').textContent = `الحجز مع: ${currentProvider.name}`;
-            document.getElementById('bookingModal').style.display = 'flex';
+
+            const modal = document.getElementById('bookingModal');
+            modal.style.display = 'flex';
             document.body.style.overflow = 'hidden';
 
             // Set min date to today
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('serviceDate').min = today;
+            console.log('Modal should be visible now');
         }
 
         function closeBookingModal() {
