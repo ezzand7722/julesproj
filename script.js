@@ -14,7 +14,7 @@ let allServices = [];
 document.addEventListener('DOMContentLoaded', async function () {
     // Register Service Worker for PWA (Only if on HTTP/HTTPS)
     if ('serviceWorker' in navigator && (window.location.protocol.indexOf('http') === 0)) {
-        navigator.serviceWorker.register('/sw.js')
+        navigator.serviceWorker.register('sw.js')
             .then(() => console.log('✅ Service Worker registered'))
             .catch(err => console.log('SW registration failed:', err));
     } else {
