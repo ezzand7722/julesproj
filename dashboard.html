@@ -209,6 +209,33 @@
                     </form>
                 </div>
 
+                <!-- Portfolio Section -->
+                <div class="dashboard-card">
+                    <h2>🖼️ معرض أعمالي</h2>
+                    <div class="portfolio-upload-area">
+                        <input type="file" id="portfolioFile" accept="image/*,video/*" style="display: none;"
+                            onchange="handleFileSelect(event)">
+                        <div class="upload-placeholder" onclick="document.getElementById('portfolioFile').click()">
+                            <span class="upload-icon">☁️</span>
+                            <span>اضغط لرفع صورة أو فيديو</span>
+                        </div>
+                        <div id="uploadPreview" style="display: none; margin-top: 10px;">
+                            <img id="previewImg" style="max-width: 100%; border-radius: 8px; display: none;">
+                            <video id="previewVideo" controls
+                                style="max-width: 100%; border-radius: 8px; display: none;"></video>
+                            <input type="text" id="portfolioCaption" placeholder="أضف وصفاً..." class="input-caption">
+                            <div class="upload-actions">
+                                <button class="btn btn-primary" onclick="uploadPortfolioItem()">رفع</button>
+                                <button class="btn btn-ghost" onclick="resetUpload()">إلغاء</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="portfolioGrid" class="portfolio-grid">
+                        <div class="loading-spinner">جاري التحميل...</div>
+                    </div>
+                </div>
+
                 <div class="dashboard-card">
                     <h2>⭐ آخر التقييمات</h2>
                     <div id="reviewsList">
@@ -222,6 +249,7 @@
     <script src="admin-config.js"></script>
     <script src="chat.js"></script>
     <script src="dashboard.js"></script>
+    <script src="portfolio.js"></script>
 </body>
 
 </html>

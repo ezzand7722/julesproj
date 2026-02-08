@@ -10,6 +10,7 @@ const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_
 // Global state
 let allProviders = [];
 let allServices = [];
+let notificationSubscription = null;
 
 document.addEventListener('DOMContentLoaded', async function () {
     // Register Service Worker for PWA (Only if on HTTP/HTTPS)
@@ -43,6 +44,7 @@ async function checkSession() {
             console.log('👤 User:', session.user.email);
         }
         updateAuthUI(session);
+        if (session) setupRealtimeNotifications(session);
 
         // Listen for auth changes
         supabaseClient.auth.onAuthStateChange((_event, session) => {
@@ -246,7 +248,7 @@ async function loadProviders(filter = {}) {
                     <span>${provider.rating} (${provider.review_count} تقييم)</span>
                 </div>
                 <div class="provider-actions" style="display: flex; gap: 8px; margin-top: 10px;">
-                    <button class="btn btn-primary" style="flex: 1;" onclick="event.stopPropagation(); openBookingModal('${escapeHtml(provider.id)}', '${escapeHtml(provider.name)}')">احجز الآن</button>
+                    <button class="btn btn-primary" style="flex: 1;" onclick="event.stopPropagation(); window.location.href='booking.html?provider_id=${escapeHtml(provider.id)}'">احجز الآن</button>
                     ${provider.user_id ? `
                     <button onclick="event.stopPropagation(); window.location.href='customer-dashboard.html?tab=messages&chat_with=${provider.user_id}&name=${encodeURIComponent(provider.name)}'" class="btn btn-outline" style="display: flex; align-items: center; justify-content: center; width: 40px; padding: 0; border: 1px solid var(--primary); color: var(--primary);" title="مراسلة">
                         💬
@@ -467,10 +469,7 @@ window.analyzeProblem = analyzeProblem;
 
 // Booking Modal
 function openBookingModal(providerId, providerName) {
-    document.getElementById('bookingProviderId').value = providerId;
-    document.getElementById('modalProviderName').textContent = `الحجز مع: ${providerName}`;
-    document.getElementById('bookingModal').classList.add('active');
-    document.body.style.overflow = 'hidden';
+    window.location.href = `booking.html?provider_id=${providerId}`;
 }
 
 function closeModal(modalId) {
@@ -668,4 +667,37 @@ async function showProviderSignup() {
         // Not logged in -> Go to signup with provider flag
         window.location.href = 'signup.html?type=provider';
     }
+}
+
+// Real-time Notifications
+async function setupRealtimeNotifications(session) {
+    if (!session || notificationSubscription) return;
+
+    const userId = session.user.id;
+    console.log('🔔 Setting up notifications for:', userId);
+
+    try {
+        notificationSubscription = supabaseClient
+            .channel('public:notifications')
+            .on('postgres_changes', {
+                event: 'INSERT',
+                schema: 'public',
+                table: 'notifications',
+                filter: `user_id=eq.${userId}`
+            }, payload => {
+                console.log('📩 New notification:', payload.new);
+                handleNewNotification(payload.new);
+            })
+            .subscribe((status) => {
+                console.log('🔔 Notification subscription status:', status);
+            });
+    } catch (err) {
+        console.error('Error setting up notifications:', err);
+    }
+}
+
+function handleNewNotification(notification) {
+    // Show toast with sound effect hint (visual only for now)
+    const type = notification.type === 'alert' ? 'error' : 'info';
+    showNotification(`🔔 ${notification.title}: ${notification.message}`, type);
 }

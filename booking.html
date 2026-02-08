@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حجز موعد - خدمتي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style_v2.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .step-content {
+            display: none;
+        }
+
+        .step-content.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .date-card {
+            border: 1px solid var(--neutral-200);
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .date-card.selected {
+            border-color: var(--primary-600);
+            background: var(--primary-50);
+            color: var(--primary-600);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="app-container">
+        <!-- Top Bar -->
+        <header class="p-4 flex items-center gap-2"
+            style="background: var(--white); border-bottom: 1px solid var(--neutral-100);">
+            <button class="btn-ghost" onclick="history.back()" style="width:auto; padding:0;">➜</button>
+            <h3 style="flex:1; text-align: center;">حجز موعد</h3>
+            <div style="width: 20px;"></div>
+        </header>
+
+        <main class="p-4">
+            <div id="loading" style="text-align: center; padding: 20px;">
+                جاري التحميل...
+            </div>
+
+            <div id="bookingContent" style="display: none;">
+                <!-- Provider Info -->
+                <div class="card mb-4 flex items-center gap-2" style="padding: 0.75rem;">
+                    <div style="width: 40px; height: 40px; background: var(--primary-100); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--primary-700);"
+                        id="providerAvatar">
+                        --
+                    </div>
+                    <div>
+                        <div class="text-xs text-neutral-500">حجز مع</div>
+                        <div class="font-bold" id="providerName">--</div>
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="flex items-center justify-between mb-4" style="padding: 0 1rem;">
+                    <div class="flex flex-col items-center">
+                        <div class="badge badge-verified"
+                            style="width: 30px; height: 30px; justify-content: center; background: var(--primary-600); color: white;">
+                            1</div>
+                        <span class="text-xs">الوقت</span>
+                    </div>
+                    <div style="height: 2px; flex: 1; background: var(--neutral-200); margin: 0 8px;"></div>
+                    <div class="flex flex-col items-center">
+                        <div class="badge badge-verified"
+                            style="width: 30px; height: 30px; justify-content: center; background: var(--neutral-200); color: var(--neutral-500);"
+                            id="step2-indicator">2</div>
+                        <span class="text-xs">الموقع</span>
+                    </div>
+                    <div style="height: 2px; flex: 1; background: var(--neutral-200); margin: 0 8px;"></div>
+                    <div class="flex flex-col items-center">
+                        <div class="badge badge-verified"
+                            style="width: 30px; height: 30px; justify-content: center; background: var(--neutral-200); color: var(--neutral-500);"
+                            id="step3-indicator">3</div>
+                        <span class="text-xs">تأكيد</span>
+                    </div>
+                </div>
+
+                <!-- Step 1: Date & Time -->
+                <div id="step-1" class="step-content active">
+                    <h2 class="mb-4">متى تريد الخدمة؟</h2>
+
+                    <h4 class="mb-2">اختر اليوم</h4>
+                    <div class="grid grid-cols-3 gap-2 mb-4" id="dateGrid">
+                        <!-- Dates injected by JS -->
+                    </div>
+
+                    <h4 class="mb-2">اختر الوقت</h4>
+                    <div class="flex flex-col gap-2 mb-4">
+                        <label class="card flex items-center gap-2" style="cursor: pointer;">
+                            <input type="radio" name="time" value="صباحاً (9-12)" checked>
+                            <span>صباحاً (9:00 - 12:00)</span>
+                        </label>
+                        <label class="card flex items-center gap-2" style="cursor: pointer;">
+                            <input type="radio" name="time" value="ظهراً (12-3)">
+                            <span>ظهراً (12:00 - 15:00)</span>
+                        </label>
+                        <label class="card flex items-center gap-2" style="cursor: pointer;">
+                            <input type="radio" name="time" value="عصراً (3-6)">
+                            <span>عصراً (15:00 - 18:00)</span>
+                        </label>
+                        <label class="card flex items-center gap-2" style="cursor: pointer;">
+                            <input type="radio" name="time" value="مساءً (6-9)">
+                            <span>مساءً (18:00 - 21:00)</span>
+                        </label>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="nextStep(2)">التالي: الموقع</button>
+                </div>
+
+                <!-- Step 2: Location & Details -->
+                <div id="step-2" class="step-content">
+                    <h2 class="mb-4">تفاصيل الطلب</h2>
+
+                    <div class="form-group">
+                        <label class="label">اسمك الكامل</label>
+                        <input type="text" id="customerName" class="input" placeholder="اسمك">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="label">رقم الهاتف</label>
+                        <input type="tel" id="customerPhone" class="input" placeholder="079XXXXXXX">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="label">المدينة</label>
+                        <select id="bgCity" class="input">
+                            <option value="عمان">عمان</option>
+                            <option value="اربد">اربد</option>
+                            <option value="الزرقاء">الزرقاء</option>
+                            <option value="العقبة">العقبة</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="label">تفاصيل العنوان</label>
+                        <input type="text" id="addressDetails" class="input" placeholder="الشارع، رقم العمارة، الطابق">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="label">وصف المشكلة</label>
+                        <textarea id="bookingNotes" class="input" rows="3"
+                            placeholder="اشرح المشكلة باختصار..."></textarea>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="nextStep(3)">التالي: مراجعة الطلب</button>
+                    <button class="btn btn-ghost mt-2" onclick="nextStep(1)">رجوع</button>
+                </div>
+
+                <!-- Step 3: Confirmation -->
+                <div id="step-3" class="step-content">
+                    <h2 class="mb-4">مراجعة الطلب</h2>
+
+                    <div class="card mb-4">
+                        <div class="flex justify-between mb-2">
+                            <span class="text-neutral-500">مقدم الخدمة</span>
+                            <strong id="confirmProviderName">--</strong>
+                        </div>
+                        <div class="flex justify-between mb-2">
+                            <span class="text-neutral-500">الموعد</span>
+                            <strong id="confirmDate">--</strong>
+                        </div>
+                        <div class="flex justify-between mb-2">
+                            <span class="text-neutral-500">الوقت</span>
+                            <strong id="confirmTime">--</strong>
+                        </div>
+                        <div class="flex justify-between mb-2">
+                            <span class="text-neutral-500">الموقع</span>
+                            <strong id="confirmLocation">--</strong>
+                        </div>
+                        <div style="border-top: 1px solid var(--neutral-200); margin: 8px 0;"></div>
+                        <div class="flex justify-between">
+                            <span class="text-neutral-900 font-bold">السعر التقديري</span>
+                            <span class="text-primary font-bold text-lg">يحدد بعد المعاينة</span>
+                        </div>
+                    </div>
+
+                    <div id="errorMsg" style="color: red; text-align: center; margin-bottom: 10px; display: none;">
+                    </div>
+
+                    <button class="btn btn-primary" id="submitBtn" onclick="finishBooking()">تأكيد الحجز ✅</button>
+                    <button class="btn btn-ghost mt-2" onclick="nextStep(2)">تعديل</button>
+                </div>
+
+                <!-- Success Message -->
+                <div id="success-screen" class="step-content text-center" style="padding-top: 2rem;">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">🎉</div>
+                    <h2 class="text-primary mb-2">تم الحجز بنجاح!</h2>
+                    <p class="mb-4">تم إرسال طلبك إلى مقدم الخدمة.<br>سيتم التواصل معك قريباً.</p>
+                    <a href="index.html" class="btn btn-primary">العودة للرئيسية</a>
+                    <a href="customer-dashboard.html" class="btn btn-ghost mt-2">عرض حجوزاتي</a>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://rkhkvmcnjuwoxammhsqn.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJraGt2bWNuanV3b3hhbW1oc3FuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAzODk0MjcsImV4cCI6MjA4NTk2NTQyN30.iGTVKa7iap8MLZ8v0efCvzsqzviNBbacVfEDxQGDsZQ';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const providerId = urlParams.get('provider_id');
+        let selectedDate = null;
+
+        // Initialize
+        async function init() {
+            if (!providerId) {
+                alert("رابط غير صحيح (مفقود رقم المزود)");
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // Load provider info
+            const { data: provider, error } = await supabase
+                .from('providers')
+                .select('*')
+                .eq('id', providerId)
+                .single();
+
+            if (error || !provider) {
+                alert("مقدم الخدمة غير موجود");
+                window.location.href = 'index.html';
+                return;
+            }
+
+            document.getElementById('providerName').textContent = provider.name;
+            document.getElementById('providerAvatar').textContent = provider.name.substring(0, 2);
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('bookingContent').style.display = 'block';
+
+            generateDates();
+        }
+
+        function generateDates() {
+            const dateGrid = document.getElementById('dateGrid');
+            const today = new Date();
+            const days = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+
+            let html = '';
+            for (let i = 0; i < 6; i++) {
+                const d = new Date(today);
+                d.setDate(today.getDate() + i);
+
+                const dayName = i === 0 ? 'اليوم' : (i === 1 ? 'غداً' : days[d.getDay()]);
+                const dateStr = `${d.getDate()}/${d.getMonth() + 1}`;
+                const fullDate = d.toISOString().split('T')[0];
+
+                html += `
+                    <div class="date-card ${i === 0 ? 'selected' : ''}" onclick="selectDate(this, '${fullDate}', '${dayName}')">
+                        <div class="text-sm">${dayName}</div>
+                        <div class="font-bold">${dateStr}</div>
+                    </div>
+                `;
+
+                if (i === 0) selectedDate = { full: fullDate, display: dayName };
+            }
+            dateGrid.innerHTML = html;
+        }
+
+        function selectDate(el, full, display) {
+            document.querySelectorAll('.date-card').forEach(c => c.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedDate = { full, display };
+        }
+
+        function nextStep(step) {
+            // Validation
+            if (step === 3) {
+                const name = document.getElementById('customerName').value;
+                const phone = document.getElementById('customerPhone').value;
+                if (!name || !phone) {
+                    alert("الرجاء إدخال الاسم ورقم الهاتف");
+                    return;
+                }
+
+                // Populate Confirmation
+                document.getElementById('confirmProviderName').textContent = document.getElementById('providerName').textContent;
+                document.getElementById('confirmDate').textContent = selectedDate.full;
+                const time = document.querySelector('input[name="time"]:checked').value;
+                document.getElementById('confirmTime').textContent = time;
+
+                const city = document.getElementById('bgCity').value;
+                const details = document.getElementById('addressDetails').value;
+                document.getElementById('confirmLocation').textContent = `${city} - ${details}`;
+            }
+
+            // Hide all steps
+            document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+            // Show target step
+            document.getElementById('step-' + step).classList.add('active');
+
+            // Update indicators
+            if (step >= 2) {
+                document.getElementById('step2-indicator').style.background = 'var(--primary-600)';
+                document.getElementById('step2-indicator').style.color = 'white';
+            }
+            if (step >= 3) {
+                document.getElementById('step3-indicator').style.background = 'var(--primary-600)';
+                document.getElementById('step3-indicator').style.color = 'white';
+            }
+        }
+
+        async function finishBooking() {
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.textContent = 'جاري الإرسال...';
+            document.getElementById('errorMsg').style.display = 'none';
+
+            try {
+                // Get customer ID if logged in
+                const { data: { user } } = await supabase.auth.getUser();
+
+                const bookingData = {
+                    provider_id: providerId,
+                    customer_id: user ? user.id : null,
+                    customer_name: document.getElementById('customerName').value,
+                    customer_phone: document.getElementById('customerPhone').value,
+                    service_date: selectedDate.full,
+                    preferred_time: document.querySelector('input[name="time"]:checked').value,
+                    notes: document.getElementById('bookingNotes').value +
+                        `\nالعنوان: ${document.getElementById('bgCity').value} - ${document.getElementById('addressDetails').value}`,
+                    status: 'pending'
+                };
+
+                const { error } = await supabase
+                    .from('bookings')
+                    .insert([bookingData]);
+
+                if (error) throw error;
+
+                document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+                document.getElementById('success-screen').classList.add('active');
+
+            } catch (err) {
+                console.error(err);
+                document.getElementById('errorMsg').textContent = 'خطأ: ' + err.message;
+                document.getElementById('errorMsg').style.display = 'block';
+                btn.disabled = false;
+                btn.textContent = 'تأكيد الحجز ✅';
+            }
+        }
+
+        init();
+    </script>
+</body>
+
+</html>

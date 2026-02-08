@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>خدمتي - Khedmati</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&family=Inter:wght@400;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style_v2.css">
+</head>
+
+<body>
+
+    <div class="app-container">
+        <!-- Navbar (Desktop/Mobile Header) -->
+        <nav class="navbar" style="position: sticky; top:0;">
+            <div class="nav-container">
+                <a href="#" class="text-primary font-bold" style="font-size: 1.5rem; text-decoration:none;">خدمتي
+                    🛠️</a>
+                <div class="flex gap-2">
+                    <a href="login.html" class="btn btn-ghost text-sm">دخول</a>
+                    <a href="become-provider.html" class="btn btn-primary text-sm" style="width: auto;">انضم كمقدم
+                        خدمة</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Mobile Header (Simple) -->
+        <header class="p-4 flex justify-between items-center bg-white md:hidden"
+            style="border-bottom: 1px solid var(--neutral-100);">
+            <span class="text-primary font-bold" style="font-size: 1.25rem;">خدمتي 🛠️</span>
+            <a href="login.html" class="text-sm text-neutral-500" style="text-decoration:none">تسجيل دخول</a>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h1>خدمات صيانة منزلية <span class="text-primary">موثوقة</span></h1>
+                <p>سباكة، كهرباء، تنظيف.. محترفون بانتظارك في الأردن.</p>
+
+                <!-- Search Box -->
+                <div class="search-box">
+                    <div class="search-input-wrapper">
+                        <span class="search-icon-inside">🔍</span>
+                        <input type="text" class="search-input-field" placeholder="عن ماذا تبحث؟ (مثال: سباك)">
+                    </div>
+                </div>
+
+                <div class="flex gap-2 justify-center mt-3">
+                    <span class="badge badge-verified" style="background:white; border:1px solid #eee;">📍 عمان</span>
+                    <span class="badge badge-verified" style="background:white; border:1px solid #eee;">⚡ وصول
+                        سريع</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services Grid -->
+        <section class="section" style="background: var(--neutral-50);">
+            <div class="section-header">
+                <h2>خدماتنا</h2>
+                <p>الأكثر طلباً هذا الأسبوع</p>
+            </div>
+
+            <div class="services-grid">
+                <a href="booking_flow_demo.html" class="service-card" style="text-decoration: none; color: inherit;">
+                    <span class="service-icon">🔧</span>
+                    <h3>سباكة</h3>
+                </a>
+                <a href="booking_flow_demo.html" class="service-card" style="text-decoration: none; color: inherit;">
+                    <span class="service-icon">⚡</span>
+                    <h3>كهرباء</h3>
+                </a>
+                <a href="booking_flow_demo.html" class="service-card" style="text-decoration: none; color: inherit;">
+                    <span class="service-icon">❄️</span>
+                    <h3>تكييف</h3>
+                </a>
+                <a href="booking_flow_demo.html" class="service-card" style="text-decoration: none; color: inherit;">
+                    <span class="service-icon">🧹</span>
+                    <h3>تنظيف</h3>
+                </a>
+                <a href="booking_flow_demo.html" class="service-card" style="text-decoration: none; color: inherit;">
+                    <span class="service-icon">🔨</span>
+                    <h3>نجارة</h3>
+                </a>
+                <a href="booking_flow_demo.html" class="service-card" style="text-decoration: none; color: inherit;">
+                    <span class="service-icon">📦</span>
+                    <h3>نقل عفش</h3>
+                </a>
+            </div>
+        </section>
+
+        <!-- Trust Signals / Why Us -->
+        <section class="section bg-white">
+            <div class="section-header">
+                <h2>لماذا خدمتي؟</h2>
+            </div>
+            <div class="flex flex-col gap-4">
+                <div class="flex items-center gap-4 p-4 border rounded-lg">
+                    <span style="font-size: 2rem;">🛡️</span>
+                    <div>
+                        <h3>مقدمون موثوقون</h3>
+                        <p class="text-sm">نتحقق من الهوية والسجل الجنائي لكل مقدم خدمة</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 p-4 border rounded-lg">
+                    <span style="font-size: 2rem;">⭐</span>
+                    <div>
+                        <h3>تقييمات حقيقية</h3>
+                        <p class="text-sm">لا تقبل التقييمات إلا من عملاء حقيقيين</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 p-4 border rounded-lg">
+                    <span style="font-size: 2rem;">⏩</span>
+                    <div>
+                        <h3>سرعة في الوصول</h3>
+                        <p class="text-sm">نصلك في أقل من 60 دقيقة للحالات الطارئة</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-links">
+                <a href="#">من نحن</a>
+                <a href="#">الشروط</a>
+                <a href="#">الخصوصية</a>
+            </div>
+            <p class="text-xs text-neutral-500">© 2026 خدمتي. صنع بحب في الأردن.</p>
+        </footer>
+
+        <!-- Bottom Navigation (Mobile) -->
+        <nav class="bottom-nav">
+            <a href="index_ui.html" class="nav-item active">
+                <span class="nav-icon">🏠</span>
+                <span>الرئيسية</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">📅</span>
+                <span>حجوزاتي</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">💬</span>
+                <span>الرسائل</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">👤</span>
+                <span>حسابي</span>
+            </a>
+        </nav>
+
+    </div>
+</body>
+
+</html>

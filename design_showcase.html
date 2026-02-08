@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khedmati Design System Showcase</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&family=Inter:wght@400;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style_v2.css">
+</head>
+
+<body style="background-color: #e5e5e5;">
+
+    <div class="app-container">
+        <!-- Header -->
+        <header class="p-4 flex items-center justify-between"
+            style="background: var(--white); border-bottom: 1px solid var(--neutral-100);">
+            <h1 style="font-size: 1.5rem; margin:0;" class="text-primary">خدمتي <span style="font-size:1rem">🎨</span>
+            </h1>
+            <div class="badge badge-verified">عرض التصميم</div>
+        </header>
+
+        <main class="p-4">
+
+            <!-- Typography -->
+            <section class="mb-4">
+                <h2 class="mb-4">1. الطباعة (Typography)</h2>
+                <div class="card">
+                    <h1>عنوان رئيسي H1</h1>
+                    <h2>عنوان قسم H2</h2>
+                    <h3>عنوان بطاقة H3</h3>
+                    <p>هذا نص فقرة عادي. يستخدم لعرض المحتوى التفصيلي والوصف. الخط المستخدم هو "تجوال" لضمان القراءة
+                        السهلة والجمالية العربية.</p>
+                    <p class="text-xs text-center" style="margin-top:8px;">نص صغير للمساعدة (Helper Text)</p>
+                </div>
+            </section>
+
+            <!-- Buttons -->
+            <section class="mb-4">
+                <h2 class="mb-4">2. الأزرار (Buttons)</h2>
+                <div class="card flex flex-col gap-2">
+                    <button class="btn btn-primary">تأكيد الحجز</button>
+                    <button class="btn btn-secondary">إلغاء الأمر</button>
+                    <button class="btn btn-ghost">تخطِ الآن</button>
+                </div>
+            </section>
+
+            <!-- Inputs -->
+            <section class="mb-4">
+                <h2 class="mb-4">3. حقول الإدخال (Forms)</h2>
+                <div class="card">
+                    <div class="form-group">
+                        <label class="label">الاسم الكامل</label>
+                        <input type="text" class="input" placeholder="مثال: أحمد محمد">
+                    </div>
+                    <div class="form-group">
+                        <label class="label">رقم الهاتف</label>
+                        <input type="tel" class="input" placeholder="079XXXXXXX"
+                            style="font-family: var(--font-secondary);">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Components: Service Card -->
+            <section class="mb-4">
+                <h2 class="mb-4">4. بطاقات الخدمات</h2>
+                <div class="grid grid-cols-2 gap-2">
+                    <div class="service-card">
+                        <span class="service-icon">⚡</span>
+                        <h3>كهربائي</h3>
+                        <p class="text-xs">صيانة وتمديد</p>
+                    </div>
+                    <div class="service-card" style="border-color: var(--primary-500); background: var(--primary-50);">
+                        <span class="service-icon">❄️</span>
+                        <h3>تكييف</h3>
+                        <p class="text-xs">تنظيف وتبريد</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Components: Provider Card -->
+            <section class="mb-4">
+                <h2 class="mb-4">5. بطاقة مقدم خدمة</h2>
+                <div class="card provider-card mb-4">
+                    <img src="https://via.placeholder.com/60" alt="Avatar" class="provider-avatar">
+                    <div style="flex:1">
+                        <div class="flex items-center justify-between">
+                            <h3 style="margin:0; font-size: 1.1rem;">أحمد العمري <span class="verified-icon">✓</span>
+                            </h3>
+                            <div class="badge badge-rating"><span class="star">★</span> 4.9</div>
+                        </div>
+                        <p class="text-sm text-primary font-bold">سباك محترف</p>
+                        <p class="text-xs" style="margin-top:4px;">📍 عمان، الجبيهة • 🕑 يصل خلال ساعة</p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="#" class="nav-item active">
+                <span class="nav-icon">🏠</span>
+                <span>الرئيسية</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">📅</span>
+                <span>حجوزاتي</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">👤</span>
+                <span>حسابي</span>
+            </a>
+        </nav>
+    </div>
+
+</body>
+
+</html>
