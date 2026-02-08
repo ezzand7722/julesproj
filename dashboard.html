@@ -72,6 +72,9 @@
                 <div class="stat-card-info">
                     <h3 id="creditsBalance">--</h3>
                     <p>رصيدك الحالي</p>
+                    <button class="btn-small" onclick="openTopUpModal()"
+                        style="margin-top: 5px; background: var(--primary); color: white; border: none; cursor: pointer;">+
+                        شحن الرصيد</button>
                 </div>
             </div>
             <div class="stat-card">
@@ -79,6 +82,56 @@
                 <div class="stat-card-info">
                     <h3 id="avgRating">0.0</h3>
                     <p>تقييمك</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Up Modal -->
+        <div id="topUpModal" class="modal"
+            style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+            <div class="modal-content"
+                style="background: white; padding: 2rem; border-radius: 12px; width: 90%; max-width: 500px; position: relative;">
+                <button onclick="closeTopUpModal()"
+                    style="position: absolute; top: 10px; left: 10px; background: none; border: none; font-size: 1.5rem; cursor: pointer;">✕</button>
+                <h2 style="margin-bottom: 1.5rem; text-align: center;">شحن رصيد المحفظة 💰</h2>
+
+                <div class="packages-grid" style="display: grid; gap: 1rem;">
+                    <div class="package-card" onclick="selectPackage(10, 'Starter', 5)"
+                        style="border: 2px solid #eee; padding: 1rem; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h3 style="margin: 0;">باقة البداية</h3>
+                            <p style="margin: 0; color: #666;">10 عملات</p>
+                        </div>
+                        <div class="price" style="font-weight: bold; color: var(--primary);">5 JD</div>
+                    </div>
+
+                    <div class="package-card" onclick="selectPackage(50, 'Pro', 20)"
+                        style="border: 2px solid var(--primary); background: var(--primary-50); padding: 1rem; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h3 style="margin: 0;">باقة المحترفين 🔥</h3>
+                            <p style="margin: 0; color: #666;">50 عملة</p>
+                        </div>
+                        <div class="price" style="font-weight: bold; color: var(--primary);">20 JD</div>
+                    </div>
+
+                    <div class="package-card" onclick="selectPackage(100, 'Business', 35)"
+                        style="border: 2px solid #eee; padding: 1rem; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h3 style="margin: 0;">باقة الأعمال</h3>
+                            <p style="margin: 0; color: #666;">100 عملة</p>
+                        </div>
+                        <div class="price" style="font-weight: bold; color: var(--primary);">35 JD</div>
+                    </div>
+                </div>
+
+                <div id="paymentForm"
+                    style="display: none; margin-top: 1.5rem; border-top: 1px solid #eee; padding-top: 1rem;">
+                    <h4 style="margin-bottom: 1rem;">تفاصيل الدفع (محاكاة) 💳</h4>
+                    <p class="text-sm text-neutral-500 mb-2">سيتم خصم <span id="selectedPrice">0</span> JD</p>
+                    <button id="payBtn" class="btn btn-primary btn-block" onclick="processPayment()">تأكيد
+                        الدفع</button>
+                    <button class="btn btn-ghost btn-block" onclick="cancelPayment()" style="margin-top: 0.5rem;">تغيير
+                        الباقة</button>
                 </div>
             </div>
         </div>

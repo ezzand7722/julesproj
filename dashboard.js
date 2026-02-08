@@ -496,3 +496,82 @@ function showNotification(message, type = 'info') {
         setTimeout(() => notification.remove(), 400);
     }, 3000);
 }
+
+// --- Top Up Logic ---
+let selectedPackageData = null;
+
+window.openTopUpModal = function () {
+    document.getElementById('topUpModal').style.display = 'flex';
+    document.getElementById('paymentForm').style.display = 'none';
+    selectedPackageData = null;
+    // Reset selection styles
+    document.querySelectorAll('.package-card').forEach(c => {
+        c.style.borderColor = '#eee';
+        c.style.backgroundColor = 'white';
+    });
+}
+
+window.closeTopUpModal = function () {
+    document.getElementById('topUpModal').style.display = 'none';
+}
+
+window.selectPackage = function (amount, name, price) {
+    selectedPackageData = { amount, name, price };
+
+    // Highlight selection
+    document.querySelectorAll('.package-card').forEach(c => {
+        c.style.borderColor = '#eee';
+        c.style.backgroundColor = 'white';
+    });
+    event.currentTarget.style.borderColor = 'var(--primary)';
+    event.currentTarget.style.backgroundColor = 'var(--primary-50)';
+
+    // Show form
+    document.getElementById('paymentForm').style.display = 'block';
+    document.getElementById('selectedPrice').textContent = price;
+
+    // Smooth scroll to form
+    document.getElementById('paymentForm').scrollIntoView({ behavior: 'smooth' });
+}
+
+window.cancelPayment = function () {
+    document.getElementById('paymentForm').style.display = 'none';
+    selectedPackageData = null;
+    document.querySelectorAll('.package-card').forEach(c => {
+        c.style.borderColor = '#eee';
+        c.style.backgroundColor = 'white';
+    });
+}
+
+window.processPayment = async function () {
+    if (!selectedPackageData) return;
+
+    const btn = document.getElementById('payBtn');
+    btn.disabled = true;
+    btn.textContent = 'جاري معالجة الدفع...';
+
+    try {
+        // Simulate payment delay
+        await new Promise(r => setTimeout(r, 1500));
+
+        // Call Backend to Add Credits
+        const { data, error } = await supabaseDashboard
+            .rpc('add_credits', {
+                amount: selectedPackageData.amount,
+                package_name: selectedPackageData.name
+            });
+
+        if (error) throw error;
+
+        showNotification(`تم شحن ${selectedPackageData.amount} عملة بنجاح! 🎉`, 'success');
+        closeTopUpModal();
+        loadCredits(); // Refresh balance
+
+    } catch (err) {
+        console.error('Payment failed:', err);
+        showNotification('فشل عملية الدفع: ' + err.message, 'error');
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'تأكيد الدفع';
+    }
+}

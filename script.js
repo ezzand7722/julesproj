@@ -369,10 +369,18 @@ function setupEventListeners() {
     }
 }
 
-async function performSearch() {
-    const search = document.getElementById('searchInput').value.trim();
-    const city = document.getElementById('locationSelect').value;
+async function performSearch(queryOverride = null) {
+    const searchInput = document.getElementById('searchInput');
+    const locationSelect = document.getElementById('locationSelect');
     const neighborhoodSelect = document.getElementById('neighborhoodSelect');
+
+    // Use override if provided, otherwise check input if it exists, otherwise empty
+    let search = queryOverride;
+    if (search === null) {
+        search = searchInput ? searchInput.value.trim() : '';
+    }
+
+    const city = locationSelect ? locationSelect.value : '';
     const neighborhood = neighborhoodSelect ? neighborhoodSelect.value : '';
 
     showNotification('جاري البحث...', 'info');
@@ -380,15 +388,21 @@ async function performSearch() {
     await loadProviders({ search, city, neighborhood });
 
     // Scroll to providers section
-    document.getElementById('providers').scrollIntoView({ behavior: 'smooth' });
+    const providersSection = document.getElementById('providers');
+    if (providersSection) {
+        providersSection.scrollIntoView({ behavior: 'smooth' });
+    }
 
     const count = allProviders.length;
     showNotification(`تم العثور على ${count} نتيجة! 🎉`, 'success');
 }
 
 function filterByService(serviceName) {
-    document.getElementById('searchInput').value = serviceName;
-    performSearch();
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.value = serviceName;
+    }
+    performSearch(serviceName);
 }
 
 // AI Matchmaking Logic

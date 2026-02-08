@@ -1,0 +1,174 @@
+/* Circular Menu Styles */
+.circular-menu-container {
+    position: relative;
+    width: 600px;
+    height: 600px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    /* Connecting ring */
+    border: 30px solid rgba(255, 255, 255, 0.4);
+    /* Semi-transparent white ring */
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05), inset 0 0 20px rgba(0, 0, 0, 0.05);
+}
+
+.center-logo {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1), inset 0 0 0 5px #f0f9ff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    border: 5px solid #0e3b5e;
+    background: white;
+}
+
+.center-logo img {
+    width: 80px;
+    height: auto;
+    margin-bottom: 10px;
+}
+
+.center-logo h1 {
+    font-size: 1.8rem;
+    color: #0e3b5e;
+    /* Dark Blue */
+    margin: 0;
+    line-height: 1;
+    font-weight: 800;
+}
+
+.center-logo p {
+    font-size: 1.2rem;
+    color: #0e3b5e;
+    margin: 0;
+    font-weight: 700;
+}
+
+.service-item {
+    position: absolute;
+    width: 110px;
+    height: 110px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 3px solid #0e3b5e;
+    /* Theme color border */
+    text-decoration: none;
+    color: #333;
+}
+
+.service-item:hover {
+    transform: scale(1.15) !important;
+    /* Scale up on hover, keeping position */
+    box-shadow: 0 8px 25px rgba(14, 59, 94, 0.25);
+    z-index: 20;
+    background: #0e3b5e;
+    color: white;
+}
+
+.service-item .icon {
+    font-size: 2.5rem;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.service-item .label {
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-align: center;
+    line-height: 1.2;
+}
+
+/* Positioning around the circle (approximate degrees for 7 items) */
+/* Radius = 220px */
+
+/* Item 1: Top (Mechanic) */
+.service-item:nth-child(2) {
+    transform: translate(0, -220px);
+}
+
+/* Item 2: Top Right (Electrician) */
+.service-item:nth-child(3) {
+    transform: translate(170px, -110px);
+}
+
+/* Item 3: Bottom Right (Teacher) */
+.service-item:nth-child(4) {
+    transform: translate(200px, 60px);
+}
+
+/* Item 4: Bottom Right (Teacher Female?) / Generic */
+.service-item:nth-child(5) {
+    transform: translate(100px, 190px);
+}
+
+/* Item 5: Bottom Left (Cleaner) */
+.service-item:nth-child(6) {
+    transform: translate(-100px, 190px);
+}
+
+/* Item 6: Left (Painter) */
+.service-item:nth-child(7) {
+    transform: translate(-200px, 60px);
+}
+
+/* Item 7: Top Left (Plumber) */
+.service-item:nth-child(8) {
+    transform: translate(-170px, -110px);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .circular-menu-container {
+        width: 100%;
+        height: auto;
+        flex-direction: column;
+        gap: 20px;
+        padding: 40px 20px;
+        border-radius: 0;
+    }
+
+    .center-logo {
+        position: relative;
+        transform: none !important;
+        margin-bottom: 30px;
+        width: 160px;
+        height: 160px;
+    }
+
+    .service-item {
+        position: relative;
+        transform: none !important;
+        /* Reset positioning */
+        width: 100%;
+        max-width: 300px;
+        height: 80px;
+        border-radius: 12px;
+        flex-direction: row;
+        justify-content: flex-start;
+        padding: 0 20px;
+        gap: 15px;
+    }
+
+    .service-item:hover {
+        transform: scale(1.02) !important;
+    }
+
+    .service-item .icon {
+        margin-bottom: 0;
+    }
+}

@@ -53,54 +53,63 @@
         </div>
     </nav>
 
-    <section class="hero">
+    <link rel="stylesheet" href="circular-menu.css">
+    <section class="hero" style="min-height: 800px; display: flex; align-items: center; overflow: hidden;">
         <div class="hero-bg">
             <div class="hero-gradient"></div>
-            <div class="floating-shapes">
-                <div class="shape shape-1"></div>
-                <div class="shape shape-2"></div>
-                <div class="shape shape-3"></div>
-            </div>
+            <!-- Retain shapes if desired, or remove for cleaner look -->
         </div>
-        <div class="hero-content">
-            <h1>اعثر على أفضل <span class="highlight">الخدمات المحلية</span> في الأردن</h1>
-            <p class="hero-subtitle">من الصيانة المنزلية إلى الدروس الخصوصية - نربطك بمحترفين موثوقين</p>
-            <div class="search-box">
-                <div class="search-input-wrapper">
-                    <span class="search-icon">🔍</span>
-                    <input type="text" class="search-input" id="searchInput"
-                        placeholder="ابحث عن خدمة... سباك، كهربائي، معلم">
-                </div>
-                <div class="location-wrapper">
-                    <span class="location-icon">📍</span>
-                    <select class="location-select" id="locationSelect" onchange="updateNeighborhoods()">
-                        <option value="">كل المناطق</option>
-                        <option value="عمان">عمّان</option>
-                        <option value="اربد">إربد</option>
-                        <option value="الزرقاء">الزرقاء</option>
-                        <option value="العقبة">العقبة</option>
-                    </select>
-                </div>
-                <div class="location-wrapper" id="neighborhoodWrapper" style="display: none;">
-                    <span class="location-icon">🏘️</span>
-                    <select class="location-select" id="neighborhoodSelect">
-                        <option value="">كل الأحياء</option>
-                    </select>
-                </div>
-                <button class="search-btn" id="searchBtn">ابحث الآن</button>
-                <button type="button" class="ai-search-btn" onclick="openAIModal()" title="بحث ذكي">🤖</button>
+
+        <div class="circular-menu-container">
+            <!-- Center Logo -->
+            <div class="center-logo">
+                <div style="font-size: 3rem; margin-bottom: 10px;">🛠️</div>
+                <h1>Khedmati</h1>
+                <p>خدمتي</p>
             </div>
 
+            <!-- Service Items -->
+            <!-- 1. Mechanic -->
+            <a href="javascript:void(0)" onclick="filterByService('ميكانيك')" class="service-item">
+                <span class="icon">🔧</span>
+                <span class="label">ميكانيكي</span>
+            </a>
 
-            <div class="hero-stats">
-                <div class="stat"><span class="stat-number" id="providerCount">0</span><span class="stat-label">مقدم
-                        خدمة</span></div>
-                <div class="stat-divider"></div>
-                <div class="stat"><span class="stat-number" id="bookingCount">0</span><span class="stat-label">حجز
-                        ناجح</span></div>
-                <div class="stat-divider"></div>
-                <div class="stat"><span class="stat-number">4.8⭐</span><span class="stat-label">تقييم متوسط</span></div>
-            </div>
+            <!-- 2. Electrician -->
+            <a href="javascript:void(0)" onclick="filterByService('كهرباء')" class="service-item">
+                <span class="icon">⚡</span>
+                <span class="label">كهربائية</span>
+            </a>
+
+            <!-- 3. Teacher (Male) -->
+            <a href="javascript:void(0)" onclick="filterByService('تعليم')" class="service-item">
+                <span class="icon">👨‍🏫</span>
+                <span class="label">معلم</span>
+            </a>
+
+            <!-- 4. Teacher (Female) / Education -->
+            <a href="javascript:void(0)" onclick="filterByService('تعليم')" class="service-item">
+                <span class="icon">👩‍🏫</span>
+                <span class="label">معلمة</span>
+            </a>
+
+            <!-- 5. Cleaner -->
+            <a href="javascript:void(0)" onclick="filterByService('تنظيف')" class="service-item">
+                <span class="icon">🧹</span>
+                <span class="label">عاملة نظافة</span>
+            </a>
+
+            <!-- 6. Painter -->
+            <a href="javascript:void(0)" onclick="filterByService('دهان')" class="service-item">
+                <span class="icon">🎨</span>
+                <span class="label">دهان</span>
+            </a>
+
+            <!-- 7. Plumber -->
+            <a href="javascript:void(0)" onclick="filterByService('سباكة')" class="service-item">
+                <span class="icon">🚰</span>
+                <span class="label">سباكة</span>
+            </a>
         </div>
     </section>
 
