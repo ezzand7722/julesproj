@@ -4,9 +4,7 @@
     width: 600px;
     height: 600px;
     margin: 0 auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    /* Removed flex centering for container to use absolute positioning strictly */
     border-radius: 50%;
     /* Connecting ring */
     border: 30px solid rgba(255, 255, 255, 0.4);
@@ -16,6 +14,8 @@
 
 .center-logo {
     position: absolute;
+    top: 50%;
+    left: 50%;
     width: 200px;
     height: 200px;
     background: white;
@@ -27,7 +27,7 @@
     align-items: center;
     z-index: 10;
     border: 5px solid #0e3b5e;
-    background: white;
+    transform: translate(-50%, -50%);
 }
 
 .center-logo img {
@@ -69,11 +69,13 @@
     /* Theme color border */
     text-decoration: none;
     color: #333;
+    /* Key change: default transform is centering only */
+    transform: translate(-50%, -50%);
 }
 
 .service-item:hover {
-    transform: scale(1.15) !important;
-    /* Scale up on hover, keeping position */
+    /* Key change: scale combined with the base translate */
+    transform: translate(-50%, -50%) scale(1.15);
     box-shadow: 0 8px 25px rgba(14, 59, 94, 0.25);
     z-index: 20;
     background: #0e3b5e;
@@ -93,42 +95,50 @@
     line-height: 1.2;
 }
 
-/* Positioning around the circle (approximate degrees for 7 items) */
-/* Radius = 220px */
+/* Positioning around the circle using Top/Left */
+/* Center is 50%, 50% */
+/* Radius approx 220px */
 
-/* Item 1: Top (Mechanic) */
+/* Item 1: Top (Mechanic) -> 0, -220 */
 .service-item:nth-child(2) {
-    transform: translate(0, -220px);
+    top: calc(50% - 220px);
+    left: 50%;
 }
 
-/* Item 2: Top Right (Electrician) */
+/* Item 2: Top Right (Electrician) -> 170, -110 */
 .service-item:nth-child(3) {
-    transform: translate(170px, -110px);
+    top: calc(50% - 110px);
+    left: calc(50% + 170px);
 }
 
-/* Item 3: Bottom Right (Teacher) */
+/* Item 3: Bottom Right (Teacher) -> 200, 60 */
 .service-item:nth-child(4) {
-    transform: translate(200px, 60px);
+    top: calc(50% + 60px);
+    left: calc(50% + 200px);
 }
 
-/* Item 4: Bottom Right (Teacher Female?) / Generic */
+/* Item 4: Bottom Right (Teacher Female?) / Generic -> 100, 190 */
 .service-item:nth-child(5) {
-    transform: translate(100px, 190px);
+    top: calc(50% + 190px);
+    left: calc(50% + 100px);
 }
 
-/* Item 5: Bottom Left (Cleaner) */
+/* Item 5: Bottom Left (Cleaner) -> -100, 190 */
 .service-item:nth-child(6) {
-    transform: translate(-100px, 190px);
+    top: calc(50% + 190px);
+    left: calc(50% - 100px);
 }
 
-/* Item 6: Left (Painter) */
+/* Item 6: Left (Painter) -> -200, 60 */
 .service-item:nth-child(7) {
-    transform: translate(-200px, 60px);
+    top: calc(50% + 60px);
+    left: calc(50% - 200px);
 }
 
-/* Item 7: Top Left (Plumber) */
+/* Item 7: Top Left (Plumber) -> -170, -110 */
 .service-item:nth-child(8) {
-    transform: translate(-170px, -110px);
+    top: calc(50% - 110px);
+    left: calc(50% - 170px);
 }
 
 /* Mobile Responsiveness */
@@ -137,14 +147,19 @@
         width: 100%;
         height: auto;
         flex-direction: column;
+        display: flex;
         gap: 20px;
         padding: 40px 20px;
         border-radius: 0;
+        border: none;
+        box-shadow: none;
     }
 
     .center-logo {
         position: relative;
-        transform: none !important;
+        top: auto;
+        left: auto;
+        transform: none;
         margin-bottom: 30px;
         width: 160px;
         height: 160px;
@@ -152,6 +167,8 @@
 
     .service-item {
         position: relative;
+        top: auto !important;
+        left: auto !important;
         transform: none !important;
         /* Reset positioning */
         width: 100%;
