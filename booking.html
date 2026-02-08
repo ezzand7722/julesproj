@@ -222,7 +222,7 @@
     <script>
         const SUPABASE_URL = 'https://rkhkvmcnjuwoxammhsqn.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJraGt2bWNuanV3b3hhbW1oc3FuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAzODk0MjcsImV4cCI6MjA4NTk2NTQyN30.iGTVKa7iap8MLZ8v0efCvzsqzviNBbacVfEDxQGDsZQ';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const supabaseBookingClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         const urlParams = new URLSearchParams(window.location.search);
         const providerId = urlParams.get('provider_id');
@@ -237,7 +237,7 @@
             }
 
             // Load provider info
-            const { data: provider, error } = await supabase
+            const { data: provider, error } = await supabaseBookingClient
                 .from('providers')
                 .select('*')
                 .eq('id', providerId)
@@ -334,7 +334,7 @@
 
             try {
                 // Get customer ID if logged in
-                const { data: { user } } = await supabase.auth.getUser();
+                const { data: { user } } = await supabaseBookingClient.auth.getUser();
 
                 const bookingData = {
                     provider_id: providerId,
@@ -348,7 +348,7 @@
                     status: 'pending'
                 };
 
-                const { error } = await supabase
+                const { error } = await supabaseBookingClient
                     .from('bookings')
                     .insert([bookingData]);
 
