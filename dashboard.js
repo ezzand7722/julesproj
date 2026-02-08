@@ -110,8 +110,33 @@ async function updateUI() {
 
     document.getElementById('avgRating').textContent = currentProvider.rating || '4.0';
 
+    // Fetch and display credits
+    await loadCredits();
+
     // Load services
     await loadServices();
+}
+
+async function loadCredits() {
+    try {
+        const { data: profile, error } = await supabaseDashboard
+            .from('profiles')
+            .select('credits_balance')
+            .eq('id', currentUser.id)
+            .single();
+
+        if (profile) {
+            document.getElementById('creditsBalance').textContent = profile.credits_balance + ' عملة';
+
+            // Visual warning if low
+            const card = document.getElementById('creditsBalance').closest('.stat-card');
+            if (profile.credits_balance < 2) {
+                card.style.border = '2px solid red';
+            }
+        }
+    } catch (err) {
+        console.error('Error loading credits:', err);
+    }
 }
 
 // Load Services
@@ -325,10 +350,17 @@ async function updateBookingStatus(id, status) {
         .eq('id', id);
 
     if (error) {
-        showNotification('فشل تحديث الحالة', 'error');
+        console.error('Update status error:', error);
+        // Supabase trigger errors often come in error.message
+        if (error.message && error.message.includes('رصيدك غير كافي')) {
+            alert('⚠️ ' + error.message + '\n\nيجب عليك شحن رصيدك لتتمكن من قبول المزيد من الحجوزات.');
+        } else {
+            showNotification('فشل تحديث الحالة: ' + error.message, 'error');
+        }
     } else {
         showNotification('تم تحديث الحالة بنجاح', 'success');
         loadBookings();
+        loadCredits(); // Refresh credits
     }
 }
 
