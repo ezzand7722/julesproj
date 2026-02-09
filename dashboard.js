@@ -499,20 +499,44 @@ function showNotification(message, type = 'info') {
 
 // --- Top Up Logic ---
 let selectedPackageData = null;
+let selectedPaymentMethod = null;
+let currentPaymentId = null;
 
 window.openTopUpModal = function () {
     document.getElementById('topUpModal').style.display = 'flex';
-    document.getElementById('paymentForm').style.display = 'none';
-    selectedPackageData = null;
+    resetTopUpModal();
+}
+
+window.closeTopUpModal = function () {
+    document.getElementById('topUpModal').style.display = 'none';
+    resetTopUpModal();
+}
+
+function resetTopUpModal() {
+    // Reset all steps
+    document.getElementById('step1').style.display = 'block';
+    document.getElementById('step2').style.display = 'none';
+    document.getElementById('step3').style.display = 'none';
+    document.getElementById('processingStep').style.display = 'none';
+    
     // Reset selection styles
     document.querySelectorAll('.package-card').forEach(c => {
         c.style.borderColor = '#eee';
         c.style.backgroundColor = 'white';
     });
-}
-
-window.closeTopUpModal = function () {
-    document.getElementById('topUpModal').style.display = 'none';
+    
+    document.querySelectorAll('.payment-method-card').forEach(c => {
+        c.classList.remove('selected');
+    });
+    
+    // Hide all payment forms
+    document.querySelectorAll('.payment-form').forEach(f => {
+        f.style.display = 'none';
+    });
+    
+    selectedPackageData = null;
+    selectedPaymentMethod = null;
+    currentPaymentId = null;
 }
 
 window.selectPackage = function (amount, name, price) {
@@ -526,27 +550,261 @@ window.selectPackage = function (amount, name, price) {
     event.currentTarget.style.borderColor = 'var(--primary)';
     event.currentTarget.style.backgroundColor = 'var(--primary-50)';
 
-    // Show form
-    document.getElementById('paymentForm').style.display = 'block';
-    document.getElementById('selectedPrice').textContent = price;
-
-    // Smooth scroll to form
-    document.getElementById('paymentForm').scrollIntoView({ behavior: 'smooth' });
+    // Wait a bit then move to step 2
+    setTimeout(() => {
+        document.getElementById('step1').style.display = 'none';
+        document.getElementById('step2').style.display = 'block';
+        document.getElementById('selectedPrice').textContent = price;
+        document.getElementById('selectedPackageName').textContent = name;
+    }, 300);
 }
 
-window.cancelPayment = function () {
-    document.getElementById('paymentForm').style.display = 'none';
-    selectedPackageData = null;
-    document.querySelectorAll('.package-card').forEach(c => {
-        c.style.borderColor = '#eee';
-        c.style.backgroundColor = 'white';
+window.backToPackages = function () {
+    document.getElementById('step2').style.display = 'none';
+    document.getElementById('step1').style.display = 'block';
+    selectedPaymentMethod = null;
+}
+
+window.selectPaymentMethod = function (method) {
+    selectedPaymentMethod = method;
+    
+    // Highlight selection
+    document.querySelectorAll('.payment-method-card').forEach(c => {
+        c.classList.remove('selected');
     });
+    event.currentTarget.classList.add('selected');
+    
+    // Wait a bit then move to step 3
+    setTimeout(() => {
+        document.getElementById('step2').style.display = 'none';
+        document.getElementById('step3').style.display = 'block';
+        
+        // Show appropriate form
+        document.querySelectorAll('.payment-form').forEach(f => {
+            f.style.display = 'none';
+        });
+        
+        if (method === 'credit_card') {
+            document.getElementById('creditCardForm').style.display = 'block';
+        } else if (method === 'cliq') {
+            document.getElementById('cliqForm').style.display = 'block';
+        } else if (method === 'orange_money') {
+            document.getElementById('orangeMoneyForm').style.display = 'block';
+        } else if (method === 'uwallet') {
+            document.getElementById('uwalletForm').style.display = 'block';
+        }
+    }, 300);
 }
 
+window.backToPaymentMethods = function () {
+    document.getElementById('step3').style.display = 'none';
+    document.getElementById('step2').style.display = 'block';
+}
+
+function showProcessingStep(message) {
+    document.getElementById('step3').style.display = 'none';
+    document.getElementById('processingStep').style.display = 'block';
+    document.getElementById('processingMessage').textContent = message;
+}
+
+// Credit Card Payment
+window.processCreditCardPayment = async function () {
+    const btn = document.getElementById('payBtnCard');
+    btn.disabled = true;
+    btn.textContent = 'جاري الاتصال بمزود الدفع...';
+    
+    try {
+        showProcessingStep('جاري فتح صفحة الدفع الآمنة...');
+        
+        const result = await window.PaymentGateway.initCreditCardPayment(
+            selectedPackageData.price,
+            selectedPackageData.name,
+            currentUser.email
+        );
+        
+        if (result.success) {
+            currentPaymentId = result.paymentId;
+            
+            // In production, open payment gateway URL
+            // window.open(result.paymentUrl, '_blank');
+            
+            // For demo, simulate successful payment
+            setTimeout(async () => {
+                await simulatePaymentCompletion();
+            }, 3000);
+        }
+    } catch (error) {
+        console.error('Credit card payment error:', error);
+        showNotification('فشل الاتصال بمزود الدفع: ' + error.message, 'error');
+        backToPaymentMethods();
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'متابعة للدفع الآمن 🔒';
+    }
+}
+
+// CliQ Payment
+window.processCliqPayment = async function () {
+    const phone = document.getElementById('cliqPhone').value;
+    
+    if (!phone || !/^0[0-9]{9}$/.test(phone)) {
+        showNotification('يرجى إدخال رقم موبايل صحيح', 'error');
+        return;
+    }
+    
+    const btn = document.getElementById('payBtnCliq');
+    btn.disabled = true;
+    btn.textContent = 'جاري إرسال الطلب...';
+    
+    try {
+        showProcessingStep('جاري إرسال طلب الدفع إلى البنك...');
+        
+        const result = await window.PaymentGateway.initCliqPayment(
+            selectedPackageData.price,
+            selectedPackageData.name,
+            phone,
+            supabaseDashboard
+        );
+        
+        if (result.success) {
+            currentPaymentId = result.paymentId;
+            showProcessingStep(result.instructions || 'يرجى الموافقة من تطبيق البنك');
+            
+            // For demo, simulate approval after 5 seconds
+            setTimeout(async () => {
+                await simulatePaymentCompletion();
+            }, 5000);
+        }
+    } catch (error) {
+        console.error('CliQ payment error:', error);
+        showNotification('فشلت عملية الدفع: ' + error.message, 'error');
+        backToPaymentMethods();
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'إرسال طلب الدفع';
+    }
+}
+
+// Orange Money Payment
+window.processOrangeMoneyPayment = async function () {
+    const phone = document.getElementById('orangePhone').value;
+    
+    if (!phone || !/^(078|079)[0-9]{7}$/.test(phone)) {
+        showNotification('يرجى إدخال رقم Orange صحيح', 'error');
+        return;
+    }
+    
+    const btn = document.getElementById('payBtnOrange');
+    btn.disabled = true;
+    btn.textContent = 'جاري المعالجة...';
+    
+    try {
+        showProcessingStep('جاري إرسال رمز التأكيد...');
+        
+        const result = await window.PaymentGateway.initOrangeMoneyPayment(
+            selectedPackageData.price,
+            selectedPackageData.name,
+            phone,
+            supabaseDashboard
+        );
+        
+        if (result.success) {
+            currentPaymentId = result.paymentId;
+            showProcessingStep(result.instructions || 'سيصلك رمز التأكيد عبر SMS');
+            
+            // For demo, simulate success
+            setTimeout(async () => {
+                await simulatePaymentCompletion();
+            }, 4000);
+        }
+    } catch (error) {
+        console.error('Orange Money payment error:', error);
+        showNotification('فشلت عملية الدفع: ' + error.message, 'error');
+        backToPaymentMethods();
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'تأكيد الدفع';
+    }
+}
+
+// uWallet Payment
+window.processUWalletPayment = async function () {
+    const account = document.getElementById('uwalletAccount').value;
+    
+    if (!account || account.trim().length === 0) {
+        showNotification('يرجى إدخال رقم الحساب', 'error');
+        return;
+    }
+    
+    const btn = document.getElementById('payBtnUwallet');
+    btn.disabled = true;
+    btn.textContent = 'جاري المعالجة...';
+    
+    try {
+        showProcessingStep('جاري الاتصال بمحفظة uWallet...');
+        
+        const result = await window.PaymentGateway.initUWalletPayment(
+            selectedPackageData.price,
+            selectedPackageData.name,
+            account,
+            supabaseDashboard
+        );
+        
+        if (result.success) {
+            currentPaymentId = result.paymentId;
+            showProcessingStep('جاري تأكيد الدفع...');
+            
+            // For demo, simulate success
+            setTimeout(async () => {
+                await simulatePaymentCompletion();
+            }, 3000);
+        }
+    } catch (error) {
+        console.error('uWallet payment error:', error);
+        showNotification('فشلت عملية الدفع: ' + error.message, 'error');
+        backToPaymentMethods();
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'تأكيد الدفع';
+    }
+}
+
+// Simulate payment completion (for demo purposes)
+async function simulatePaymentCompletion() {
+    try {
+        // Use the simulate function or directly confirm
+        // In production, this would be called from a webhook/callback
+        const result = await window.PaymentGateway.simulatePaymentSuccess(
+            currentPaymentId,
+            selectedPackageData.amount,
+            selectedPackageData.name,
+            supabaseDashboard
+        );
+        
+        if (result.success) {
+            showNotification(`تم شحن ${selectedPackageData.amount} عملة بنجاح! 🎉`, 'success');
+            await loadCredits(); // Refresh balance
+            closeTopUpModal();
+        }
+    } catch (error) {
+        console.error('Payment completion error:', error);
+        showNotification('حدث خطأ أثناء تأكيد الدفع: ' + error.message, 'error');
+        closeTopUpModal();
+    }
+}
+
+// Keep old function for backward compatibility (but not used in new UI)
+window.cancelPayment = function () {
+    backToPaymentMethods();
+}
+
+// Old processPayment function - kept for backward compatibility
 window.processPayment = async function () {
     if (!selectedPackageData) return;
 
     const btn = document.getElementById('payBtn');
+    if (!btn) return; // Old UI might not exist
+    
     btn.disabled = true;
     btn.textContent = 'جاري معالجة الدفع...';
 

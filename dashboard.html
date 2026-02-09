@@ -88,51 +88,188 @@
 
         <!-- Top Up Modal -->
         <div id="topUpModal" class="modal"
-            style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+            style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; overflow-y: auto;">
             <div class="modal-content"
-                style="background: white; padding: 2rem; border-radius: 12px; width: 90%; max-width: 500px; position: relative;">
+                style="background: white; padding: 2rem; border-radius: 12px; width: 90%; max-width: 600px; position: relative; max-height: 90vh; overflow-y: auto; margin: 20px;">
                 <button onclick="closeTopUpModal()"
-                    style="position: absolute; top: 10px; left: 10px; background: none; border: none; font-size: 1.5rem; cursor: pointer;">✕</button>
+                    style="position: absolute; top: 10px; left: 10px; background: none; border: none; font-size: 1.5rem; cursor: pointer; z-index: 10;">✕</button>
                 <h2 style="margin-bottom: 1.5rem; text-align: center;">شحن رصيد المحفظة 💰</h2>
 
-                <div class="packages-grid" style="display: grid; gap: 1rem;">
-                    <div class="package-card" onclick="selectPackage(10, 'Starter', 5)"
-                        style="border: 2px solid #eee; padding: 1rem; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; justify-content: space-between; align-items: center;">
-                        <div>
-                            <h3 style="margin: 0;">باقة البداية</h3>
-                            <p style="margin: 0; color: #666;">10 عملات</p>
+                <!-- Step 1: Select Package -->
+                <div id="step1" class="payment-step">
+                    <h3 style="margin-bottom: 1rem; font-size: 1.1rem;">اختر الباقة المناسبة</h3>
+                    <div class="packages-grid" style="display: grid; gap: 1rem;">
+                        <div class="package-card" onclick="selectPackage(10, 'باقة البداية', 5)"
+                            style="border: 2px solid #eee; padding: 1rem; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h4 style="margin: 0;">باقة البداية</h4>
+                                <p style="margin: 0; color: #666; font-size: 0.9rem;">10 عملات</p>
+                            </div>
+                            <div class="price" style="font-weight: bold; color: var(--primary); font-size: 1.2rem;">5 JD</div>
                         </div>
-                        <div class="price" style="font-weight: bold; color: var(--primary);">5 JD</div>
-                    </div>
 
-                    <div class="package-card" onclick="selectPackage(50, 'Pro', 20)"
-                        style="border: 2px solid var(--primary); background: var(--primary-50); padding: 1rem; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; justify-content: space-between; align-items: center;">
-                        <div>
-                            <h3 style="margin: 0;">باقة المحترفين 🔥</h3>
-                            <p style="margin: 0; color: #666;">50 عملة</p>
+                        <div class="package-card" onclick="selectPackage(50, 'باقة المحترفين', 20)"
+                            style="border: 2px solid var(--primary); background: var(--primary-50); padding: 1rem; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h4 style="margin: 0;">باقة المحترفين 🔥</h4>
+                                <p style="margin: 0; color: #666; font-size: 0.9rem;">50 عملة</p>
+                                <span style="background: #fbbf24; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; margin-top: 4px; display: inline-block;">الأفضل قيمة</span>
+                            </div>
+                            <div class="price" style="font-weight: bold; color: var(--primary); font-size: 1.2rem;">20 JD</div>
                         </div>
-                        <div class="price" style="font-weight: bold; color: var(--primary);">20 JD</div>
-                    </div>
 
-                    <div class="package-card" onclick="selectPackage(100, 'Business', 35)"
-                        style="border: 2px solid #eee; padding: 1rem; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; justify-content: space-between; align-items: center;">
-                        <div>
-                            <h3 style="margin: 0;">باقة الأعمال</h3>
-                            <p style="margin: 0; color: #666;">100 عملة</p>
+                        <div class="package-card" onclick="selectPackage(100, 'باقة الأعمال', 35)"
+                            style="border: 2px solid #eee; padding: 1rem; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h4 style="margin: 0;">باقة الأعمال</h4>
+                                <p style="margin: 0; color: #666; font-size: 0.9rem;">100 عملة</p>
+                            </div>
+                            <div class="price" style="font-weight: bold; color: var(--primary); font-size: 1.2rem;">35 JD</div>
                         </div>
-                        <div class="price" style="font-weight: bold; color: var(--primary);">35 JD</div>
                     </div>
                 </div>
 
-                <div id="paymentForm"
-                    style="display: none; margin-top: 1.5rem; border-top: 1px solid #eee; padding-top: 1rem;">
-                    <h4 style="margin-bottom: 1rem;">تفاصيل الدفع (محاكاة) 💳</h4>
-                    <p class="text-sm text-neutral-500 mb-2">سيتم خصم <span id="selectedPrice">0</span> JD</p>
-                    <button id="payBtn" class="btn btn-primary btn-block" onclick="processPayment()">تأكيد
-                        الدفع</button>
-                    <button class="btn btn-ghost btn-block" onclick="cancelPayment()" style="margin-top: 0.5rem;">تغيير
-                        الباقة</button>
+                <!-- Step 2: Select Payment Method -->
+                <div id="step2" class="payment-step" style="display: none;">
+                    <h3 style="margin-bottom: 1rem; font-size: 1.1rem;">اختر طريقة الدفع</h3>
+                    <p style="color: #666; margin-bottom: 1rem; font-size: 0.9rem;">
+                        المبلغ المطلوب: <strong><span id="selectedPrice">0</span> JD</strong> | 
+                        الباقة: <strong><span id="selectedPackageName">-</span></strong>
+                    </p>
+
+                    <div class="payment-methods" style="display: grid; gap: 0.75rem;">
+                        <!-- Credit Card -->
+                        <div class="payment-method-card" onclick="selectPaymentMethod('credit_card')"
+                            style="border: 2px solid #eee; padding: 1rem; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 1rem;">
+                            <div style="font-size: 2rem;">💳</div>
+                            <div style="flex: 1;">
+                                <h4 style="margin: 0; font-size: 1rem;">بطاقة ائتمان/خصم</h4>
+                                <p style="margin: 0; color: #666; font-size: 0.85rem;">Visa, MasterCard, Mada</p>
+                            </div>
+                            <div style="color: #10b981;">✓</div>
+                        </div>
+
+                        <!-- CliQ -->
+                        <div class="payment-method-card" onclick="selectPaymentMethod('cliq')"
+                            style="border: 2px solid #eee; padding: 1rem; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 1rem;">
+                            <div style="font-size: 2rem;">🏦</div>
+                            <div style="flex: 1;">
+                                <h4 style="margin: 0; font-size: 1rem;">CliQ - كليك</h4>
+                                <p style="margin: 0; color: #666; font-size: 0.85rem;">الدفع الفوري عبر البنك</p>
+                            </div>
+                            <div style="color: #10b981;">✓</div>
+                        </div>
+
+                        <!-- Orange Money -->
+                        <div class="payment-method-card" onclick="selectPaymentMethod('orange_money')"
+                            style="border: 2px solid #eee; padding: 1rem; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 1rem;">
+                            <div style="font-size: 2rem;">📱</div>
+                            <div style="flex: 1;">
+                                <h4 style="margin: 0; font-size: 1rem;">Orange Money</h4>
+                                <p style="margin: 0; color: #666; font-size: 0.85rem;">محفظة أورانج الإلكترونية</p>
+                            </div>
+                            <div style="color: #10b981;">✓</div>
+                        </div>
+
+                        <!-- uWallet -->
+                        <div class="payment-method-card" onclick="selectPaymentMethod('uwallet')"
+                            style="border: 2px solid #eee; padding: 1rem; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 1rem;">
+                            <div style="font-size: 2rem;">👛</div>
+                            <div style="flex: 1;">
+                                <h4 style="margin: 0; font-size: 1rem;">uWallet</h4>
+                                <p style="margin: 0; color: #666; font-size: 0.85rem;">المحفظة الإلكترونية</p>
+                            </div>
+                            <div style="color: #10b981;">✓</div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-ghost btn-block" onclick="backToPackages()" 
+                        style="margin-top: 1rem;">← العودة للباقات</button>
                 </div>
+
+                <!-- Step 3: Payment Details -->
+                <div id="step3" class="payment-step" style="display: none;">
+                    <h3 style="margin-bottom: 1rem; font-size: 1.1rem;">أدخل تفاصيل الدفع</h3>
+
+                    <!-- Credit Card Form -->
+                    <div id="creditCardForm" class="payment-form" style="display: none;">
+                        <p style="background: #fef3c7; padding: 0.75rem; border-radius: 6px; font-size: 0.9rem; margin-bottom: 1rem;">
+                            💡 سيتم فتح صفحة الدفع الآمنة في نافذة جديدة
+                        </p>
+                        <button id="payBtnCard" class="btn btn-primary btn-block" onclick="processCreditCardPayment()">
+                            متابعة للدفع الآمن 🔒
+                        </button>
+                    </div>
+
+                    <!-- CliQ Form -->
+                    <div id="cliqForm" class="payment-form" style="display: none;">
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">رقم الموبايل المرتبط بحساب CliQ</label>
+                            <input type="tel" id="cliqPhone" placeholder="07XXXXXXXX" 
+                                style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem;"
+                                maxlength="10" pattern="0[0-9]{9}">
+                            <p style="color: #666; font-size: 0.85rem; margin-top: 0.5rem;">سيصلك طلب الموافقة على تطبيق البنك</p>
+                        </div>
+                        <button id="payBtnCliq" class="btn btn-primary btn-block" onclick="processCliqPayment()">
+                            إرسال طلب الدفع
+                        </button>
+                    </div>
+
+                    <!-- Orange Money Form -->
+                    <div id="orangeMoneyForm" class="payment-form" style="display: none;">
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">رقم Orange Money</label>
+                            <input type="tel" id="orangePhone" placeholder="078XXXXXXX or 079XXXXXXX" 
+                                style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem;"
+                                maxlength="10" pattern="07[89][0-9]{7}">
+                            <p style="color: #666; font-size: 0.85rem; margin-top: 0.5rem;">سيصلك رمز التأكيد عبر SMS</p>
+                        </div>
+                        <button id="payBtnOrange" class="btn btn-primary btn-block" onclick="processOrangeMoneyPayment()">
+                            تأكيد الدفع
+                        </button>
+                    </div>
+
+                    <!-- uWallet Form -->
+                    <div id="uwalletForm" class="payment-form" style="display: none;">
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">رقم حساب uWallet</label>
+                            <input type="text" id="uwalletAccount" placeholder="رقم الحساب أو البريد الإلكتروني" 
+                                style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem;">
+                            <p style="color: #666; font-size: 0.85rem; margin-top: 0.5rem;">يمكنك أيضاً مسح رمز QR من تطبيق uWallet</p>
+                        </div>
+                        <button id="payBtnUwallet" class="btn btn-primary btn-block" onclick="processUWalletPayment()">
+                            تأكيد الدفع
+                        </button>
+                    </div>
+
+                    <button class="btn btn-ghost btn-block" onclick="backToPaymentMethods()" 
+                        style="margin-top: 1rem;">← العودة لطرق الدفع</button>
+                </div>
+
+                <!-- Payment Processing -->
+                <div id="processingStep" class="payment-step" style="display: none; text-align: center; padding: 2rem 0;">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">⏳</div>
+                    <h3 style="margin-bottom: 0.5rem;">جاري معالجة الدفع...</h3>
+                    <p id="processingMessage" style="color: #666;">يرجى الانتظار</p>
+                    <div style="margin-top: 1rem;">
+                        <div class="spinner" style="border: 3px solid #f3f3f3; border-top: 3px solid var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto;"></div>
+                    </div>
+                </div>
+
+                <style>
+                    @keyframes spin {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                    }
+                    .payment-method-card:hover {
+                        border-color: var(--primary) !important;
+                        background: var(--primary-50);
+                    }
+                    .payment-method-card.selected {
+                        border-color: var(--primary) !important;
+                        background: var(--primary-50) !important;
+                    }
+                </style>
             </div>
         </div>
 
@@ -307,6 +444,7 @@
     </div>
 
     <script src="admin-config.js"></script>
+    <script src="payment-gateway.js"></script>
     <script src="chat.js"></script>
     <script src="dashboard.js"></script>
     <script src="portfolio.js"></script>
