@@ -1,22 +1,27 @@
-/* Premium UX/UI Improvements - Overlay on existing styles */
-/* Add this to your HTML files for instant premium look */
+/* ============================================
+   PREMIUM STYLES - Clean Frosted Glass Design
+   ============================================ */
 
-/* Better Arabic Typography */
+/* Typography */
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap');
 
 :root {
-    --font-primary: 'IBM Plex+Sans Arabic', 'Tajawal', sans-serif;
+    --font-primary: 'IBM Plex Sans Arabic', 'Tajawal', sans-serif;
+    --text-dark: #1e293b;
+    --text-darker: #0f172a;
+    --text-muted: #475569;
 }
 
-/* SUBTLE PASTEL AURORA GRADIENT - SOFT & GENTLE */
+/* ============================================
+   1. BODY - Soft Pastel Aurora Gradient
+   ============================================ */
 body {
-    font-family: var(--font-primary);
-    min-height: 100vh !important;
-    background: linear-gradient(135deg, 
-        #E3F2FD 0%,      /* Very light blue */
-        #F3E5F5 50%,     /* Soft lavender */
-        #E0F2F1 100%     /* Hint of mint */
-    ) !important;
+    font-family: var(--font-primary) !important;
+    color: var(--text-dark) !important;
+    min-height: 100vh;
+    background: 
+        linear-gradient(135deg, #E3F2FD 0%, #F3E5F5 50%, #E0F2F1 100%) 
+        !important;
     background-attachment: fixed !important;
     background-size: 200% 200% !important;
     animation: subtleAurora 20s ease infinite;
@@ -27,152 +32,111 @@ body {
     50% { background-position: 100% 50%; }
 }
 
-/* FORCE CONTAINERS TO BE TRANSPARENT - LET THE GRADIENT SHOW */
-/* BUT NOT sections that have their own dark backgrounds (hero, cta, footer) */
-html,
+/* ============================================
+   2. TEXT COLORS - Dark on Light (Global Default)
+   ============================================ */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text-darker) !important;
+    -webkit-text-fill-color: var(--text-darker) !important;
+}
+
+p, span, li, label, td, th, dt, dd, small, strong, em, blockquote, figcaption {
+    color: var(--text-dark) !important;
+}
+
+a:not(.btn):not(.btn-primary):not(.btn-ghost):not(.search-btn) {
+    color: #0891b2 !important;
+}
+
+/* ============================================
+   3. TRANSPARENT WRAPPERS - Let gradient show
+   Only generic wrappers, NOT sections with own backgrounds
+   ============================================ */
 .container,
 .content-wrapper,
 .wrapper,
 .main-content,
 .page-wrapper,
-.dashboard-container,
 main,
 .auth-container,
 .booking-container,
-.profile-container {
+.profile-container,
+.dashboard-container {
     background-color: transparent !important;
     background-image: none !important;
 }
 
-/* Regular sections transparent, but KEEP hero/cta/footer dark backgrounds */
-section:not(.hero):not(.cta-section):not(.footer) {
-    background-color: transparent !important;
-    background-image: none !important;
+/* Light sections -> transparent so gradient shows */
+.services,
+.how-it-works,
+.providers,
+.testimonials {
+    background: transparent !important;
 }
 
-/* ===== MASTER TEXT COLOR FIX ===== */
-/* Force ALL body text to dark navy */
-body {
-    color: #1e293b !important;
-}
+/* ============================================
+   4. DARK SECTIONS - Keep their backgrounds!
+   Hero, CTA, Footer stay dark with white text.
+   ============================================ */
 
-/* ALL headings - deep navy, always */
-h1, h2, h3, h4, h5, h6 {
-    color: #0f172a !important;
-    -webkit-text-fill-color: #0f172a !important;
+/* Hero */
+.hero,
+.hero-section {
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0891b2 100%) !important;
 }
-
-/* ALL paragraphs, spans, list items - dark text */
-p, span, li, label, td, th, dt, dd, figcaption, blockquote, small, strong, em {
-    color: #1e293b !important;
+.hero *, .hero-content, .hero-content h1, .hero-content h1 *,
+.hero-content p, .hero-subtitle, .hero .highlight,
+.hero .stat-number, .hero .stat-label {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
 }
-
-/* Stat numbers and labels */
-.stat-number, .stat-label {
-    color: #1e293b !important;
-}
-
-/* Section subtitles/descriptions */
-.section-header p,
-.hero-subtitle,
-.cta-content p {
-    color: #475569 !important;
-}
-
-/* Links get brand teal */
-a:not(.btn):not(.btn-primary):not(.btn-ghost):not(.search-btn):not(nav a) {
-    color: #0891b2 !important;
-}
-a:not(.btn):not(.btn-primary):hover {
-    color: #0e7490 !important;
-}
-
-/* ===== EXCEPTIONS: White text stays on dark backgrounds ===== */
-/* Hero section (has its own dark gradient) */
-.hero *,
-.hero-content,
-.hero-content h1,
-.hero-content p,
-.hero-subtitle,
-.hero .stat-number,
-.hero .stat-label,
 .hero .highlight {
-    color: var(--white, #ffffff) !important;
-    -webkit-text-fill-color: unset !important;
-}
-
-.hero-content h1 {
-    color: #ffffff !important;
-    -webkit-text-fill-color: #ffffff !important;
-}
-
-.highlight {
+    background: linear-gradient(135deg, #22d3ee, #8b5cf6);
+    -webkit-background-clip: text;
     -webkit-text-fill-color: transparent !important;
+    background-clip: text;
+}
+.hero .stat-label {
+    color: #94a3b8 !important;
+    -webkit-text-fill-color: #94a3b8 !important;
 }
 
-/* CTA section (has its own dark gradient) */
-.cta-section *,
-.cta-content,
-.cta-content h2,
-.cta-content p,
-.cta-benefits li {
+/* CTA Section */
+.cta-section {
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0891b2 100%) !important;
+}
+.cta-section h2,
+.cta-section p,
+.cta-section li,
+.cta-section span,
+.cta-section .cta-content,
+.cta-section .cta-content h2,
+.cta-section .cta-content p,
+.cta-section .cta-benefits li {
     color: #ffffff !important;
     -webkit-text-fill-color: #ffffff !important;
 }
-
-.cta-content p {
+.cta-section .cta-content p {
     color: #cbd5e1 !important;
     -webkit-text-fill-color: #cbd5e1 !important;
 }
 
-/* Footer (has dark background) */
-.footer *,
-.footer h4,
-.footer p,
-.footer a,
-.footer .logo-text,
-.footer-brand p {
+/* Footer */
+footer, .footer {
+    background: #0f172a !important;
+}
+.footer *, .footer p, .footer a, .footer span, .footer li {
     color: #cbd5e1 !important;
     -webkit-text-fill-color: #cbd5e1 !important;
 }
-
-.footer h4,
-.footer .logo-text {
+.footer h4, .footer .logo-text {
     color: #ffffff !important;
     -webkit-text-fill-color: #ffffff !important;
 }
 
-/* Button text stays white */
-.btn-primary,
-.search-btn,
-.btn-primary span,
-button[class*="primary"] {
-    color: #ffffff !important;
-    -webkit-text-fill-color: #ffffff !important;
-}
-
-/* Nav links on light bg should be dark */
-nav a, .navbar a, .nav-link,
-nav .logo-text, .navbar .logo-text {
-    color: #0f172a !important;
-    -webkit-text-fill-color: #0f172a !important;
-}
-
-/* Grid Utility Classes */
-.grid {
-    display: grid;
-}
-
-.grid-cols-2 {
-    grid-template-columns: repeat(2, 1fr);
-}
-
-.gap-3 {
-    gap: 0.75rem;
-}
-
-/* FROSTED GLASS EFFECT FOR CONTENT CONTAINERS */
-/* Cards and Main Content Areas */
+/* ============================================
+   5. FROSTED GLASS - Cards & Content Containers
+   ============================================ */
 .card,
 .dashboard-card,
 .provider-card,
@@ -180,25 +144,48 @@ nav .logo-text, .navbar .logo-text {
 .profile-card,
 .stat-card,
 .payment-card,
-.list-item,
-.provider-item,
-.service-item,
 .service-card,
 .testimonial-card,
 .step,
-.dashboard-content,
-.search-box {
-    background: rgba(255, 255, 255, 0.75) !important;
+.search-box,
+.list-item,
+.provider-item,
+.service-item,
+.dashboard-content {
+    background: rgba(255, 255, 255, 0.8) !important;
     backdrop-filter: blur(12px) !important;
     -webkit-backdrop-filter: blur(12px) !important;
     border: 1px solid rgba(255, 255, 255, 0.3) !important;
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1) !important;
     border-radius: 16px !important;
+    color: var(--text-dark) !important;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    color: #1e293b !important;
 }
 
-/* GLASSMORPHISM FOR INPUTS & FORMS */
+.card:hover,
+.provider-card:hover,
+.dashboard-card:hover,
+.service-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.15) !important;
+}
+
+/* Auth Forms */
+.auth-form,
+.login-form,
+.signup-form,
+.form-container,
+.auth-box {
+    background: rgba(255, 255, 255, 0.8) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1) !important;
+    border-radius: 20px !important;
+    padding: 2rem !important;
+}
+
+/* Inputs */
 input[type="text"],
 input[type="email"],
 input[type="password"],
@@ -210,448 +197,161 @@ textarea,
 select,
 .form-control,
 .input-field {
-    background: rgba(255, 255, 255, 0.75) !important;
+    background: rgba(255, 255, 255, 0.8) !important;
     backdrop-filter: blur(12px) !important;
     -webkit-backdrop-filter: blur(12px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1) !important;
+    border: 1px solid rgba(200, 200, 220, 0.4) !important;
     border-radius: 12px !important;
     padding: 12px 16px !important;
-    transition: all 0.3s ease !important;
-    color: #1e293b !important;
+    color: var(--text-dark) !important;
 }
 
-input:focus,
-textarea:focus,
-select:focus {
-    background: rgba(255, 255, 255, 0.9) !important;
-    border-color: rgba(8, 145, 178, 0.5) !important;
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15), 0 0 0 3px rgba(8, 145, 178, 0.1) !important;
+input:focus, textarea:focus, select:focus {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border-color: #0891b2 !important;
+    box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.15) !important;
     outline: none !important;
 }
 
-/* GLASSMORPHISM FOR AUTH FORMS */
-.auth-form,
-.login-form,
-.signup-form,
-.form-container,
-.auth-box {
-    background: rgba(255, 255, 255, 0.75) !important;
+/* Navigation */
+nav, .navbar, .header {
+    background: rgba(255, 255, 255, 0.8) !important;
     backdrop-filter: blur(12px) !important;
     -webkit-backdrop-filter: blur(12px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1) !important;
+    box-shadow: 0 2px 16px rgba(31, 38, 135, 0.08) !important;
+}
+nav a, .navbar a, .nav-link, nav .logo-text {
+    color: var(--text-darker) !important;
+    -webkit-text-fill-color: var(--text-darker) !important;
+}
+
+/* Chat */
+.chat-container, .conversation-list, .messages-area {
+    background: transparent !important;
+}
+.message-bubble, .message-input-container {
+    background: rgba(255, 255, 255, 0.8) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+}
+.conversation-item {
+    background: rgba(255, 255, 255, 0.6) !important;
+}
+.conversation-item.active {
+    background: rgba(255, 255, 255, 0.85) !important;
+}
+
+/* Modals */
+.modal-content, .popup-content, .dialog-content, .topup-modal, [class*="modal"] {
+    background: rgba(255, 255, 255, 0.9) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
     border-radius: 20px !important;
-    padding: 2rem !important;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2) !important;
 }
 
-.card:hover,
-.provider-card:hover,
-.dashboard-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 
-        0 20px 40px rgba(0, 0, 0, 0.08),
-        0 2px 6px rgba(0, 0, 0, 0.12);
+/* Dashboard/Auth page wrappers */
+.dashboard-header, .dashboard-sidebar,
+.auth-wrapper, .auth-page, .login-container, .signup-container {
+    background: transparent !important;
 }
 
-/* Better Buttons */
-.btn-primary,
-.btn {
-    box-shadow: 0 4px 12px rgba(30, 58, 138, 0.25);
-    font-weight: 600;
-    letter-spacing: -0.01em;
+/* ============================================
+   6. BUTTONS - Proper Contrast
+   ============================================ */
+.btn-primary, .search-btn, button[class*="primary"] {
+    background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%) !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    border: none !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 12px rgba(8, 145, 178, 0.3) !important;
 }
-
-.btn-primary:hover {
-    box-shadow: 0 6px 20px rgba(30, 58, 138, 0.35);
+.btn-primary:hover, .search-btn:hover {
+    box-shadow: 0 6px 20px rgba(8, 145, 178, 0.4) !important;
     transform: translateY(-1px);
 }
 
-/* Premium Avatar Styling */
-.avatar-placeholder,
-.provider-avatar,
+/* CTA button (white on dark section) */
+.cta-section .btn,
+.cta-section .btn-light {
+    background: #ffffff !important;
+    color: #0891b2 !important;
+    -webkit-text-fill-color: #0891b2 !important;
+    font-weight: 700 !important;
+}
+
+/* ============================================
+   7. UTILITY & EXTRAS
+   ============================================ */
+
+/* Grid Utilities */
+.grid { display: grid; }
+.grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+.gap-3 { gap: 0.75rem; }
+
+/* Avatar */
+.avatar-placeholder, .provider-avatar,
 [style*="border-radius: 50%"][style*="background"] {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    font-weight: 700;
 }
 
-/* Better Stats Cards */
-.stat-card {
-    text-align: center;
-    padding: 1.5rem 1rem;
-}
-
-.stat-card h3 {
-    font-size: 2rem;
-    font-weight: 700;
-    margin-bottom: 0.25rem;
-}
-
-.stat-card p {
-    font-size: 0.875rem;
-    color: #6b7280;
-    margin-top: 0.5rem;
-}
-
-.stat-icon {
-    font-size: 2.5rem;
-    margin-bottom: 0.5rem;
-    opacity: 0.9;
-}
-
-/* Hero Section with Background Image */
-.hero-section,
-.hero {
-    background: 
-        linear-gradient(135deg, rgba(30, 58, 95, 0.95) 0%, rgba(13, 27, 42, 0.98) 100%),
-        url('https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=1600&q=80') center/cover !important;
-    background-blend-mode: overlay;
-    position: relative;
-}
-
-.hero-title,
-.hero h1 {
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-/* Better Input Fields */
-.input,
-input[type="text"],
-input[type="email"],
-input[type="tel"],
-input[type="password"],
-textarea,
-select {
-    border: 2px solid #e5e7eb;
-    border-radius: 12px;
-    padding: 0.875rem 1rem;
-    font-size: 1rem;
-    transition: all 0.2s;
-}
-
-.input:focus,
-input:focus,
-textarea:focus,
-select:focus {
-    border-color: var(--primary-500, #3b82f6);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-    outline: none;
-}
-
-/* Modern Chat Styling */
-.message-sent {
-    background: linear-gradient(135deg, #0084ff 0%, #0066cc 100%);
-    border-radius: 18px 18px 4px 18px;
-    padding: 10px 14px;
-    font-size: 15px;
-    line-height: 1.4;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-    max-width: 70%;
-}
-
-.message-received {
-    background: #f0f0f0;
-    color: #000;
-    border-radius: 18px 18px 18px 4px;
-    padding: 10px 14px;
-    font-size: 15px;
-    line-height: 1.4;
-    max-width: 70%;
-}
-
-.messages-list,
-.chat-messages {
-    padding: 16px;
-    gap: 8px;
-}
-
-.message-time {
-    font-size: 11px;
-    color: rgba(255,255,255,0.7);
-    margin-top: 4px;
-}
-
-/* Better Service Cards Grid */
-.services-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 16px;
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-.service-card {
-    background: white;
-    padding: 24px 16px;
-    border-radius: 16px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-}
-
-.service-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-}
-
-.service-icon {
-    font-size: 3rem;
-    margin-bottom: 8px;
-}
-
-/* Premium Typography Scales */
+/* Typography Scale */
 h1 { font-weight: 800; letter-spacing: -0.02em; }
 h2 { font-weight: 700; letter-spacing: -0.01em; }
 h3 { font-weight: 600; }
 
-/* Better Loading States */
-.loading,
-[id*="loading"] {
+/* Premium Shadows */
+.stat-card { text-align: center; padding: 1.5rem 1rem; }
+
+/* Loading States */
+.loading, [id*="loading"] {
     padding: 40px;
     text-align: center;
-    font-size: 1.125rem;
-    color: #6b7280;
+    color: var(--text-muted) !important;
 }
 
-/* Improved Modal Styling */
-.modal-content,
-.topup-modal,
-[class*="modal"] {
-    background: white;
-    border-radius: 20px;
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
-    max-width: 500px;
-}
-
-/* Better Progress/Step Indicators */
-.progress-step,
-.step-indicator {
-    border-radius: 12px;
-    padding: 12px 16px;
-}
-
-.progress-step.active {
-    background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
-}
-
-/* Improved Table Styling */
-table {
-    border-collapse: separate;
-    border-spacing: 0;
-    border-radius: 12px;
-    overflow: hidden;
-}
-
-thead tr {
-    background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
-}
-
-tbody tr:hover {
-    background: #f9fafb;
-}
-
-/* Better Badge/Tag Styling */
-.badge,
-.status-badge,
-[class*="badge"] {
-    border-radius: 8px;
-    padding: 4px 12px;
-    font-weight: 600;
-    font-size: 0.8125rem;
-}
-
-/* Improved Empty States */
-.empty-state {
-    padding: 60px 40px;
-    text-align: center;
-}
-
-.empty-state-icon {
-    font-size: 4rem;
-    opacity: 0.3;
-    margin-bottom: 16px;
-}
-
-/* Better Footer */
-footer {
-    backdrop-filter: blur(10px);
-    background: rgba(255, 255, 255, 0.95);
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-/* Accessibility & Polish */
-button, .btn, a {
-    -webkit-tap-highlight-color: transparent;
-}
-
+/* Smooth Rendering */
 * {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
+button, .btn, a {
+    -webkit-tap-highlight-color: transparent;
+}
 
-/* Flatpickr Calendar Customization (for Arabic) */
+/* Flatpickr Calendar */
 .flatpickr-calendar {
     border-radius: 16px;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
     border: none;
     font-family: var(--font-primary);
 }
-
 .flatpickr-day.selected {
-    background: var(--primary-500, #3b82f6);
-    border-color: var(--primary-500, #3b82f6);
+    background: #0891b2;
+    border-color: #0891b2;
 }
 
-.flatpickr-day.today {
-    border-color: var(--primary-500, #3b82f6);
+/* Modern Chat Bubbles */
+.message-sent {
+    background: linear-gradient(135deg, #0084ff 0%, #0066cc 100%) !important;
+    border-radius: 18px 18px 4px 18px;
+    color: #fff !important;
+}
+.message-sent span, .message-sent p {
+    color: #fff !important;
+    -webkit-text-fill-color: #fff !important;
+}
+.message-received {
+    background: rgba(255,255,255,0.9) !important;
+    color: #000 !important;
+    border-radius: 18px 18px 18px 4px;
 }
 
-.flatpickr-day:hover {
-    background: var(--primary-100, #dbeafe);
-}
-
-/* Responsive improvements */
+/* Responsive */
 @media (max-width: 640px) {
-    .card,
-    .dashboard-card {
-        border-radius: 12px !important;
-    }
-    
+    .card, .dashboard-card { border-radius: 12px !important; }
     h1 { font-size: 1.75rem; }
     h2 { font-size: 1.5rem; }
-}
-
-/* AGGRESSIVE OVERRIDES - FORCE TRANSPARENCY ON PAGE ELEMENTS */
-/* Override all white backgrounds from other CSS files */
-
-/* Chat System - Frosted Glass */
-.chat-container,
-.conversation-list,
-.messages-area {
-    background: transparent !important;
-}
-
-.message-bubble {
-    background: rgba(255, 255, 255, 0.75) !important;
-    backdrop-filter: blur(12px) !important;
-    -webkit-backdrop-filter: blur(12px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1) !important;
-}
-
-.conversation-item {
-    background: rgba(255, 255, 255, 0.6) !important;
-    backdrop-filter: blur(8px) !important;
-    -webkit-backdrop-filter: blur(8px) !important;
-}
-
-.conversation-item.active {
-    background: rgba(255, 255, 255, 0.85) !important;
-    backdrop-filter: blur(12px) !important;
-    -webkit-backdrop-filter: blur(12px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.4) !important;
-}
-
-.message-input-container {
-    background: rgba(255, 255, 255, 0.75) !important;
-    backdrop-filter: blur(12px) !important;
-    -webkit-backdrop-filter: blur(12px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
-}
-
-/* Dashboard Overrides */
-.dashboard-container,
-.dashboard-header,
-.dashboard-content,
-.dashboard-sidebar {
-    background: transparent !important;
-}
-
-/* Auth Pages Overrides */
-.auth-wrapper,
-.auth-page,
-.login-container,
-.signup-container {
-    background: transparent !important;
-}
-
-/* Modal/Popup - Frosted Glass */
-.modal-content,
-.popup-content,
-.dialog-content {
-    background: rgba(255, 255, 255, 0.75) !important;
-    backdrop-filter: blur(12px) !important;
-    -webkit-backdrop-filter: blur(12px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1) !important;
-    border-radius: 20px !important;
-}
-
-/* Navigation - Frosted Glass */
-nav,
-.navbar,
-.header {
-    background: rgba(255, 255, 255, 0.75) !important;
-    backdrop-filter: blur(12px) !important;
-    -webkit-backdrop-filter: blur(12px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1) !important;
-}
-
-/* Ensure frosted glass containers have dark text */
-.card,
-.dashboard-card,
-.provider-card,
-.booking-card,
-.profile-card,
-.auth-form,
-.message-bubble,
-nav,
-.navbar,
-.header {
-    color: #1e293b !important;
-}
-
-/* Override inline styles - Keep containers transparent, frosted glass on content only */
-[style*="background: white"],
-[style*="background: #fff"],
-[style*="background: #ffffff"],
-[style*="background-color: white"],
-[style*="background-color: #fff"],
-[style*="background-color: #ffffff"] {
-    background: transparent !important;
-}
-
-/* Apply frosted glass to specific content cards/forms that need it */
-.card[style*="background"],
-.auth-form[style*="background"],
-.provider-card[style*="background"],
-.booking-card[style*="background"] {
-    background: rgba(255, 255, 255, 0.75) !important;
-    backdrop-filter: blur(12px) !important;
-    -webkit-backdrop-filter: blur(12px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1) !important;
-}
-
-/* Buttons should have proper contrast */
-.btn,
-button {
-    font-weight: 600 !important;
-    box-shadow: 0 4px 12px rgba(31, 38, 135, 0.15) !important;
-}
-
-.btn-primary {
-    background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%) !important;
-    color: white !important;
-    border: none !important;
-}
-
-.btn-primary:hover {
-    box-shadow: 0 6px 20px rgba(31, 38, 135, 0.25) !important;
-    transform: translateY(-1px) !important;
 }
