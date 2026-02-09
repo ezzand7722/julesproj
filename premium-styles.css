@@ -1,0 +1,311 @@
+/* Premium UX/UI Improvements - Overlay on existing styles */
+/* Add this to your HTML files for instant premium look */
+
+/* Better Arabic Typography */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --font-primary: 'IBM Plex+Sans Arabic', 'Tajawal', sans-serif;
+}
+
+body {
+    font-family: var(--font-primary);
+}
+
+/* Premium Shadows & Glassmorphism */
+.card,
+.dashboard-card,
+.provider-card,
+.booking-card,
+.profile-card,
+.stat-card,
+.payment-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.05),
+        0 1px 3px rgba(0, 0, 0, 0.1);
+    border-radius: 16px !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover,
+.provider-card:hover,
+.dashboard-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.08),
+        0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+/* Better Buttons */
+.btn-primary,
+.btn {
+    box-shadow: 0 4px 12px rgba(30, 58, 138, 0.25);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+.btn-primary:hover {
+    box-shadow: 0 6px 20px rgba(30, 58, 138, 0.35);
+    transform: translateY(-1px);
+}
+
+/* Premium Avatar Styling */
+.avatar-placeholder,
+.provider-avatar,
+[style*="border-radius: 50%"][style*="background"] {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    font-weight: 700;
+}
+
+/* Better Stats Cards */
+.stat-card {
+    text-align: center;
+    padding: 1.5rem 1rem;
+}
+
+.stat-card h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.stat-card p {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin-top: 0.5rem;
+}
+
+.stat-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    opacity: 0.9;
+}
+
+/* Hero Section with Background Image */
+.hero-section,
+.hero {
+    background: 
+        linear-gradient(135deg, rgba(30, 58, 95, 0.95) 0%, rgba(13, 27, 42, 0.98) 100%),
+        url('https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=1600&q=80') center/cover !important;
+    background-blend-mode: overlay;
+    position: relative;
+}
+
+.hero-title,
+.hero h1 {
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Better Input Fields */
+.input,
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="password"],
+textarea,
+select {
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 0.875rem 1rem;
+    font-size: 1rem;
+    transition: all 0.2s;
+}
+
+.input:focus,
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--primary-500, #3b82f6);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    outline: none;
+}
+
+/* Modern Chat Styling */
+.message-sent {
+    background: linear-gradient(135deg, #0084ff 0%, #0066cc 100%);
+    border-radius: 18px 18px 4px 18px;
+    padding: 10px 14px;
+    font-size: 15px;
+    line-height: 1.4;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    max-width: 70%;
+}
+
+.message-received {
+    background: #f0f0f0;
+    color: #000;
+    border-radius: 18px 18px 18px 4px;
+    padding: 10px 14px;
+    font-size: 15px;
+    line-height: 1.4;
+    max-width: 70%;
+}
+
+.messages-list,
+.chat-messages {
+    padding: 16px;
+    gap: 8px;
+}
+
+.message-time {
+    font-size: 11px;
+    color: rgba(255,255,255,0.7);
+    margin-top: 4px;
+}
+
+/* Better Service Cards Grid */
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 16px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.service-card {
+    background: white;
+    padding: 24px 16px;
+    border-radius: 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+.service-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+}
+
+.service-icon {
+    font-size: 3rem;
+    margin-bottom: 8px;
+}
+
+/* Premium Typography Scales */
+h1 { font-weight: 800; letter-spacing: -0.02em; }
+h2 { font-weight: 700; letter-spacing: -0.01em; }
+h3 { font-weight: 600; }
+
+/* Better Loading States */
+.loading,
+[id*="loading"] {
+    padding: 40px;
+    text-align: center;
+    font-size: 1.125rem;
+    color: #6b7280;
+}
+
+/* Improved Modal Styling */
+.modal-content,
+.topup-modal,
+[class*="modal"] {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+    max-width: 500px;
+}
+
+/* Better Progress/Step Indicators */
+.progress-step,
+.step-indicator {
+    border-radius: 12px;
+    padding: 12px 16px;
+}
+
+.progress-step.active {
+    background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+}
+
+/* Improved Table Styling */
+table {
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+thead tr {
+    background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+}
+
+tbody tr:hover {
+    background: #f9fafb;
+}
+
+/* Better Badge/Tag Styling */
+.badge,
+.status-badge,
+[class*="badge"] {
+    border-radius: 8px;
+    padding: 4px 12px;
+    font-weight: 600;
+    font-size: 0.8125rem;
+}
+
+/* Improved Empty States */
+.empty-state {
+    padding: 60px 40px;
+    text-align: center;
+}
+
+.empty-state-icon {
+    font-size: 4rem;
+    opacity: 0.3;
+    margin-bottom: 16px;
+}
+
+/* Better Footer */
+footer {
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.95);
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Accessibility & Polish */
+button, .btn, a {
+    -webkit-tap-highlight-color: transparent;
+}
+
+* {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Flatpickr Calendar Customization (for Arabic) */
+.flatpickr-calendar {
+    border-radius: 16px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    border: none;
+    font-family: var(--font-primary);
+}
+
+.flatpickr-day.selected {
+    background: var(--primary-500, #3b82f6);
+    border-color: var(--primary-500, #3b82f6);
+}
+
+.flatpickr-day.today {
+    border-color: var(--primary-500, #3b82f6);
+}
+
+.flatpickr-day:hover {
+    background: var(--primary-100, #dbeafe);
+}
+
+/* Responsive improvements */
+@media (max-width: 640px) {
+    .card,
+    .dashboard-card {
+        border-radius: 12px !important;
+    }
+    
+    h1 { font-size: 1.75rem; }
+    h2 { font-size: 1.5rem; }
+}

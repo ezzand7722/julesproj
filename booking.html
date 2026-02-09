@@ -5,10 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>حجز موعد - خدمتي</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style_v2.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ar.js"></script>
     <style>
         .step-content {
             display: none;
@@ -105,9 +107,9 @@
                 <div id="step-1" class="step-content active">
                     <h2 class="mb-4">متى تريد الخدمة؟</h2>
 
-                    <h4 class="mb-2">اختر اليوم</h4>
-                    <div class="grid grid-cols-3 gap-2 mb-4" id="dateGrid">
-                        <!-- Dates injected by JS -->
+                    <h4 class="mb-2">اختر التاريخ</h4>
+                    <div class="form-group mb-4">
+                        <input type="text" id="serviceDate" class="input" placeholder="انقر لاختيار التاريخ..." readonly style="cursor: pointer; background: white;">
                     </div>
 
                     <h4 class="mb-2">اختر الوقت</h4>
@@ -254,39 +256,53 @@
             document.getElementById('loading').style.display = 'none';
             document.getElementById('bookingContent').style.display = 'block';
 
-            generateDates();
+            initDatePicker();
+        }
+
+        function initDatePicker() {
+            const today = new Date();
+            selectedDate = { full: today.toISOString().split('T')[0], display: 'اليوم' };
+
+            flatpickr("#serviceDate", {
+                locale: "ar",
+                minDate: "today",
+                maxDate: new Date().fp_incr(30), // 30 days from now
+                dateFormat: "Y-m-d",
+                defaultDate: "today",
+                inline: false, // Shows calendar on click
+                onChange: function (selectedDates, dateStr, instance) {
+                    if (selectedDates.length > 0) {
+                        const selected = selectedDates[0];
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+                        
+                        let display;
+                        if (selected.toDateString() === today.toDateString()) {
+                            display = 'اليوم';
+                        } else {
+                            const tomorrow = new Date(today);
+                            tomorrow.setDate(today.getDate() + 1);
+                            if (selected.toDateString() === tomorrow.toDateString()) {
+                                display = 'غداً';
+                            } else {
+                                const days = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+                                display = days[selected.getDay()];
+                            }
+                        }
+                        selectedDate = { full: dateStr, display: display };
+                    }
+                }
+            });
         }
 
         function generateDates() {
-            const dateGrid = document.getElementById('dateGrid');
-            const today = new Date();
-            const days = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
-
-            let html = '';
-            for (let i = 0; i < 6; i++) {
-                const d = new Date(today);
-                d.setDate(today.getDate() + i);
-
-                const dayName = i === 0 ? 'اليوم' : (i === 1 ? 'غداً' : days[d.getDay()]);
-                const dateStr = `${d.getDate()}/${d.getMonth() + 1}`;
-                const fullDate = d.toISOString().split('T')[0];
-
-                html += `
-                    <div class="date-card ${i === 0 ? 'selected' : ''}" onclick="selectDate(this, '${fullDate}', '${dayName}')">
-                        <div class="text-sm">${dayName}</div>
-                        <div class="font-bold">${dateStr}</div>
-                    </div>
-                `;
-
-                if (i === 0) selectedDate = { full: fullDate, display: dayName };
-            }
-            dateGrid.innerHTML = html;
+            // Legacy function - replaced with Flatpickr calendar
+            // Kept for backward compatibility but not used
         }
 
         function selectDate(el, full, display) {
-            document.querySelectorAll('.date-card').forEach(c => c.classList.remove('selected'));
-            el.classList.add('selected');
-            selectedDate = { full, display };
+            // Legacy function - replaced with Flatpickr calendar
+            // Kept for backward compatibility but not used
         }
 
         function nextStep(step) {
