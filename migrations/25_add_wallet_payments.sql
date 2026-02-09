@@ -32,6 +32,8 @@ create table if not exists public.wallet_transactions (
 -- RLS for wallet_transactions
 alter table public.wallet_transactions enable row level security;
 
+drop policy if exists "Users can view their own wallet transactions" on public.wallet_transactions;
+
 create policy "Users can view their own wallet transactions"
   on public.wallet_transactions for select
   using (
@@ -199,6 +201,7 @@ $$ language plpgsql security definer;
 
 -- 6. Update the old add_credits function to use transaction_type 'purchase' instead of 'deposit'
 drop function if exists public.add_credits(int, text);
+drop function if exists public.add_credits(integer, text);
 
 create or replace function public.add_credits(amount int, package_name text)
 returns json as $$
