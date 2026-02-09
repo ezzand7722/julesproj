@@ -28,6 +28,7 @@ body {
 }
 
 /* FORCE CONTAINERS TO BE TRANSPARENT - LET THE GRADIENT SHOW */
+/* BUT NOT sections that have their own dark backgrounds (hero, cta, footer) */
 html,
 .container,
 .content-wrapper,
@@ -35,13 +36,126 @@ html,
 .main-content,
 .page-wrapper,
 .dashboard-container,
-section,
 main,
 .auth-container,
 .booking-container,
 .profile-container {
     background-color: transparent !important;
     background-image: none !important;
+}
+
+/* Regular sections transparent, but KEEP hero/cta/footer dark backgrounds */
+section:not(.hero):not(.cta-section):not(.footer) {
+    background-color: transparent !important;
+    background-image: none !important;
+}
+
+/* ===== MASTER TEXT COLOR FIX ===== */
+/* Force ALL body text to dark navy */
+body {
+    color: #1e293b !important;
+}
+
+/* ALL headings - deep navy, always */
+h1, h2, h3, h4, h5, h6 {
+    color: #0f172a !important;
+    -webkit-text-fill-color: #0f172a !important;
+}
+
+/* ALL paragraphs, spans, list items - dark text */
+p, span, li, label, td, th, dt, dd, figcaption, blockquote, small, strong, em {
+    color: #1e293b !important;
+}
+
+/* Stat numbers and labels */
+.stat-number, .stat-label {
+    color: #1e293b !important;
+}
+
+/* Section subtitles/descriptions */
+.section-header p,
+.hero-subtitle,
+.cta-content p {
+    color: #475569 !important;
+}
+
+/* Links get brand teal */
+a:not(.btn):not(.btn-primary):not(.btn-ghost):not(.search-btn):not(nav a) {
+    color: #0891b2 !important;
+}
+a:not(.btn):not(.btn-primary):hover {
+    color: #0e7490 !important;
+}
+
+/* ===== EXCEPTIONS: White text stays on dark backgrounds ===== */
+/* Hero section (has its own dark gradient) */
+.hero *,
+.hero-content,
+.hero-content h1,
+.hero-content p,
+.hero-subtitle,
+.hero .stat-number,
+.hero .stat-label,
+.hero .highlight {
+    color: var(--white, #ffffff) !important;
+    -webkit-text-fill-color: unset !important;
+}
+
+.hero-content h1 {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+}
+
+.highlight {
+    -webkit-text-fill-color: transparent !important;
+}
+
+/* CTA section (has its own dark gradient) */
+.cta-section *,
+.cta-content,
+.cta-content h2,
+.cta-content p,
+.cta-benefits li {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+}
+
+.cta-content p {
+    color: #cbd5e1 !important;
+    -webkit-text-fill-color: #cbd5e1 !important;
+}
+
+/* Footer (has dark background) */
+.footer *,
+.footer h4,
+.footer p,
+.footer a,
+.footer .logo-text,
+.footer-brand p {
+    color: #cbd5e1 !important;
+    -webkit-text-fill-color: #cbd5e1 !important;
+}
+
+.footer h4,
+.footer .logo-text {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+}
+
+/* Button text stays white */
+.btn-primary,
+.search-btn,
+.btn-primary span,
+button[class*="primary"] {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+}
+
+/* Nav links on light bg should be dark */
+nav a, .navbar a, .nav-link,
+nav .logo-text, .navbar .logo-text {
+    color: #0f172a !important;
+    -webkit-text-fill-color: #0f172a !important;
 }
 
 /* Grid Utility Classes */
@@ -68,7 +182,12 @@ main,
 .payment-card,
 .list-item,
 .provider-item,
-.service-item {
+.service-item,
+.service-card,
+.testimonial-card,
+.step,
+.dashboard-content,
+.search-box {
     background: rgba(255, 255, 255, 0.75) !important;
     backdrop-filter: blur(12px) !important;
     -webkit-backdrop-filter: blur(12px) !important;
@@ -76,6 +195,7 @@ main,
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1) !important;
     border-radius: 16px !important;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    color: #1e293b !important;
 }
 
 /* GLASSMORPHISM FOR INPUTS & FORMS */
@@ -482,7 +602,7 @@ nav,
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1) !important;
 }
 
-/* Ensure text is readable with dark color */
+/* Ensure frosted glass containers have dark text */
 .card,
 .dashboard-card,
 .provider-card,
@@ -494,20 +614,6 @@ nav,
 .navbar,
 .header {
     color: #1e293b !important;
-}
-
-/* Headings need strong contrast */
-h1, h2, h3, h4, h5, h6 {
-    color: #0f172a !important;
-}
-
-/* Links should be visible */
-a {
-    color: #0891b2 !important;
-}
-
-a:hover {
-    color: #0e7490 !important;
 }
 
 /* Override inline styles - Keep containers transparent, frosted glass on content only */
