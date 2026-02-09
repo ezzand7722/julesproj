@@ -1,0 +1,121 @@
+/* Premium Subtle Background Textures */
+/* Ultra-subtle geometric micro-patterns for professional depth */
+
+/* Option 1: Geometric Dot Grid (Most Subtle) */
+.subtle-bg-dots {
+    background-color: #ffffff;
+    background-image: 
+        radial-gradient(circle at 1px 1px, rgba(0, 0, 0, 0.03) 1px, transparent 0);
+    background-size: 40px 40px;
+    background-position: 0 0;
+}
+
+/* Option 2: Connected Dots Network (Recommended ⭐) */
+.subtle-bg-network {
+    background-color: #ffffff;
+    background-image: 
+        url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Option 3: Isometric Grid */
+.subtle-bg-isometric {
+    background-color: #ffffff;
+    background-image:
+        linear-gradient(30deg, transparent 48%, rgba(0, 0, 0, 0.02) 49%, rgba(0, 0, 0, 0.02) 51%, transparent 52%),
+        linear-gradient(-30deg, transparent 48%, rgba(0, 0, 0, 0.02) 49%, rgba(0, 0, 0, 0.02) 51%, transparent 52%);
+    background-size: 30px 52px;
+}
+
+/* Option 4: Hexagon Honeycomb */
+.subtle-bg-hexagon {
+    background-color: #ffffff;
+    background-image:
+        url("data:image/svg+xml,%3Csvg width='28' height='49' viewBox='0 0 28 49' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='0.03'%3E%3Cpath d='M13.99 9.25l13 7.5v15l-13 7.5L1 31.75v-15l12.99-7.5zM3 17.9v12.7l10.99 6.34 11-6.35V17.9l-11-6.34L3 17.9zM0 15l12.98-7.5V0h-2v6.35L0 12.69v2.3zm0 18.5L12.98 41v8h-2v-6.85L0 35.81v-2.3zM15 0v7.5L27.99 15H28v-2.31h-.01L17 6.35V0h-2zm0 49v-8l12.99-7.5H28v2.31h-.01L17 42.15V49h-2z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Option 5: Tiny Diagonal Lines */
+.subtle-bg-lines {
+    background-color: #ffffff;
+    background-image: 
+        repeating-linear-gradient(
+            45deg,
+            transparent,
+            transparent 10px,
+            rgba(0, 0, 0, 0.015) 10px,
+            rgba(0, 0, 0, 0.015) 11px
+        );
+}
+
+/* Option 6: Plus Pattern (Crosses) */
+.subtle-bg-plus {
+    background-color: #ffffff;
+    background-image:
+        url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23000000' fill-opacity='0.035' fill-rule='evenodd'%3E%3Cpath d='M0 20h40v1H0zm20-20v40h1V0z'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Option 7: Circuit Board (Tech Feel) */
+.subtle-bg-circuit {
+    background-color: #ffffff;
+    background-image:
+        url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23000000' fill-opacity='0.025' fill-rule='evenodd'/%3E%3C/svg%3E");
+}
+
+/* Option 8: Wave Pattern (Organic) */
+.subtle-bg-wave {
+    background-color: #ffffff;
+    background-image:
+        url("data:image/svg+xml,%3Csvg width='52' height='26' viewBox='0 0 52 26' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='0.03'%3E%3Cpath d='M10 10c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4v2c-3.314 0-6-2.686-6-6 0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6zm25.464-1.95l8.486 8.486-1.414 1.414-8.486-8.486 1.414-1.414z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* ⭐ RECOMMENDED: Apply to body or main containers */
+body {
+    /* Choose one of the patterns above by uncommenting */
+    /* background-color: #ffffff; */
+    /* background-image: ... pattern CSS here ... */
+}
+
+/* Apply to specific pages */
+.dashboard-page,
+.customer-dashboard,
+.booking-page,
+.chat-container {
+    /* Background already set by body, this is for page-specific override */
+}
+
+/* Dark mode variant (if needed) */
+@media (prefers-color-scheme: dark) {
+    .subtle-bg-network {
+        background-color: #1a1a1a;
+        background-image: 
+            url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+}
+
+/* 
+USAGE EXAMPLES:
+
+1. Apply globally to all pages:
+body {
+    background-color: #ffffff;
+    background-image: 
+        url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+2. Apply to specific containers:
+.dashboard-container,
+.chat-main,
+.booking-container {
+    background-color: #ffffff;
+    background-image: url("data:image/svg+xml,...");
+    min-height: 100vh;
+}
+
+3. Combine with your existing gradients:
+.hero {
+    background: 
+        linear-gradient(135deg, rgba(30, 58, 95, 0.95) 0%, rgba(13, 27, 42, 0.98) 100%),
+        url("data:image/svg+xml,%3Csvg..."),
+        url('background-image.jpg');
+    background-blend-mode: overlay, normal, normal;
+}
+*/

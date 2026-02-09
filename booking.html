@@ -140,9 +140,29 @@
                         </label>
                     </div>
                     <style>
+                        .time-card {
+                            position: relative;
+                        }
                         .time-card:has(input:checked) {
-                            border-color: var(--primary, #0891b2);
-                            background: rgba(8, 145, 178, 0.05);
+                            border-color: var(--primary, #0891b2) !important;
+                            background: rgba(8, 145, 178, 0.1) !important;
+                            box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.15) !important;
+                        }
+                        .time-card:has(input:checked)::after {
+                            content: '✓';
+                            position: absolute;
+                            top: 8px;
+                            right: 8px;
+                            background: var(--primary, #0891b2);
+                            color: white;
+                            width: 20px;
+                            height: 20px;
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            font-size: 12px;
+                            font-weight: bold;
                         }
                         .time-card:hover {
                             border-color: var(--primary, #0891b2);
@@ -150,6 +170,23 @@
                             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
                         }
                     </style>
+                    <script>
+                        // Handle time card selection highlighting
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const timeCards = document.querySelectorAll('.time-card');
+                            timeCards.forEach(card => {
+                                card.addEventListener('click', function() {
+                                    const radio = this.querySelector('input[type="radio"]');
+                                    if (radio) {
+                                        radio.checked = true;
+                                        // Force visual update
+                                        timeCards.forEach(c => c.classList.remove('selected'));
+                                        this.classList.add('selected');
+                                    }
+                                });
+                            });
+                        });
+                    </script>
 
                     <button class="btn btn-primary" onclick="nextStep(2)">التالي: الموقع</button>
                 </div>
