@@ -8,28 +8,23 @@
     --font-primary: 'IBM Plex+Sans Arabic', 'Tajawal', sans-serif;
 }
 
-/* AGGRESSIVE MESH GRADIENT BACKGROUND - VISIBLE & BOLD */
+/* SUBTLE PASTEL AURORA GRADIENT - SOFT & GENTLE */
 body {
     font-family: var(--font-primary);
     min-height: 100vh !important;
     background: linear-gradient(135deg, 
-        #e0f2fe 0%,      /* Light blue */
-        #ddd6fe 25%,     /* Light purple */
-        #ccfbf1 50%,     /* Light teal */
-        #e0e7ff 75%,     /* Light indigo */
-        #fae8ff 100%     /* Light pink-purple */
+        #E3F2FD 0%,      /* Very light blue */
+        #F3E5F5 50%,     /* Soft lavender */
+        #E0F2F1 100%     /* Hint of mint */
     ) !important;
     background-attachment: fixed !important;
-    background-size: 400% 400% !important;
-    animation: meshGradient 15s ease infinite;
+    background-size: 200% 200% !important;
+    animation: subtleAurora 20s ease infinite;
 }
 
-@keyframes meshGradient {
-    0% { background-position: 0% 50%; }
-    25% { background-position: 100% 50%; }
-    50% { background-position: 100% 100%; }
-    75% { background-position: 0% 100%; }
-    100% { background-position: 0% 50%; }
+@keyframes subtleAurora {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
 }
 
 /* FORCE CONTAINERS TO BE TRANSPARENT - LET THE GRADIENT SHOW */
@@ -62,21 +57,23 @@ main,
     gap: 0.75rem;
 }
 
-/* Premium Shadows & Glassmorphism */
+/* FROSTED GLASS EFFECT FOR CONTENT CONTAINERS */
+/* Cards and Main Content Areas */
 .card,
 .dashboard-card,
 .provider-card,
 .booking-card,
 .profile-card,
 .stat-card,
-.payment-card {
-    background: rgba(255, 255, 255, 0.95) !important;
-    backdrop-filter: blur(10px) !important;
-    -webkit-backdrop-filter: blur(10px) !important;
+.payment-card,
+.list-item,
+.provider-item,
+.service-item {
+    background: rgba(255, 255, 255, 0.75) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
     border: 1px solid rgba(255, 255, 255, 0.3) !important;
-    box-shadow: 
-        0 10px 30px rgba(0, 0, 0, 0.05),
-        0 1px 3px rgba(0, 0, 0, 0.1) !important;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1) !important;
     border-radius: 16px !important;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
@@ -93,21 +90,23 @@ textarea,
 select,
 .form-control,
 .input-field {
-    background: rgba(255, 255, 255, 0.8) !important;
-    backdrop-filter: blur(10px) !important;
-    -webkit-backdrop-filter: blur(10px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+    background: rgba(255, 255, 255, 0.75) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1) !important;
     border-radius: 12px !important;
     padding: 12px 16px !important;
     transition: all 0.3s ease !important;
+    color: #1e293b !important;
 }
 
 input:focus,
 textarea:focus,
 select:focus {
-    background: rgba(255, 255, 255, 0.95) !important;
+    background: rgba(255, 255, 255, 0.9) !important;
     border-color: rgba(8, 145, 178, 0.5) !important;
-    box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.1) !important;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15), 0 0 0 3px rgba(8, 145, 178, 0.1) !important;
     outline: none !important;
 }
 
@@ -117,13 +116,13 @@ select:focus {
 .signup-form,
 .form-container,
 .auth-box {
-    background: rgba(255, 255, 255, 0.9) !important;
-    backdrop-filter: blur(15px) !important;
-    -webkit-backdrop-filter: blur(15px) !important;
+    background: rgba(255, 255, 255, 0.75) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
     border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1) !important;
     border-radius: 20px !important;
     padding: 2rem !important;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1) !important;
 }
 
 .card:hover,
@@ -409,20 +408,39 @@ button, .btn, a {
 /* AGGRESSIVE OVERRIDES - FORCE TRANSPARENCY ON PAGE ELEMENTS */
 /* Override all white backgrounds from other CSS files */
 
-/* Chat System Overrides */
+/* Chat System - Frosted Glass */
 .chat-container,
 .conversation-list,
-.messages-area,
-.message-input-container,
-.conversation-item {
+.messages-area {
     background: transparent !important;
 }
 
-.message-bubble,
+.message-bubble {
+    background: rgba(255, 255, 255, 0.75) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1) !important;
+}
+
+.conversation-item {
+    background: rgba(255, 255, 255, 0.6) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+}
+
 .conversation-item.active {
     background: rgba(255, 255, 255, 0.85) !important;
-    backdrop-filter: blur(10px) !important;
-    -webkit-backdrop-filter: blur(10px) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+}
+
+.message-input-container {
+    background: rgba(255, 255, 255, 0.75) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
 }
 
 /* Dashboard Overrides */
@@ -441,36 +459,58 @@ button, .btn, a {
     background: transparent !important;
 }
 
-/* Modal/Popup Overrides */
+/* Modal/Popup - Frosted Glass */
 .modal-content,
 .popup-content,
 .dialog-content {
-    background: rgba(255, 255, 255, 0.95) !important;
-    backdrop-filter: blur(15px) !important;
-    -webkit-backdrop-filter: blur(15px) !important;
+    background: rgba(255, 255, 255, 0.75) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1) !important;
     border-radius: 20px !important;
 }
 
-/* Navigation Overrides */
+/* Navigation - Frosted Glass */
 nav,
 .navbar,
 .header {
-    background: rgba(255, 255, 255, 0.9) !important;
-    backdrop-filter: blur(10px) !important;
-    -webkit-backdrop-filter: blur(10px) !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+    background: rgba(255, 255, 255, 0.75) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1) !important;
 }
 
-/* List Items */
-.list-item,
-.provider-item,
-.service-item {
-    background: rgba(255, 255, 255, 0.85) !important;
-    backdrop-filter: blur(8px) !important;
-    -webkit-backdrop-filter: blur(8px) !important;
+/* Ensure text is readable with dark color */
+.card,
+.dashboard-card,
+.provider-card,
+.booking-card,
+.profile-card,
+.auth-form,
+.message-bubble,
+nav,
+.navbar,
+.header {
+    color: #1e293b !important;
 }
 
-/* Override inline styles that might set white backgrounds */
+/* Headings need strong contrast */
+h1, h2, h3, h4, h5, h6 {
+    color: #0f172a !important;
+}
+
+/* Links should be visible */
+a {
+    color: #0891b2 !important;
+}
+
+a:hover {
+    color: #0e7490 !important;
+}
+
+/* Override inline styles - Keep containers transparent, frosted glass on content only */
 [style*="background: white"],
 [style*="background: #fff"],
 [style*="background: #ffffff"],
@@ -480,12 +520,32 @@ nav,
     background: transparent !important;
 }
 
-/* Keep only cards, inputs, and forms with white glass backgrounds */
-.card [style*="background"],
-.form-control [style*="background"],
-input[style*="background"],
-.auth-form [style*="background"] {
-    background: rgba(255, 255, 255, 0.85) !important;
-    backdrop-filter: blur(10px) !important;
-    -webkit-backdrop-filter: blur(10px) !important;
+/* Apply frosted glass to specific content cards/forms that need it */
+.card[style*="background"],
+.auth-form[style*="background"],
+.provider-card[style*="background"],
+.booking-card[style*="background"] {
+    background: rgba(255, 255, 255, 0.75) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1) !important;
+}
+
+/* Buttons should have proper contrast */
+.btn,
+button {
+    font-weight: 600 !important;
+    box-shadow: 0 4px 12px rgba(31, 38, 135, 0.15) !important;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%) !important;
+    color: white !important;
+    border: none !important;
+}
+
+.btn-primary:hover {
+    box-shadow: 0 6px 20px rgba(31, 38, 135, 0.25) !important;
+    transform: translateY(-1px) !important;
 }
