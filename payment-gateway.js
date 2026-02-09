@@ -43,39 +43,33 @@ const PAYMENT_CONFIG = {
 /**
  * Initialize Credit Card Payment via PayTabs
  */
-async function initCreditCardPayment(amount, packageName, userEmail) {
+async function initCreditCardPayment(amount, packageName, userEmail, creditsAmount, supabaseClient) {
     if (!PAYMENT_CONFIG.paytabs.enabled) {
         throw new Error('Credit card payments are not configured');
     }
 
     try {
-        // Create payment page
-        const paymentData = {
-            profile_id: PAYMENT_CONFIG.paytabs.profileId,
-            tran_type: "sale",
-            tran_class: "ecom",
-            cart_id: `topup_${Date.now()}`,
-            cart_currency: "JOD",
-            cart_amount: amount,
-            cart_description: `Khedmati Credits: ${packageName}`,
-            callback: `${window.location.origin}/payment-callback.html`,
-            return: `${window.location.origin}/dashboard.html?payment=success`,
-            customer_details: {
-                name: "Customer",
-                email: userEmail,
-                phone: "962700000000"
-            }
-        };
+        // First, create payment record in database to get proper UUID
+        const { data, error } = await supabaseClient.rpc('create_topup_payment', {
+            p_amount: amount,
+            p_provider: 'credit_card',
+            p_package_name: packageName,
+            p_wallet_details: null
+        });
+
+        if (error) throw error;
 
         // In production, this should call your backend which then calls PayTabs
         // For now, we'll simulate the payment page URL
-        console.log('PayTabs Payment Data:', paymentData);
+        console.log('PayTabs Payment initiated:', data);
         
         // Return payment URL (in production, this comes from PayTabs API)
         return {
             success: true,
             paymentUrl: '#', // This would be the actual PayTabs payment page URL
-            paymentId: paymentData.cart_id,
+            paymentId: data.payment_id,
+            creditsAmount: creditsAmount,
+            packageName: packageName,
             method: 'credit_card'
         };
         
@@ -233,7 +227,7 @@ async function confirmPayment(paymentId, transactionRef, creditsAmount, packageN
 }
 
 /**
- * Simulate Payment Success (for testing/demo)
+ * Simulate Payment Success (for testing/demo - CREDIT CARD ONLY)
  * Remove this in production
  */
 async function simulatePaymentSuccess(paymentId, creditsAmount, packageName, supabaseClient) {
@@ -243,8 +237,33 @@ async function simulatePaymentSuccess(paymentId, creditsAmount, packageName, sup
     // Generate fake transaction reference
     const transactionRef = `SIM_${Date.now()}`;
     
-    // Confirm payment
+    // Confirm payment (auto-approve for demo)
     return await confirmPayment(paymentId, transactionRef, creditsAmount, packageName, supabaseClient);
+}
+
+/**
+ * Get pending payments for manual verification
+ */
+async function getPendingPayments(supabaseClient) {
+    const { data, error } = await supabaseClient
+        .from('payments')
+        .select(`
+            id,
+            amount,
+            provider,
+            created_at,
+            wallet_transactions (
+                wallet_type,
+                wallet_phone,
+                wallet_account
+            )
+        `)
+        .eq('status', 'pending')
+        .eq('payment_purpose', 'topup')
+        .order('created_at', { ascending: false });
+    
+    if (error) throw error;
+    return data;
 }
 
 // Export functions
@@ -255,5 +274,6 @@ window.PaymentGateway = {
     initOrangeMoneyPayment,
     initUWalletPayment,
     confirmPayment,
-    simulatePaymentSuccess
+    simulatePaymentSuccess,
+    getPendingPayments
 };

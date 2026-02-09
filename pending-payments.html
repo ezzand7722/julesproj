@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>طلبات الدفع المعلقة - خدمتي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .payments-grid {
+            display: grid;
+            gap: 15px;
+        }
+        .payment-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-right: 4px solid #f59e0b;
+        }
+        .payment-card.approved {
+            border-right-color: #10b981;
+            opacity: 0.6;
+        }
+        .payment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .payment-method {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        .method-cliq { background: #dbeafe; color: #1e40af; }
+        .method-orange_money { background: #fed7aa; color: #c2410c; }
+        .method-uwallet { background: #e9d5ff; color: #7c3aed; }
+        .method-credit_card { background: #d1fae5; color: #047857; }
+        .payment-details {
+            margin: 15px 0;
+            padding: 15px;
+            background: #f9fafb;
+            border-radius: 8px;
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+        }
+        .detail-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        .detail-value {
+            font-weight: 500;
+        }
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .btn {
+            flex: 1;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+        .btn-approve {
+            background: #10b981;
+            color: white;
+        }
+        .btn-approve:hover {
+            background: #059669;
+        }
+        .btn-reject {
+            background: #ef4444;
+            color: white;
+        }
+        .btn-reject:hover {
+            background: #dc2626;
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 12px;
+        }
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 style="margin: 0 0 10px 0;">💰 طلبات الدفع المعلقة</h1>
+            <p style="margin: 0; color: #666;">قم بمراجعة وتأكيد طلبات الشحن بعد التحقق من استلام الدفع</p>
+            <button onclick="window.location.href='dashboard.html'" 
+                style="margin-top: 15px; padding: 8px 16px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer;">
+                ← العودة للوحة التحكم
+            </button>
+        </div>
+
+        <div id="loading" class="loading">
+            <div style="font-size: 2rem;">⏳</div>
+            <p>جاري التحميل...</p>
+        </div>
+
+        <div id="paymentsContainer" class="payments-grid" style="display: none;"></div>
+
+        <div id="emptyState" class="empty-state" style="display: none;">
+            <div class="empty-icon">✅</div>
+            <h2>لا توجد طلبات معلقة</h2>
+            <p style="color: #666;">جميع طلبات الدفع تمت معالجتها</p>
+        </div>
+    </div>
+
+    <script type="module">
+        const SUPABASE_URL = 'https://rkhkvmcnjuwoxammhsqn.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJraGt2bWNuanV3b3hhbW1oc3FuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzc2NTA0OTcsImV4cCI6MjA1MzIyNjQ5N30.t-H6OXhyINIYp0NkjGTiMRHw4c8q-nqGE90xmTh5UvA';
+        
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let currentUser = null;
+
+        // Check auth
+        async function init() {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+            currentUser = user;
+            await loadPendingPayments();
+        }
+
+        async function loadPendingPayments() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('paymentsContainer').style.display = 'none';
+            document.getElementById('emptyState').style.display = 'none';
+
+            try {
+                const { data, error } = await supabase
+                    .from('payments')
+                    .select(`
+                        id,
+                        amount,
+                        provider,
+                        created_at,
+                        status,
+                        wallet_transactions (
+                            wallet_type,
+                            wallet_phone,
+                            wallet_account
+                        )
+                    `)
+                    .eq('payment_purpose', 'topup')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                document.getElementById('loading').style.display = 'none';
+
+                if (!data || data.length === 0) {
+                    document.getElementById('emptyState').style.display = 'block';
+                    return;
+                }
+
+                renderPayments(data);
+                document.getElementById('paymentsContainer').style.display = 'grid';
+
+            } catch (error) {
+                console.error('Error loading payments:', error);
+                alert('فشل تحميل طلبات الدفع: ' + error.message);
+            }
+        }
+
+        function renderPayments(payments) {
+            const container = document.getElementById('paymentsContainer');
+            container.innerHTML = payments.map(payment => {
+                const wallet = payment.wallet_transactions?.[0];
+                const isPending = payment.status === 'pending';
+                const isApproved = payment.status === 'paid';
+                
+                const methodMap = {
+                    'cliq': 'CliQ - كليك',
+                    'orange_money': 'Orange Money',
+                    'uwallet': 'uWallet',
+                    'credit_card': 'بطاقة ائتمان'
+                };
+
+                return `
+                    <div class="payment-card ${isApproved ? 'approved' : ''}" id="payment-${payment.id}">
+                        <div class="payment-header">
+                            <div>
+                                <span class="payment-method method-${payment.provider}">
+                                    ${methodMap[payment.provider] || payment.provider}
+                                </span>
+                                <span style="margin-right: 10px; color: ${isPending ? '#f59e0b' : '#10b981'}; font-weight: 500;">
+                                    ${isPending ? '⏳ معلق' : '✅ مؤكد'}
+                                </span>
+                            </div>
+                            <div style="font-size: 1.5rem; font-weight: bold; color: #3b82f6;">
+                                ${payment.amount} JD
+                            </div>
+                        </div>
+
+                        <div class="payment-details">
+                            ${wallet ? `
+                                ${wallet.wallet_phone ? `
+                                    <div class="detail-row">
+                                        <span class="detail-label">رقم الهاتف:</span>
+                                        <span class="detail-value">${wallet.wallet_phone}</span>
+                                    </div>
+                                ` : ''}
+                                ${wallet.wallet_account ? `
+                                    <div class="detail-row">
+                                        <span class="detail-label">رقم الحساب:</span>
+                                        <span class="detail-value">${wallet.wallet_account}</span>
+                                    </div>
+                                ` : ''}
+                            ` : ''}
+                            <div class="detail-row">
+                                <span class="detail-label">تاريخ الطلب:</span>
+                                <span class="detail-value">${new Date(payment.created_at).toLocaleString('ar-JO')}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">رقم العملية:</span>
+                                <span class="detail-value" style="font-size: 0.8rem;">${payment.id.substring(0, 8)}...</span>
+                            </div>
+                        </div>
+
+                        ${isPending ? `
+                            <div class="actions">
+                                <button class="btn btn-approve" onclick="approvePayment('${payment.id}', ${payment.amount})">
+                                    ✓ تأكيد الدفع
+                                </button>
+                                <button class="btn btn-reject" onclick="rejectPayment('${payment.id}')">
+                                    ✕ رفض
+                                </button>
+                            </div>
+                        ` : `
+                            <p style="text-align: center; color: #10b981; margin: 10px 0;">
+                                ✅ تم تأكيد هذا الدفع
+                            </p>
+                        `}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        window.approvePayment = async function(paymentId, amount) {
+            if (!confirm(`هل أنت متأكد من تأكيد هذا الدفع؟\nالمبلغ: ${amount} دينار`)) {
+                return;
+            }
+
+            // Calculate credits (assuming 10 credits per 5 JD)
+            const creditsAmount = amount === 5 ? 10 : amount === 20 ? 50 : amount === 35 ? 100 : Math.floor(amount / 0.5);
+            const packageName = amount === 5 ? 'باقة البداية' : amount === 20 ? 'باقة المحترفين' : amount === 35 ? 'باقة الأعمال' : 'باقة مخصصة';
+
+            try {
+                const { data, error } = await supabase.rpc('confirm_topup_payment', {
+                    p_payment_id: paymentId,
+                    p_transaction_ref: `MANUAL_${Date.now()}`,
+                    p_credits_amount: creditsAmount,
+                    p_package_name: packageName
+                });
+
+                if (error) throw error;
+
+                alert('✅ تم تأكيد الدفع بنجاح!');
+                await loadPendingPayments();
+
+            } catch (error) {
+                console.error('Approval error:', error);
+                alert('فشل تأكيد الدفع: ' + error.message);
+            }
+        };
+
+        window.rejectPayment = async function(paymentId) {
+            if (!confirm('هل أنت متأكد من رفض هذا الدفع؟')) {
+                return;
+            }
+
+            try {
+                const { error } = await supabase
+                    .from('payments')
+                    .update({ status: 'failed' })
+                    .eq('id', paymentId);
+
+                if (error) throw error;
+
+                alert('تم رفض الطلب');
+                await loadPendingPayments();
+
+            } catch (error) {
+                console.error('Rejection error:', error);
+                alert('فشل رفض الطلب: ' + error.message);
+            }
+        };
+
+        init();
+    </script>
+</body>
+</html>

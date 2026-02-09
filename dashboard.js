@@ -619,7 +619,9 @@ window.processCreditCardPayment = async function () {
         const result = await window.PaymentGateway.initCreditCardPayment(
             selectedPackageData.price,
             selectedPackageData.name,
-            currentUser.email
+            currentUser.email,
+            selectedPackageData.amount,
+            supabaseDashboard
         );
         
         if (result.success) {
@@ -630,7 +632,7 @@ window.processCreditCardPayment = async function () {
             
             // For demo, simulate successful payment
             setTimeout(async () => {
-                await simulatePaymentCompletion();
+                await simulatePaymentCompletion(result.creditsAmount, result.packageName);
             }, 3000);
         }
     } catch (error) {
@@ -657,7 +659,7 @@ window.processCliqPayment = async function () {
     btn.textContent = 'جاري إرسال الطلب...';
     
     try {
-        showProcessingStep('جاري إرسال طلب الدفع إلى البنك...');
+        showProcessingStep('جاري إرسال طلب الدفع...');
         
         const result = await window.PaymentGateway.initCliqPayment(
             selectedPackageData.price,
@@ -668,12 +670,17 @@ window.processCliqPayment = async function () {
         
         if (result.success) {
             currentPaymentId = result.paymentId;
-            showProcessingStep(result.instructions || 'يرجى الموافقة من تطبيق البنك');
             
-            // For demo, simulate approval after 5 seconds
-            setTimeout(async () => {
-                await simulatePaymentCompletion();
-            }, 5000);
+            // Show success message for manual verification
+            showNotification(
+                `تم إرسال طلب الدفع بنجاح!\n\nالمبلغ: ${selectedPackageData.price} دينار\nالرقم: ${phone}\n\nيرجى تحويل المبلغ عبر CliQ ثم الانتظار حتى نتحقق من الدفع.`,
+                'success'
+            );
+            
+            setTimeout(() => {
+                closeTopUpModal();
+                loadCredits();
+            }, 2000);
         }
     } catch (error) {
         console.error('CliQ payment error:', error);
@@ -699,7 +706,7 @@ window.processOrangeMoneyPayment = async function () {
     btn.textContent = 'جاري المعالجة...';
     
     try {
-        showProcessingStep('جاري إرسال رمز التأكيد...');
+        showProcessingStep('جاري إرسال طلب الدفع...');
         
         const result = await window.PaymentGateway.initOrangeMoneyPayment(
             selectedPackageData.price,
@@ -710,12 +717,17 @@ window.processOrangeMoneyPayment = async function () {
         
         if (result.success) {
             currentPaymentId = result.paymentId;
-            showProcessingStep(result.instructions || 'سيصلك رمز التأكيد عبر SMS');
             
-            // For demo, simulate success
-            setTimeout(async () => {
-                await simulatePaymentCompletion();
-            }, 4000);
+            // Show success message for manual verification
+            showNotification(
+                `تم إرسال طلب الدفع بنجاح!\n\nالمبلغ: ${selectedPackageData.price} دينار\nرقم Orange Money: ${phone}\n\nيرجى إتمام الدفع عبر Orange Money ثم الانتظار حتى نتحقق من الدفع.`,
+                'success'
+            );
+            
+            setTimeout(() => {
+                closeTopUpModal();
+                loadCredits();
+            }, 2000);
         }
     } catch (error) {
         console.error('Orange Money payment error:', error);
@@ -741,7 +753,7 @@ window.processUWalletPayment = async function () {
     btn.textContent = 'جاري المعالجة...';
     
     try {
-        showProcessingStep('جاري الاتصال بمحفظة uWallet...');
+        showProcessingStep('جاري إرسال طلب الدفع...');
         
         const result = await window.PaymentGateway.initUWalletPayment(
             selectedPackageData.price,
@@ -752,12 +764,17 @@ window.processUWalletPayment = async function () {
         
         if (result.success) {
             currentPaymentId = result.paymentId;
-            showProcessingStep('جاري تأكيد الدفع...');
             
-            // For demo, simulate success
-            setTimeout(async () => {
-                await simulatePaymentCompletion();
-            }, 3000);
+            // Show success message for manual verification
+            showNotification(
+                `تم إرسال طلب الدفع بنجاح!\n\nالمبلغ: ${selectedPackageData.price} دينار\nحساب uWallet: ${account}\n\nيرجى إتمام الدفع عبر uWallet ثم الانتظار حتى نتحقق من الدفع.`,
+                'success'
+            );
+            
+            setTimeout(() => {
+                closeTopUpModal();
+                loadCredits();
+            }, 2000);
         }
     } catch (error) {
         console.error('uWallet payment error:', error);
@@ -769,20 +786,20 @@ window.processUWalletPayment = async function () {
     }
 }
 
-// Simulate payment completion (for demo purposes)
-async function simulatePaymentCompletion() {
+// Simulate payment completion (for demo purposes - CREDIT CARD ONLY)
+async function simulatePaymentCompletion(creditsAmount, packageName) {
     try {
         // Use the simulate function or directly confirm
         // In production, this would be called from a webhook/callback
         const result = await window.PaymentGateway.simulatePaymentSuccess(
             currentPaymentId,
-            selectedPackageData.amount,
-            selectedPackageData.name,
+            creditsAmount || selectedPackageData.amount,
+            packageName || selectedPackageData.name,
             supabaseDashboard
         );
         
         if (result.success) {
-            showNotification(`تم شحن ${selectedPackageData.amount} عملة بنجاح! 🎉`, 'success');
+            showNotification(`تم شحن ${creditsAmount || selectedPackageData.amount} عملة بنجاح! 🎉`, 'success');
             await loadCredits(); // Refresh balance
             closeTopUpModal();
         }
