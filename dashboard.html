@@ -149,38 +149,21 @@
                             <div style="color: #10b981;">✓</div>
                         </div>
 
-                        <!-- CliQ -->
-                        <div class="payment-method-card" onclick="selectPaymentMethod('cliq')"
-                            style="border: 2px solid #eee; padding: 1rem; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 1rem;">
-                            <div style="font-size: 2rem;">🏦</div>
+                        <!-- WhatsApp for Alternative Payments -->
+                        <div class="payment-method-card" onclick="contactWhatsApp()"
+                            style="border: 2px solid #25D366; padding: 1rem; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 1rem; background: #f0fdf4;">
+                            <div style="font-size: 2rem;">💬</div>
                             <div style="flex: 1;">
-                                <h4 style="margin: 0; font-size: 1rem;">CliQ - كليك</h4>
-                                <p style="margin: 0; color: #666; font-size: 0.85rem;">الدفع الفوري عبر البنك</p>
+                                <h4 style="margin: 0; font-size: 1rem; color: #25D366;">الدفع عبر CliQ أو المحفظة الإلكترونية</h4>
+                                <p style="margin: 0; color: #666; font-size: 0.85rem;">تواصل معنا عبر واتساب للدفع بطرق أخرى</p>
                             </div>
-                            <div style="color: #10b981;">✓</div>
+                            <div style="color: #25D366; font-size: 1.5rem;">→</div>
                         </div>
+                    </div>
 
-                        <!-- Orange Money -->
-                        <div class="payment-method-card" onclick="selectPaymentMethod('orange_money')"
-                            style="border: 2px solid #eee; padding: 1rem; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 1rem;">
-                            <div style="font-size: 2rem;">📱</div>
-                            <div style="flex: 1;">
-                                <h4 style="margin: 0; font-size: 1rem;">Orange Money</h4>
-                                <p style="margin: 0; color: #666; font-size: 0.85rem;">محفظة أورانج الإلكترونية</p>
-                            </div>
-                            <div style="color: #10b981;">✓</div>
-                        </div>
-
-                        <!-- uWallet -->
-                        <div class="payment-method-card" onclick="selectPaymentMethod('uwallet')"
-                            style="border: 2px solid #eee; padding: 1rem; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 1rem;">
-                            <div style="font-size: 2rem;">👛</div>
-                            <div style="flex: 1;">
-                                <h4 style="margin: 0; font-size: 1rem;">uWallet</h4>
-                                <p style="margin: 0; color: #666; font-size: 0.85rem;">المحفظة الإلكترونية</p>
-                            </div>
-                            <div style="color: #10b981;">✓</div>
-                        </div>
+                    <div style="margin-top: 1rem; padding: 1rem; background: #fef3c7; border-radius: 8px; font-size: 0.9rem;">
+                        <strong>💡 طرق دفع إضافية:</strong>
+                        <p style="margin: 0.5rem 0 0 0; color: #666;">للدفع عبر CliQ، Orange Money، أو uWallet، تواصل معنا على واتساب وسنساعدك في إتمام العملية</p>
                     </div>
 
                     <button class="btn btn-ghost btn-block" onclick="backToPackages()" 
@@ -198,47 +181,6 @@
                         </p>
                         <button id="payBtnCard" class="btn btn-primary btn-block" onclick="processCreditCardPayment()">
                             متابعة للدفع الآمن 🔒
-                        </button>
-                    </div>
-
-                    <!-- CliQ Form -->
-                    <div id="cliqForm" class="payment-form" style="display: none;">
-                        <div style="margin-bottom: 1rem;">
-                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">رقم الموبايل المرتبط بحساب CliQ</label>
-                            <input type="tel" id="cliqPhone" placeholder="07XXXXXXXX" 
-                                style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem;"
-                                maxlength="10" pattern="0[0-9]{9}">
-                            <p style="color: #666; font-size: 0.85rem; margin-top: 0.5rem;">سيصلك طلب الموافقة على تطبيق البنك</p>
-                        </div>
-                        <button id="payBtnCliq" class="btn btn-primary btn-block" onclick="processCliqPayment()">
-                            إرسال طلب الدفع
-                        </button>
-                    </div>
-
-                    <!-- Orange Money Form -->
-                    <div id="orangeMoneyForm" class="payment-form" style="display: none;">
-                        <div style="margin-bottom: 1rem;">
-                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">رقم Orange Money</label>
-                            <input type="tel" id="orangePhone" placeholder="078XXXXXXX or 079XXXXXXX" 
-                                style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem;"
-                                maxlength="10" pattern="07[89][0-9]{7}">
-                            <p style="color: #666; font-size: 0.85rem; margin-top: 0.5rem;">سيصلك رمز التأكيد عبر SMS</p>
-                        </div>
-                        <button id="payBtnOrange" class="btn btn-primary btn-block" onclick="processOrangeMoneyPayment()">
-                            تأكيد الدفع
-                        </button>
-                    </div>
-
-                    <!-- uWallet Form -->
-                    <div id="uwalletForm" class="payment-form" style="display: none;">
-                        <div style="margin-bottom: 1rem;">
-                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">رقم حساب uWallet</label>
-                            <input type="text" id="uwalletAccount" placeholder="رقم الحساب أو البريد الإلكتروني" 
-                                style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem;">
-                            <p style="color: #666; font-size: 0.85rem; margin-top: 0.5rem;">يمكنك أيضاً مسح رمز QR من تطبيق uWallet</p>
-                        </div>
-                        <button id="payBtnUwallet" class="btn btn-primary btn-block" onclick="processUWalletPayment()">
-                            تأكيد الدفع
                         </button>
                     </div>
 

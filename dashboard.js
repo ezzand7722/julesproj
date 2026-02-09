@@ -574,26 +574,40 @@ window.selectPaymentMethod = function (method) {
     });
     event.currentTarget.classList.add('selected');
     
-    // Wait a bit then move to step 3
-    setTimeout(() => {
-        document.getElementById('step2').style.display = 'none';
-        document.getElementById('step3').style.display = 'block';
-        
-        // Show appropriate form
-        document.querySelectorAll('.payment-form').forEach(f => {
-            f.style.display = 'none';
-        });
-        
-        if (method === 'credit_card') {
+    // Only credit card can proceed to step 3
+    if (method === 'credit_card') {
+        // Wait a bit then move to step 3
+        setTimeout(() => {
+            document.getElementById('step2').style.display = 'none';
+            document.getElementById('step3').style.display = 'block';
+            
+            // Show credit card form
+            document.querySelectorAll('.payment-form').forEach(f => {
+                f.style.display = 'none';
+            });
             document.getElementById('creditCardForm').style.display = 'block';
-        } else if (method === 'cliq') {
-            document.getElementById('cliqForm').style.display = 'block';
-        } else if (method === 'orange_money') {
-            document.getElementById('orangeMoneyForm').style.display = 'block';
-        } else if (method === 'uwallet') {
-            document.getElementById('uwalletForm').style.display = 'block';
-        }
-    }, 300);
+        }, 300);
+    }
+}
+
+// WhatsApp contact for alternative payments
+window.contactWhatsApp = function() {
+    const packageInfo = selectedPackageData;
+    const message = `مرحباً! أرغب في شحن رصيدي:\n\nالباقة: ${packageInfo.name}\nالمبلغ: ${packageInfo.price} دينار\nالعملات: ${packageInfo.amount} عملة\n\nأرغب في الدفع عبر CliQ أو محفظة إلكترونية`;
+    
+    // Replace with your actual WhatsApp number
+    const whatsappNumber = '962799999999'; // Change this to your WhatsApp number
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+    
+    window.open(whatsappUrl, '_blank');
+    
+    // Show confirmation message
+    showNotification('سيتم فتح واتساب للتواصل معنا. سنساعدك في إتمام عملية الدفع! 💬', 'success');
+    
+    // Close modal after a delay
+    setTimeout(() => {
+        closeTopUpModal();
+    }, 2000);
 }
 
 window.backToPaymentMethods = function () {
@@ -642,147 +656,6 @@ window.processCreditCardPayment = async function () {
     } finally {
         btn.disabled = false;
         btn.textContent = 'متابعة للدفع الآمن 🔒';
-    }
-}
-
-// CliQ Payment
-window.processCliqPayment = async function () {
-    const phone = document.getElementById('cliqPhone').value;
-    
-    if (!phone || !/^0[0-9]{9}$/.test(phone)) {
-        showNotification('يرجى إدخال رقم موبايل صحيح', 'error');
-        return;
-    }
-    
-    const btn = document.getElementById('payBtnCliq');
-    btn.disabled = true;
-    btn.textContent = 'جاري إرسال الطلب...';
-    
-    try {
-        showProcessingStep('جاري إرسال طلب الدفع...');
-        
-        const result = await window.PaymentGateway.initCliqPayment(
-            selectedPackageData.price,
-            selectedPackageData.name,
-            phone,
-            supabaseDashboard
-        );
-        
-        if (result.success) {
-            currentPaymentId = result.paymentId;
-            
-            // Show success message for manual verification
-            showNotification(
-                `تم إرسال طلب الدفع بنجاح!\n\nالمبلغ: ${selectedPackageData.price} دينار\nالرقم: ${phone}\n\nيرجى تحويل المبلغ عبر CliQ ثم الانتظار حتى نتحقق من الدفع.`,
-                'success'
-            );
-            
-            setTimeout(() => {
-                closeTopUpModal();
-                loadCredits();
-            }, 2000);
-        }
-    } catch (error) {
-        console.error('CliQ payment error:', error);
-        showNotification('فشلت عملية الدفع: ' + error.message, 'error');
-        backToPaymentMethods();
-    } finally {
-        btn.disabled = false;
-        btn.textContent = 'إرسال طلب الدفع';
-    }
-}
-
-// Orange Money Payment
-window.processOrangeMoneyPayment = async function () {
-    const phone = document.getElementById('orangePhone').value;
-    
-    if (!phone || !/^(078|079)[0-9]{7}$/.test(phone)) {
-        showNotification('يرجى إدخال رقم Orange صحيح', 'error');
-        return;
-    }
-    
-    const btn = document.getElementById('payBtnOrange');
-    btn.disabled = true;
-    btn.textContent = 'جاري المعالجة...';
-    
-    try {
-        showProcessingStep('جاري إرسال طلب الدفع...');
-        
-        const result = await window.PaymentGateway.initOrangeMoneyPayment(
-            selectedPackageData.price,
-            selectedPackageData.name,
-            phone,
-            supabaseDashboard
-        );
-        
-        if (result.success) {
-            currentPaymentId = result.paymentId;
-            
-            // Show success message for manual verification
-            showNotification(
-                `تم إرسال طلب الدفع بنجاح!\n\nالمبلغ: ${selectedPackageData.price} دينار\nرقم Orange Money: ${phone}\n\nيرجى إتمام الدفع عبر Orange Money ثم الانتظار حتى نتحقق من الدفع.`,
-                'success'
-            );
-            
-            setTimeout(() => {
-                closeTopUpModal();
-                loadCredits();
-            }, 2000);
-        }
-    } catch (error) {
-        console.error('Orange Money payment error:', error);
-        showNotification('فشلت عملية الدفع: ' + error.message, 'error');
-        backToPaymentMethods();
-    } finally {
-        btn.disabled = false;
-        btn.textContent = 'تأكيد الدفع';
-    }
-}
-
-// uWallet Payment
-window.processUWalletPayment = async function () {
-    const account = document.getElementById('uwalletAccount').value;
-    
-    if (!account || account.trim().length === 0) {
-        showNotification('يرجى إدخال رقم الحساب', 'error');
-        return;
-    }
-    
-    const btn = document.getElementById('payBtnUwallet');
-    btn.disabled = true;
-    btn.textContent = 'جاري المعالجة...';
-    
-    try {
-        showProcessingStep('جاري إرسال طلب الدفع...');
-        
-        const result = await window.PaymentGateway.initUWalletPayment(
-            selectedPackageData.price,
-            selectedPackageData.name,
-            account,
-            supabaseDashboard
-        );
-        
-        if (result.success) {
-            currentPaymentId = result.paymentId;
-            
-            // Show success message for manual verification
-            showNotification(
-                `تم إرسال طلب الدفع بنجاح!\n\nالمبلغ: ${selectedPackageData.price} دينار\nحساب uWallet: ${account}\n\nيرجى إتمام الدفع عبر uWallet ثم الانتظار حتى نتحقق من الدفع.`,
-                'success'
-            );
-            
-            setTimeout(() => {
-                closeTopUpModal();
-                loadCredits();
-            }, 2000);
-        }
-    } catch (error) {
-        console.error('uWallet payment error:', error);
-        showNotification('فشلت عملية الدفع: ' + error.message, 'error');
-        backToPaymentMethods();
-    } finally {
-        btn.disabled = false;
-        btn.textContent = 'تأكيد الدفع';
     }
 }
 
