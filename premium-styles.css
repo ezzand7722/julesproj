@@ -399,3 +399,66 @@ button, .btn, a {
     h1 { font-size: 1.75rem; }
     h2 { font-size: 1.5rem; }
 }
+
+/* ============================================
+   8. FLOATING BACKGROUND OBJECTS
+   Service-themed icons floating on the sides
+   ============================================ */
+.floating-objects {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.float-obj {
+    position: absolute;
+    font-size: 2rem;
+    opacity: 0.08;
+    animation: floatUpDown var(--duration, 20s) ease-in-out var(--delay, 0s) infinite;
+    filter: grayscale(40%);
+    user-select: none;
+}
+
+/* Slightly different sizes */
+.float-obj:nth-child(odd) {
+    font-size: 2.2rem;
+    opacity: 0.06;
+}
+.float-obj:nth-child(3n) {
+    font-size: 1.8rem;
+    opacity: 0.1;
+}
+
+@keyframes floatUpDown {
+    0%, 100% {
+        transform: translateY(0px) rotate(0deg);
+    }
+    25% {
+        transform: translateY(-20px) rotate(5deg);
+    }
+    50% {
+        transform: translateY(-35px) rotate(-3deg);
+    }
+    75% {
+        transform: translateY(-15px) rotate(4deg);
+    }
+}
+
+/* Ensure all page content sits above the floating objects */
+nav, section, main, footer, .hero, .container,
+.circular-menu-container, .search-box-container {
+    position: relative;
+    z-index: 1;
+}
+
+/* Hide floating objects on small screens to avoid clutter */
+@media (max-width: 768px) {
+    .floating-objects {
+        display: none;
+    }
+}
