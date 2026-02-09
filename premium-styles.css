@@ -417,21 +417,21 @@ button, .btn, a {
 
 .float-obj {
     position: absolute;
-    font-size: 2rem;
-    opacity: 0.08;
+    font-size: 3.5rem;
+    opacity: 0.25;
     animation: floatUpDown var(--duration, 20s) ease-in-out var(--delay, 0s) infinite;
-    filter: grayscale(40%);
+    filter: grayscale(20%) drop-shadow(0 2px 4px rgba(0,0,0,0.1));
     user-select: none;
 }
 
 /* Slightly different sizes */
 .float-obj:nth-child(odd) {
-    font-size: 2.2rem;
-    opacity: 0.06;
+    font-size: 4rem;
+    opacity: 0.2;
 }
 .float-obj:nth-child(3n) {
-    font-size: 1.8rem;
-    opacity: 0.1;
+    font-size: 3rem;
+    opacity: 0.3;
 }
 
 @keyframes floatUpDown {
