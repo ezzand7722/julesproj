@@ -96,7 +96,7 @@ async function loadConversations() {
     if (profile.role === 'customer') {
         const { data: bookings } = await supabaseClient
             .from('bookings')
-            .select('provider_id, providers(user_id, name, id)')
+            .select('provider_id, providers(user_id, name, id, specialty)')
             .eq('customer_id', myId); // Using auth.uid mapping needed? 
         // Wait, bookings.customer_id is UUID linking to auth.users usually?
         // Let's check schema. In `bookings`, customer_id is UUID.
@@ -109,6 +109,7 @@ async function loadConversations() {
                 map.set(b.providers.user_id, {
                     id: b.providers.user_id, // Auth ID (for chat)
                     name: b.providers.name,
+                    specialty: b.providers.specialty || 'مقدم خدمة',
                     avatar: b.providers.name.substring(0, 2)
                 });
             }
@@ -137,6 +138,7 @@ async function loadConversations() {
                     map.set(b.customer_id, {
                         id: b.customer_id,
                         name: b.customer_name,
+                        specialty: 'عميل',
                         avatar: b.customer_name.substring(0, 2)
                     });
                 }
@@ -152,7 +154,7 @@ async function loadConversations() {
     }
 
     listContainer.innerHTML = contacts.map(contact => `
-        <div class="conversation-item" onclick="openChat('${contact.id}', '${contact.name}')">
+        <div class="conversation-item" onclick="openChat('${contact.id}', '${contact.name}', '${contact.specialty || ''}')">
             <div class="conversation-avatar">${contact.avatar}</div>
             <div class="conversation-info">
                 <span class="conversation-name">${contact.name}</span>
@@ -163,11 +165,18 @@ async function loadConversations() {
 }
 
 // Open Chat with a User
-async function openChat(partnerId, partnerName) {
-    currentChatUser = { id: partnerId, name: partnerName };
+async function openChat(partnerId, partnerName, partnerService = 'خدمة') {
+    currentChatUser = { id: partnerId, name: partnerName, service: partnerService };
 
     // UI Updates
     document.getElementById('chatHeaderName').textContent = partnerName;
+    
+    // Update service subtitle if it exists
+    const serviceEl = document.getElementById('chatHeaderService');
+    if (serviceEl) {
+        serviceEl.textContent = partnerService;
+    }
+    
     document.getElementById('chatMessages').innerHTML = '<div class="loading-spinner">جاري تحميل الرسائل...</div>';
 
     // Mobile: Hide sidebar
@@ -292,4 +301,21 @@ function escapeHtml(text) {
 window.initChat = initChat;
 window.openChat = openChat;
 window.sendMessage = sendMessage;
+
+// Call functionality
+function callProvider() {
+    if (currentChatUser && currentChatUser.id) {
+        // In a real app, this would initiate a call or show phone number
+        alert(`اتصال بـ ${currentChatUser.name}\nسيتم إضافة رقم الهاتف لاحقاً`);
+    }
+}
+
+function callCustomer() {
+    if (currentChatUser && currentChatUser.id) {
+        alert(`اتصال بـ ${currentChatUser.name}\nسيتم إضافة رقم الهاتف لاحقاً`);
+    }
+}
+
+window.callProvider = callProvider;
+window.callCustomer = callCustomer;
 window.backToConversations = backToConversations;

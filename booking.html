@@ -113,24 +113,43 @@
                     </div>
 
                     <h4 class="mb-2">اختر الوقت</h4>
-                    <div class="flex flex-col gap-2 mb-4">
-                        <label class="card flex items-center gap-2" style="cursor: pointer;">
-                            <input type="radio" name="time" value="صباحاً (9-12)" checked>
-                            <span>صباحاً (9:00 - 12:00)</span>
+                    <div class="grid grid-cols-2 gap-3 mb-4">
+                        <label class="time-card" style="cursor: pointer; padding: 1rem; text-align: center; border: 2px solid #e5e7eb; border-radius: 12px; transition: all 0.2s;">
+                            <input type="radio" name="time" value="صباحاً (9-12)" checked style="display: none;">
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🌅</div>
+                            <div style="font-weight: 600; margin-bottom: 0.25rem;">صباحاً</div>
+                            <div style="font-size: 0.875rem; color: #6b7280;">9:00 - 12:00</div>
                         </label>
-                        <label class="card flex items-center gap-2" style="cursor: pointer;">
-                            <input type="radio" name="time" value="ظهراً (12-3)">
-                            <span>ظهراً (12:00 - 15:00)</span>
+                        <label class="time-card" style="cursor: pointer; padding: 1rem; text-align: center; border: 2px solid #e5e7eb; border-radius: 12px; transition: all 0.2s;">
+                            <input type="radio" name="time" value="ظهراً (12-3)" style="display: none;">
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">☀️</div>
+                            <div style="font-weight: 600; margin-bottom: 0.25rem;">ظهراً</div>
+                            <div style="font-size: 0.875rem; color: #6b7280;">12:00 - 15:00</div>
                         </label>
-                        <label class="card flex items-center gap-2" style="cursor: pointer;">
-                            <input type="radio" name="time" value="عصراً (3-6)">
-                            <span>عصراً (15:00 - 18:00)</span>
+                        <label class="time-card" style="cursor: pointer; padding: 1rem; text-align: center; border: 2px solid #e5e7eb; border-radius: 12px; transition: all 0.2s;">
+                            <input type="radio" name="time" value="عصراً (3-6)" style="display: none;">
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🌇</div>
+                            <div style="font-weight: 600; margin-bottom: 0.25rem;">عصراً</div>
+                            <div style="font-size: 0.875rem; color: #6b7280;">15:00 - 18:00</div>
                         </label>
-                        <label class="card flex items-center gap-2" style="cursor: pointer;">
-                            <input type="radio" name="time" value="مساءً (6-9)">
-                            <span>مساءً (18:00 - 21:00)</span>
+                        <label class="time-card" style="cursor: pointer; padding: 1rem; text-align: center; border: 2px solid #e5e7eb; border-radius: 12px; transition: all 0.2s;">
+                            <input type="radio" name="time" value="مساءً (6-9)" style="display: none;">
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🌙</div>
+                            <div style="font-weight: 600; margin-bottom: 0.25rem;">مساءً</div>
+                            <div style="font-size: 0.875rem; color: #6b7280;">18:00 - 21:00</div>
                         </label>
                     </div>
+                    <style>
+                        .time-card:has(input:checked) {
+                            border-color: var(--primary, #0891b2);
+                            background: rgba(8, 145, 178, 0.05);
+                        }
+                        .time-card:hover {
+                            border-color: var(--primary, #0891b2);
+                            transform: translateY(-2px);
+                            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                        }
+                    </style>
 
                     <button class="btn btn-primary" onclick="nextStep(2)">التالي: الموقع</button>
                 </div>
@@ -210,12 +229,12 @@
                 </div>
 
                 <!-- Success Message -->
-                <div id="success-screen" class="step-content text-center" style="padding-top: 2rem;">
+                <div id="success-screen" class="step-content text-center" style="padding: 2rem 1rem; padding-bottom: 2.5rem;">
                     <div style="font-size: 4rem; margin-bottom: 1rem;">🎉</div>
                     <h2 class="text-primary mb-2">تم الحجز بنجاح!</h2>
                     <p class="mb-4">تم إرسال طلبك إلى مقدم الخدمة.<br>سيتم التواصل معك قريباً.</p>
-                    <a href="index.html" class="btn btn-primary">العودة للرئيسية</a>
-                    <a href="customer-dashboard.html" class="btn btn-ghost mt-2">عرض حجوزاتي</a>
+                    <a href="index.html" class="btn btn-primary" style="margin-bottom: 0.5rem;">العودة للرئيسية</a>
+                    <a href="customer-dashboard.html" class="btn btn-ghost mt-2" style="margin-bottom: 1rem;">عرض حجوزاتي</a>
                 </div>
             </div>
         </main>
