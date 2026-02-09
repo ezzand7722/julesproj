@@ -133,14 +133,33 @@ The system is **ready to test immediately** in demo mode:
 
 ## 🎯 Features
 
-✅ **Multi-gateway support** - 4 different payment methods  
-✅ **User-friendly** - Clear 3-step wizard  
+✅ **Credit Card Payments** - Automated payment processing via PayTabs  
+✅ **WhatsApp Contact** - For CliQ, Orange Money & uWallet payments  
+✅ **User-friendly** - Simple 3-step process  
 ✅ **Secure** - Proper payment tracking in database  
 ✅ **Localized** - Full Arabic interface  
 ✅ **Responsive** - Works on all devices  
-✅ **Demo mode** - Test without real payments  
-✅ **Extensible** - Easy to add more payment methods  
+✅ **Demo mode** - Test credit cards without real payments  
 ✅ **Production-ready** - Just add real credentials  
+
+## 💡 How It Works
+
+### Option 1: Credit Card (Automated)
+1. User selects package
+2. Chooses credit card payment
+3. Completes payment (auto-approved in demo)
+4. Credits added immediately
+
+### Option 2: Alternative Payments (Manual via WhatsApp)
+1. User selects package
+2. Clicks WhatsApp option
+3. Contacts you on WhatsApp with payment details
+4. User completes payment via CliQ/Orange Money/uWallet
+5. You verify payment manually
+6. You approve in `pending-payments.html`
+7. Credits added to user account
+
+**WhatsApp Number:** Update in [dashboard.js](dashboard.js) line with `962799999999`  
 
 ## 💡 Demo vs Production
 
