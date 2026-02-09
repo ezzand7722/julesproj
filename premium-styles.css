@@ -1,56 +1,86 @@
 /* ============================================
-   PREMIUM STYLES - Clean Frosted Glass Design
+   KHEDMATI DESIGN SYSTEM v2
+   Clean, Professional, Trustworthy
    ============================================ */
 
-/* Typography */
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap');
 
+/* ============================================
+   DESIGN TOKENS
+   ============================================ */
 :root {
+    --brand-primary: #0052CC;
+    --brand-primary-hover: #003d99;
+    --brand-primary-light: #deebff;
+
+    --bg-app: #F4F7FA;
+    --bg-surface: #FFFFFF;
+
+    --text-primary: #091E42;
+    --text-secondary: #505F79;
+    --text-inverse: #FFFFFF;
+    --text-link: #0052CC;
+
+    --border-default: #DFE1E6;
+    --border-light: #EBECF0;
+
+    --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.12);
+    --shadow-nav: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+
     --font-primary: 'IBM Plex Sans Arabic', 'Tajawal', sans-serif;
-    --text-dark: #1e293b;
-    --text-darker: #0f172a;
-    --text-muted: #475569;
 }
 
 /* ============================================
-   1. BODY - Soft Pastel Aurora Gradient
+   RULE A: BODY - Clean Solid Background
    ============================================ */
 body {
     font-family: var(--font-primary) !important;
-    color: var(--text-dark) !important;
-    min-height: 100vh;
-    background: 
-        linear-gradient(135deg, #f0f4ff 0%, #faf0ff 35%, #f0fffe 65%, #f5f0ff 100%) 
-        !important;
-    background-attachment: fixed !important;
-    background-size: 200% 200% !important;
-    animation: subtleAurora 20s ease infinite;
-}
-
-@keyframes subtleAurora {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
+    background-color: var(--bg-app) !important;
+    background-image: none !important;
+    background-attachment: initial !important;
+    animation: none !important;
+    color: var(--text-primary) !important;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 /* ============================================
-   2. TEXT COLORS - Dark on Light (Global Default)
+   RULE C: TYPOGRAPHY - Sharp Contrast
    ============================================ */
 h1, h2, h3, h4, h5, h6 {
-    color: var(--text-darker) !important;
-    -webkit-text-fill-color: var(--text-darker) !important;
+    color: var(--text-primary) !important;
+    -webkit-text-fill-color: var(--text-primary) !important;
+    font-weight: 700;
 }
 
-p, span, li, label, td, th, dt, dd, small, strong, em, blockquote, figcaption {
-    color: var(--text-dark) !important;
+p, span, li, label, td, th, dt, dd, small, em, figcaption, blockquote {
+    color: var(--text-secondary) !important;
+}
+
+strong, b {
+    color: var(--text-primary) !important;
 }
 
 a:not(.btn):not(.btn-primary):not(.btn-ghost):not(.search-btn) {
-    color: #0891b2 !important;
+    color: var(--text-link) !important;
+}
+a:not(.btn):not(.btn-primary):hover {
+    color: var(--brand-primary-hover) !important;
 }
 
+h1 { font-weight: 800; letter-spacing: -0.02em; }
+h2 { font-weight: 700; letter-spacing: -0.01em; }
+h3 { font-weight: 600; }
+
 /* ============================================
-   3. TRANSPARENT WRAPPERS - Let gradient show
-   Only generic wrappers, NOT sections with own backgrounds
+   TRANSPARENT WRAPPERS - Show grey bg
    ============================================ */
 .container,
 .content-wrapper,
@@ -66,7 +96,6 @@ main,
     background-image: none !important;
 }
 
-/* Light sections -> transparent so gradient shows */
 .services,
 .how-it-works,
 .providers,
@@ -75,112 +104,7 @@ main,
 }
 
 /* ============================================
-   4. DARK SECTIONS - Keep their backgrounds!
-   Hero, CTA, Footer stay dark with white text.
-   ============================================ */
-
-/* Hero */
-.hero,
-.hero-section {
-    background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0891b2 100%) !important;
-}
-/* Only hero-content text white, NOT circular menu items */
-.hero-content,
-.hero-content h1,
-.hero-content h1 *,
-.hero-content p,
-.hero-subtitle,
-.hero .stat-number,
-.hero .stat-label {
-    color: #ffffff !important;
-    -webkit-text-fill-color: #ffffff !important;
-}
-.hero .highlight {
-    background: linear-gradient(135deg, #22d3ee, #8b5cf6);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent !important;
-    background-clip: text;
-}
-.hero .stat-label {
-    color: #94a3b8 !important;
-    -webkit-text-fill-color: #94a3b8 !important;
-}
-
-/* Circular menu items need dark text on white background */
-.circular-menu-container .service-item {
-    background: #ffffff !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-    border: 3px solid #0e3b5e !important;
-    border-radius: 50% !important;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
-}
-.circular-menu-container .service-item .label {
-    color: #0f172a !important;
-    -webkit-text-fill-color: #0f172a !important;
-    font-weight: 700 !important;
-}
-.circular-menu-container .service-item .icon {
-    -webkit-text-fill-color: initial !important;
-}
-.center-logo h1,
-.center-logo p {
-    color: #0e3b5e !important;
-    -webkit-text-fill-color: #0e3b5e !important;
-}
-
-/* Search box in hero - solid white with dark text */
-.hero .search-box {
-    background: #ffffff !important;
-    backdrop-filter: none !important;
-    border-radius: 50px !important;
-}
-.hero .search-box input,
-.hero .search-box select {
-    color: #1e293b !important;
-    -webkit-text-fill-color: #1e293b !important;
-    background: #f8fafc !important;
-}
-.hero .search-box input::placeholder {
-    color: #94a3b8 !important;
-    -webkit-text-fill-color: #94a3b8 !important;
-}
-
-/* CTA Section */
-.cta-section {
-    background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0891b2 100%) !important;
-}
-.cta-section h2,
-.cta-section p,
-.cta-section li,
-.cta-section span,
-.cta-section .cta-content,
-.cta-section .cta-content h2,
-.cta-section .cta-content p,
-.cta-section .cta-benefits li {
-    color: #ffffff !important;
-    -webkit-text-fill-color: #ffffff !important;
-}
-.cta-section .cta-content p {
-    color: #cbd5e1 !important;
-    -webkit-text-fill-color: #cbd5e1 !important;
-}
-
-/* Footer */
-footer, .footer {
-    background: #0f172a !important;
-}
-.footer *, .footer p, .footer a, .footer span, .footer li {
-    color: #cbd5e1 !important;
-    -webkit-text-fill-color: #cbd5e1 !important;
-}
-.footer h4, .footer .logo-text {
-    color: #ffffff !important;
-    -webkit-text-fill-color: #ffffff !important;
-}
-
-/* ============================================
-   5. FROSTED GLASS - Cards & Content Containers
+   RULE B: CARDS - White Surfaces with Soft Shadows
    ============================================ */
 .card,
 .dashboard-card,
@@ -196,14 +120,16 @@ footer, .footer {
 .list-item,
 .provider-item,
 .dashboard-content {
-    background: rgba(255, 255, 255, 0.8) !important;
-    backdrop-filter: blur(12px) !important;
-    -webkit-backdrop-filter: blur(12px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1) !important;
-    border-radius: 16px !important;
-    color: var(--text-dark) !important;
+    background-color: var(--bg-surface) !important;
+    border-radius: var(--radius-md) !important;
+    box-shadow: var(--shadow-card) !important;
+    padding: 20px;
+    margin-bottom: 16px;
+    border: 1px solid var(--border-light) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    color: var(--text-primary) !important;
 }
 
 .card:hover,
@@ -211,7 +137,7 @@ footer, .footer {
 .dashboard-card:hover,
 .service-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.15) !important;
+    box-shadow: var(--shadow-card-hover) !important;
 }
 
 /* Auth Forms */
@@ -220,13 +146,12 @@ footer, .footer {
 .signup-form,
 .form-container,
 .auth-box {
-    background: rgba(255, 255, 255, 0.8) !important;
-    backdrop-filter: blur(12px) !important;
-    -webkit-backdrop-filter: blur(12px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1) !important;
-    border-radius: 20px !important;
+    background-color: var(--bg-surface) !important;
+    border-radius: var(--radius-xl) !important;
+    box-shadow: var(--shadow-card) !important;
+    border: 1px solid var(--border-light) !important;
     padding: 2rem !important;
+    backdrop-filter: none !important;
 }
 
 /* Inputs */
@@ -241,161 +166,256 @@ textarea,
 select,
 .form-control,
 .input-field {
-    background: rgba(255, 255, 255, 0.8) !important;
-    backdrop-filter: blur(12px) !important;
-    -webkit-backdrop-filter: blur(12px) !important;
-    border: 1px solid rgba(200, 200, 220, 0.4) !important;
-    border-radius: 12px !important;
+    background-color: var(--bg-surface) !important;
+    border: 1.5px solid var(--border-default) !important;
+    border-radius: var(--radius-sm) !important;
     padding: 12px 16px !important;
-    color: var(--text-dark) !important;
+    color: var(--text-primary) !important;
+    backdrop-filter: none !important;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 input:focus, textarea:focus, select:focus {
-    background: rgba(255, 255, 255, 0.95) !important;
-    border-color: #0891b2 !important;
-    box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.15) !important;
+    border-color: var(--brand-primary) !important;
+    box-shadow: 0 0 0 3px rgba(0, 82, 204, 0.12) !important;
     outline: none !important;
 }
 
-/* Navigation */
-nav, .navbar, .header {
-    background: rgba(255, 255, 255, 0.8) !important;
-    backdrop-filter: blur(12px) !important;
-    -webkit-backdrop-filter: blur(12px) !important;
-    box-shadow: 0 2px 16px rgba(31, 38, 135, 0.08) !important;
-}
-nav a, .navbar a, .nav-link, nav .logo-text {
-    color: var(--text-darker) !important;
-    -webkit-text-fill-color: var(--text-darker) !important;
+input::placeholder, textarea::placeholder {
+    color: #97A0AF !important;
 }
 
-/* Chat */
+/* ============================================
+   NAVIGATION
+   ============================================ */
+nav, .navbar, .header {
+    background-color: var(--bg-surface) !important;
+    box-shadow: var(--shadow-nav) !important;
+    border-bottom: 1px solid var(--border-light) !important;
+    backdrop-filter: none !important;
+}
+nav a, .navbar a, .nav-link, nav .logo-text {
+    color: var(--text-primary) !important;
+    -webkit-text-fill-color: var(--text-primary) !important;
+}
+nav a:hover, .navbar a:hover {
+    color: var(--brand-primary) !important;
+    -webkit-text-fill-color: var(--brand-primary) !important;
+}
+
+/* ============================================
+   DARK SECTIONS - Hero, CTA, Footer
+   ============================================ */
+
+/* Hero */
+.hero, .hero-section {
+    background: linear-gradient(135deg, #091E42 0%, #0052CC 100%) !important;
+}
+.hero-content, .hero-content h1, .hero-content h1 *,
+.hero-content p, .hero-subtitle,
+.hero .stat-number, .hero .stat-label {
+    color: var(--text-inverse) !important;
+    -webkit-text-fill-color: var(--text-inverse) !important;
+}
+.hero .highlight {
+    background: linear-gradient(135deg, #4C9AFF, #B3D4FF);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text;
+}
+.hero .stat-label {
+    color: #B3BAC5 !important;
+    -webkit-text-fill-color: #B3BAC5 !important;
+}
+
+/* Circular menu items - solid white */
+.circular-menu-container .service-item {
+    background: var(--bg-surface) !important;
+    backdrop-filter: none !important;
+    border: 3px solid #0052CC !important;
+    border-radius: 50% !important;
+    box-shadow: var(--shadow-card) !important;
+}
+.circular-menu-container .service-item .label {
+    color: var(--text-primary) !important;
+    -webkit-text-fill-color: var(--text-primary) !important;
+    font-weight: 700 !important;
+}
+.circular-menu-container .service-item .icon {
+    -webkit-text-fill-color: initial !important;
+}
+.center-logo h1, .center-logo p {
+    color: #091E42 !important;
+    -webkit-text-fill-color: #091E42 !important;
+}
+
+/* Search box in hero */
+.hero .search-box {
+    background: var(--bg-surface) !important;
+    backdrop-filter: none !important;
+    border-radius: 50px !important;
+    box-shadow: var(--shadow-card) !important;
+}
+.hero .search-box input,
+.hero .search-box select {
+    color: var(--text-primary) !important;
+    -webkit-text-fill-color: var(--text-primary) !important;
+    background: #F4F5F7 !important;
+}
+.hero .search-box input::placeholder {
+    color: #97A0AF !important;
+    -webkit-text-fill-color: #97A0AF !important;
+}
+
+/* CTA Section */
+.cta-section {
+    background: linear-gradient(135deg, #091E42 0%, #0052CC 100%) !important;
+}
+.cta-section h2, .cta-section p, .cta-section li,
+.cta-section span, .cta-section .cta-content,
+.cta-section .cta-content h2, .cta-section .cta-content p,
+.cta-section .cta-benefits li {
+    color: var(--text-inverse) !important;
+    -webkit-text-fill-color: var(--text-inverse) !important;
+}
+.cta-section .cta-content p {
+    color: #B3BAC5 !important;
+    -webkit-text-fill-color: #B3BAC5 !important;
+}
+
+/* Footer */
+footer, .footer {
+    background: #091E42 !important;
+}
+.footer *, .footer p, .footer a, .footer span, .footer li {
+    color: #B3BAC5 !important;
+    -webkit-text-fill-color: #B3BAC5 !important;
+}
+.footer h4, .footer .logo-text {
+    color: var(--text-inverse) !important;
+    -webkit-text-fill-color: var(--text-inverse) !important;
+}
+
+/* ============================================
+   BUTTONS
+   ============================================ */
+.btn-primary, .search-btn, button[class*="primary"] {
+    background: var(--brand-primary) !important;
+    color: var(--text-inverse) !important;
+    -webkit-text-fill-color: var(--text-inverse) !important;
+    border: none !important;
+    font-weight: 600 !important;
+    box-shadow: 0 2px 8px rgba(0, 82, 204, 0.25) !important;
+    border-radius: var(--radius-sm) !important;
+    transition: all 0.2s ease;
+}
+.btn-primary:hover, .search-btn:hover {
+    background: var(--brand-primary-hover) !important;
+    box-shadow: 0 4px 12px rgba(0, 82, 204, 0.35) !important;
+    transform: translateY(-1px);
+}
+
+/* CTA button */
+.cta-section .btn, .cta-section .btn-light {
+    background: var(--bg-surface) !important;
+    color: var(--brand-primary) !important;
+    -webkit-text-fill-color: var(--brand-primary) !important;
+    font-weight: 700 !important;
+    border-radius: var(--radius-sm) !important;
+}
+
+/* ============================================
+   CHAT
+   ============================================ */
 .chat-container, .conversation-list, .messages-area {
     background: transparent !important;
 }
 .message-bubble, .message-input-container {
-    background: rgba(255, 255, 255, 0.8) !important;
-    backdrop-filter: blur(12px) !important;
-    -webkit-backdrop-filter: blur(12px) !important;
+    background-color: var(--bg-surface) !important;
+    border: 1px solid var(--border-light) !important;
+    backdrop-filter: none !important;
 }
 .conversation-item {
-    background: rgba(255, 255, 255, 0.6) !important;
+    background-color: var(--bg-surface) !important;
+    border-bottom: 1px solid var(--border-light) !important;
 }
 .conversation-item.active {
-    background: rgba(255, 255, 255, 0.85) !important;
+    background-color: var(--brand-primary-light) !important;
+    border-left: 3px solid var(--brand-primary) !important;
+}
+.message-sent {
+    background: var(--brand-primary) !important;
+    border-radius: 12px 12px 4px 12px;
+    color: var(--text-inverse) !important;
+}
+.message-sent span, .message-sent p {
+    color: var(--text-inverse) !important;
+    -webkit-text-fill-color: var(--text-inverse) !important;
+}
+.message-received {
+    background: #F4F5F7 !important;
+    color: var(--text-primary) !important;
+    border-radius: 12px 12px 12px 4px;
 }
 
-/* Modals */
-.modal-content, .popup-content, .dialog-content, .topup-modal, [class*="modal"] {
-    background: rgba(255, 255, 255, 0.9) !important;
-    backdrop-filter: blur(12px) !important;
-    -webkit-backdrop-filter: blur(12px) !important;
-    border-radius: 20px !important;
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2) !important;
+/* ============================================
+   MODALS
+   ============================================ */
+.modal-content, .popup-content, .dialog-content,
+.topup-modal, [class*="modal"] {
+    background-color: var(--bg-surface) !important;
+    border-radius: var(--radius-xl) !important;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15) !important;
+    backdrop-filter: none !important;
 }
 
-/* Dashboard/Auth page wrappers */
+/* Dashboard/Auth wrappers */
 .dashboard-header, .dashboard-sidebar,
 .auth-wrapper, .auth-page, .login-container, .signup-container {
     background: transparent !important;
 }
 
 /* ============================================
-   6. BUTTONS - Proper Contrast
+   UTILITIES
    ============================================ */
-.btn-primary, .search-btn, button[class*="primary"] {
-    background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%) !important;
-    color: #ffffff !important;
-    -webkit-text-fill-color: #ffffff !important;
-    border: none !important;
-    font-weight: 600 !important;
-    box-shadow: 0 4px 12px rgba(8, 145, 178, 0.3) !important;
-}
-.btn-primary:hover, .search-btn:hover {
-    box-shadow: 0 6px 20px rgba(8, 145, 178, 0.4) !important;
-    transform: translateY(-1px);
-}
-
-/* CTA button (white on dark section) */
-.cta-section .btn,
-.cta-section .btn-light {
-    background: #ffffff !important;
-    color: #0891b2 !important;
-    -webkit-text-fill-color: #0891b2 !important;
-    font-weight: 700 !important;
-}
-
-/* ============================================
-   7. UTILITY & EXTRAS
-   ============================================ */
-
-/* Grid Utilities */
 .grid { display: grid; }
 .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
 .gap-3 { gap: 0.75rem; }
 
-/* Avatar */
-.avatar-placeholder, .provider-avatar,
-[style*="border-radius: 50%"][style*="background"] {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+.avatar-placeholder, .provider-avatar {
+    background: linear-gradient(135deg, #0052CC 0%, #2684FF 100%) !important;
+    box-shadow: 0 2px 8px rgba(0, 82, 204, 0.3);
 }
 
-/* Typography Scale */
-h1 { font-weight: 800; letter-spacing: -0.02em; }
-h2 { font-weight: 700; letter-spacing: -0.01em; }
-h3 { font-weight: 600; }
-
-/* Premium Shadows */
 .stat-card { text-align: center; padding: 1.5rem 1rem; }
 
-/* Loading States */
 .loading, [id*="loading"] {
     padding: 40px;
     text-align: center;
-    color: var(--text-muted) !important;
+    color: var(--text-secondary) !important;
 }
 
-/* Smooth Rendering */
-* {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
 button, .btn, a {
     -webkit-tap-highlight-color: transparent;
 }
 
-/* Flatpickr Calendar */
+/* Flatpickr */
 .flatpickr-calendar {
-    border-radius: 16px;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-    border: none;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
+    border: 1px solid var(--border-light);
     font-family: var(--font-primary);
 }
 .flatpickr-day.selected {
-    background: #0891b2;
-    border-color: #0891b2;
+    background: var(--brand-primary);
+    border-color: var(--brand-primary);
 }
 
-/* Modern Chat Bubbles */
-.message-sent {
-    background: linear-gradient(135deg, #0084ff 0%, #0066cc 100%) !important;
-    border-radius: 18px 18px 4px 18px;
-    color: #fff !important;
-}
-.message-sent span, .message-sent p {
-    color: #fff !important;
-    -webkit-text-fill-color: #fff !important;
-}
-.message-received {
-    background: rgba(255,255,255,0.9) !important;
-    color: #000 !important;
-    border-radius: 18px 18px 18px 4px;
-}
-
-/* Responsive */
+/* ============================================
+   RESPONSIVE
+   ============================================ */
 @media (max-width: 640px) {
-    .card, .dashboard-card { border-radius: 12px !important; }
+    .card, .dashboard-card { border-radius: var(--radius-sm) !important; }
     h1 { font-size: 1.75rem; }
     h2 { font-size: 1.5rem; }
 }
