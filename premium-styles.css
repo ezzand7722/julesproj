@@ -827,16 +827,16 @@ button, .btn, a {
     background: #111827 !important;
 }
 /* Customer dashboard personalization cards */
-.reorder-card {
+.reorder-section {
     background: linear-gradient(to left, #f8f9fa, #ffffff) !important;
 }
-.popular-card {
+.popular-section {
     background: linear-gradient(to left, #fff7ed, #ffffff) !important;
 }
-[data-theme="dark"] .reorder-card {
+[data-theme="dark"] .reorder-section {
     background: linear-gradient(to left, #1f2937, #111827) !important;
 }
-[data-theme="dark"] .popular-card {
+[data-theme="dark"] .popular-section {
     background: linear-gradient(to left, #292524, #1f2937) !important;
 }
 /* Tabs */

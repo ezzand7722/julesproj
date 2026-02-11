@@ -78,30 +78,23 @@
         </div>
 
         <!-- Personalization Engine -->
-        <div class="personalization-grid"
-            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 30px;">
+        <div class="personalization-grid">
             <!-- Reorder Section -->
-            <div class="dashboard-card reorder-card">
-                <h3 style="margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+            <div class="dashboard-card reorder-section">
+                <h3 style="margin-bottom: 12px; display: flex; align-items: center; gap: 8px; font-size: 1rem;">
                     <span>🔁</span> اطلب مرة أخرى
                 </h3>
-                <div id="reorderLoading" class="loading-spinner">جاري التحميل...</div>
-                <div id="reorderList" class="horizontal-scroll-list"
-                    style="display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px;">
-                    <!-- Injected by JS -->
-                </div>
+                <div id="reorderLoading" class="loading-spinner" style="font-size:0.85rem;">جاري التحميل...</div>
+                <div id="reorderList" class="horizontal-scroll-list"></div>
             </div>
 
             <!-- Popular Section -->
-            <div class="dashboard-card popular-card">
-                <h3 style="margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+            <div class="dashboard-card popular-section">
+                <h3 style="margin-bottom: 12px; display: flex; align-items: center; gap: 8px; font-size: 1rem;">
                     <span>🔥</span> الأكثر طلباً بالقرب منك
                 </h3>
-                <div id="popularLoading" class="loading-spinner">جاري التحميل...</div>
-                <div id="popularList" class="horizontal-scroll-list"
-                    style="display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px;">
-                    <!-- Injected by JS -->
-                </div>
+                <div id="popularLoading" class="loading-spinner" style="font-size:0.85rem;">جاري التحميل...</div>
+                <div id="popularList" class="horizontal-scroll-list"></div>
             </div>
         </div>
 

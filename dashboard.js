@@ -109,6 +109,14 @@ async function updateUI() {
     document.getElementById('socialInstagram').value = currentProvider.social_instagram || '';
     document.getElementById('socialWebsite').value = currentProvider.social_website || '';
 
+    // Price range
+    if (document.getElementById('priceRangeMin')) {
+        document.getElementById('priceRangeMin').value = currentProvider.price_range_min || '';
+    }
+    if (document.getElementById('priceRangeMax')) {
+        document.getElementById('priceRangeMax').value = currentProvider.price_range_max || '';
+    }
+
     document.getElementById('avgRating').textContent = currentProvider.rating || '4.0';
 
     // Fetch and display credits
@@ -419,6 +427,12 @@ async function updateProfile(e) {
         const socialInstagram = document.getElementById('socialInstagram').value.trim();
         const socialWebsite = document.getElementById('socialWebsite').value.trim();
 
+        // Get price range
+        const priceRangeMinEl = document.getElementById('priceRangeMin');
+        const priceRangeMaxEl = document.getElementById('priceRangeMax');
+        const price_range_min = priceRangeMinEl && priceRangeMinEl.value ? parseFloat(priceRangeMinEl.value) : null;
+        const price_range_max = priceRangeMaxEl && priceRangeMaxEl.value ? parseFloat(priceRangeMaxEl.value) : null;
+
         // Validate required fields
         if (!name || !city) {
             showNotification('الرجاء ملء جميع الحقول المطلوبة', 'warning');
@@ -436,7 +450,9 @@ async function updateProfile(e) {
                 bio,
                 social_facebook: socialFacebook,
                 social_instagram: socialInstagram,
-                social_website: socialWebsite
+                social_website: socialWebsite,
+                price_range_min,
+                price_range_max
             })
             .eq('id', currentProvider.id);
 

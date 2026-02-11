@@ -196,7 +196,22 @@
                         </div>
                     </div>
 
-                    <!-- Row 3: Bio + Social links side by side -->
+                    <!-- Row 3: Price Range -->
+                    <div class="form-group">
+                        <label>نطاق الأسعار (يظهر في الصفحة الرئيسية)</label>
+                        <div style="display:grid; grid-template-columns:1fr auto 1fr; gap:10px; align-items:center;">
+                            <div>
+                                <input type="number" id="priceRangeMin" placeholder="من (مثال: 5)" min="0" step="0.5" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-family:inherit;">
+                            </div>
+                            <span style="color:#6b7280; font-weight:600;">—</span>
+                            <div>
+                                <input type="number" id="priceRangeMax" placeholder="إلى (مثال: 50)" min="0" step="0.5" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-family:inherit;">
+                            </div>
+                        </div>
+                        <p style="font-size:0.78rem; color:#9ca3af; margin-top:4px;">💡 حدد نطاق أسعارك ليظهر للعملاء في بطاقتك. اتركه فارغاً إذا لم ترد عرض الأسعار.</p>
+                    </div>
+
+                    <!-- Row 4: Bio + Social links side by side -->
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
                         <div class="form-group" style="margin-bottom:0;">
                             <label>نبذة عنك</label>

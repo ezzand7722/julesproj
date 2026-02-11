@@ -247,7 +247,13 @@ async function loadProviders(filter = {}) {
                     <span class="stars">${'⭐'.repeat(Math.round(provider.rating))}</span>
                     <span>${provider.rating} (${provider.review_count} تقييم)</span>
                 </div>
-                <div class="provider-price-range" id="price-range-${provider.id}" style="display:none; margin-top:6px; padding:5px 12px; background:#f0fdfa; border:1px solid #ccfbf1; border-radius:8px; text-align:center; font-size:0.85rem; font-weight:600; color:#0d9488;"></div>
+                <div class="provider-price-range" id="price-range-${provider.id}" style="margin-top:6px; padding:5px 12px; background:#f0fdfa; border:1px solid #ccfbf1; border-radius:8px; text-align:center; font-size:0.85rem; font-weight:600; color:#0d9488;">
+                    ${provider.price_range_min != null && provider.price_range_max != null
+                        ? `💰 ${provider.price_range_min} - ${provider.price_range_max} د.أ`
+                        : provider.price_range_min != null
+                            ? `💰 يبدأ من ${provider.price_range_min} د.أ`
+                            : `<span style="color:#9ca3af; font-weight:500;">💰 لا توجد أسعار محددة</span>`}
+                </div>
                 <div class="provider-offerings-preview" id="offerings-${provider.id}" style="display:none; margin-top:8px; display:flex; flex-wrap:wrap; gap:5px;"></div>
                 <div class="provider-actions" style="display: flex; gap: 8px; margin-top: 10px;">
                     <button class="btn btn-primary" style="flex: 1;" onclick="event.stopPropagation(); window.location.href='booking.html?provider_id=${escapeHtml(provider.id)}'">احجز الآن</button>
@@ -296,26 +302,26 @@ async function loadOfferingsForCards(providerIds) {
             const container = document.getElementById('offerings-' + provId);
             const provOfferings = grouped[provId] || [];
 
-            // Compute average price
-            if (priceRangeEl) {
-                const prices = provOfferings.map(o => parseFloat(o.price)).filter(p => !isNaN(p) && p > 0);
-                if (prices.length > 0) {
-                    const minPrice = Math.min(...prices);
-                    const maxPrice = Math.max(...prices);
-                    const avgPrice = (prices.reduce((a, b) => a + b, 0) / prices.length).toFixed(1);
-                    priceRangeEl.style.display = 'block';
-                    priceRangeEl.innerHTML = `💰 متوسط السعر: <strong>${avgPrice}</strong> د.أ`;
-                    const card = document.querySelector(`[data-provider-id="${provId}"]`);
-                    if (card) {
-                        card.dataset.minPrice = minPrice;
-                        card.dataset.maxPrice = maxPrice;
-                        card.dataset.avgPrice = avgPrice;
-                    }
-                } else {
-                    priceRangeEl.style.display = 'block';
-                    priceRangeEl.innerHTML = `💰 لا توجد أسعار محددة`;
-                    priceRangeEl.style.color = '#9ca3af';
-                }
+            // Only override price if provider didn't manually set a range
+            const card = document.querySelector(`[data-provider-id="${provId}"]`);
+            const hasManualRange = card && card.querySelector('.provider-price-range') && 
+                !card.querySelector('.provider-price-range').innerHTML.includes('لا توجد أسعار محددة');
+
+            // Compute average price from offerings (for sorting/filtering)
+            const prices = provOfferings.map(o => parseFloat(o.price)).filter(p => !isNaN(p) && p > 0);
+            if (card && prices.length > 0) {
+                const minPrice = Math.min(...prices);
+                const maxPrice = Math.max(...prices);
+                const avgPrice = (prices.reduce((a, b) => a + b, 0) / prices.length).toFixed(1);
+                card.dataset.minPrice = minPrice;
+                card.dataset.maxPrice = maxPrice;
+                card.dataset.avgPrice = avgPrice;
+            }
+
+            // If no manual range set and we have offering prices, show computed average
+            if (priceRangeEl && !hasManualRange && prices.length > 0) {
+                const avgPrice = (prices.reduce((a, b) => a + b, 0) / prices.length).toFixed(1);
+                priceRangeEl.innerHTML = `💰 متوسط السعر: <strong>${avgPrice}</strong> د.أ`;
             }
 
             // Render top 3 offerings as pills

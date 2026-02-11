@@ -3,51 +3,61 @@
 // Ensure CSS for horizontal scroll is present
 const scrollStyle = document.createElement('style');
 scrollStyle.textContent = `
-    .horizontal-scroll-list::-webkit-scrollbar { height: 6px; }
+    .personalization-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    .personalization-grid > .dashboard-card {
+        padding: 20px;
+        border-radius: 12px;
+    }
+    .horizontal-scroll-list { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px; }
+    .horizontal-scroll-list::-webkit-scrollbar { height: 5px; }
     .horizontal-scroll-list::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
-    .reorder-card, .popular-card {
-        min-width: 140px;
-        max-width: 140px;
-        border: 1px solid #eee;
-        border-radius: 8px;
-        padding: 10px;
+    .horizontal-scroll-list .reorder-card,
+    .horizontal-scroll-list .popular-card {
+        min-width: 130px;
+        max-width: 150px;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 12px 10px;
         text-align: center;
         background: white;
-        transition: transform 0.2s;
+        transition: transform 0.2s, box-shadow 0.2s;
         cursor: pointer;
+        flex-shrink: 0;
     }
-    .reorder-card:hover, .popular-card:hover { 
-        transform: translateY(-5px); 
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+    .horizontal-scroll-list .reorder-card:hover,
+    .horizontal-scroll-list .popular-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
     .card-img {
-        width: 50px;
-        height: 50px;
-        background: #f0f0f0;
+        width: 44px; height: 44px;
+        background: linear-gradient(135deg, #0d9488, #2dd4bf);
+        color: white;
         border-radius: 50%;
-        margin: 0 auto 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
+        margin: 0 auto 8px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.2rem; font-weight: 700;
     }
-    .card-title {
-        font-size: 0.9rem;
-        font-weight: bold;
-        margin-bottom: 5px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+    .card-title { font-size: 0.85rem; font-weight: 600; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #111827; }
+    .card-subtitle { font-size: 0.75rem; color: #6b7280; }
+    .card-action { margin-top: 6px; font-size: 0.78rem; color: var(--primary, #0d9488); font-weight: 600; }
+    /* Dark mode inner cards */
+    [data-theme="dark"] .horizontal-scroll-list .reorder-card,
+    [data-theme="dark"] .horizontal-scroll-list .popular-card {
+        background: #111827 !important;
+        border-color: #374151 !important;
     }
-    .card-subtitle {
-        font-size: 0.8rem;
-        color: #666;
-    }
-    .card-action {
-        margin-top: 8px;
-        font-size: 0.8rem;
-        color: var(--primary);
-        font-weight: bold;
+    [data-theme="dark"] .card-title { color: #f1f5f9 !important; }
+    [data-theme="dark"] .card-subtitle { color: #9ca3af !important; }
+    [data-theme="dark"] .card-action { color: #2dd4bf !important; }
+    [data-theme="dark"] .card-img { background: linear-gradient(135deg, #0d9488, #115e59) !important; }
+    @media (max-width: 768px) {
+        .personalization-grid { grid-template-columns: 1fr; }
     }
 `;
 document.head.appendChild(scrollStyle);
