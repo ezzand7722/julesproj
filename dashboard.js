@@ -758,17 +758,17 @@ async function loadServiceOfferings() {
         const priceLabels = { 'fixed': 'سعر ثابت', 'hourly': 'بالساعة', 'starting_at': 'يبدأ من' };
 
         list.innerHTML = offerings.map(o => `
-            <div class="offering-item" style="display:flex; align-items:center; justify-content:space-between; padding:14px 0; border-bottom:1px solid #f3f4f6; gap:10px;">
-                ${o.image_url ? `<img src="${o.image_url}" style="width:48px; height:48px; border-radius:8px; object-fit:cover; flex-shrink:0; border:1px solid #e5e7eb;">` : `<div style="width:48px; height:48px; border-radius:8px; background:linear-gradient(135deg,#e0f2fe,#dbeafe); display:flex; align-items:center; justify-content:center; font-size:1.4rem; flex-shrink:0;">🔧</div>`}
+            <div class="offering-item" style="display:flex; align-items:center; justify-content:space-between; padding:14px 0; gap:10px;">
+                ${o.image_url ? `<img src="${o.image_url}" class="offering-thumb" style="width:48px; height:48px; border-radius:8px; object-fit:cover; flex-shrink:0;">` : `<div class="offering-icon-placeholder" style="width:48px; height:48px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:1.4rem; flex-shrink:0;">🔧</div>`}
                 <div style="flex:1; min-width:0;">
-                    <div style="font-weight:600; font-size:0.95rem; color:#111827;">${escapeHtml(o.title)}</div>
-                    ${o.description ? `<div style="font-size:0.8rem; color:#6b7280; margin-top:2px;">${escapeHtml(o.description)}</div>` : ''}
-                    ${o.estimated_duration ? `<div style="font-size:0.75rem; color:#9ca3af; margin-top:2px;">⏱ ${escapeHtml(o.estimated_duration)}</div>` : ''}
+                    <div class="offering-title" style="font-weight:600; font-size:0.95rem;">${escapeHtml(o.title)}</div>
+                    ${o.description ? `<div class="offering-desc" style="font-size:0.8rem; margin-top:2px;">${escapeHtml(o.description)}</div>` : ''}
+                    ${o.estimated_duration ? `<div class="offering-duration" style="font-size:0.75rem; margin-top:2px;">⏱ ${escapeHtml(o.estimated_duration)}</div>` : ''}
                 </div>
                 <div style="display:flex; align-items:center; gap:12px; flex-shrink:0;">
                     <div style="text-align:left;">
-                        <div style="font-weight:700; color:#0891b2; font-size:1.05rem;">${o.price} د.أ</div>
-                        <div style="font-size:0.7rem; color:#9ca3af;">${priceLabels[o.price_type] || ''}</div>
+                        <div class="offering-price" style="font-weight:700; font-size:1.05rem;">${o.price} د.أ</div>
+                        <div class="offering-price-type" style="font-size:0.7rem;">${priceLabels[o.price_type] || ''}</div>
                     </div>
                     <div style="display:flex; gap:4px;">
                         <button onclick="editOffering('${o.id}')" style="background:none; border:none; cursor:pointer; font-size:1.1rem; padding:4px;" title="تعديل">✏️</button>

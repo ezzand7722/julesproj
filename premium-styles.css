@@ -860,3 +860,124 @@ button, .btn, a {
 [data-theme="dark"] .no-chat-selected p {
     color: #6b7280 !important;
 }
+
+/* ============================================
+   SERVICE OFFERINGS (form + list)
+   ============================================ */
+.offering-form {
+    background: #f9fafb;
+}
+.offering-subtitle {
+    color: #6b7280;
+}
+.offering-item {
+    border-bottom: 1px solid #f3f4f6;
+}
+.offering-thumb {
+    border: 1px solid #e5e7eb;
+}
+.offering-icon-placeholder {
+    background: linear-gradient(135deg, #e0f2fe, #dbeafe);
+}
+.offering-title {
+    color: #111827;
+}
+.offering-desc {
+    color: #6b7280;
+}
+.offering-duration {
+    color: #9ca3af;
+}
+.offering-price {
+    color: #0d9488;
+}
+.offering-price-type {
+    color: #9ca3af;
+}
+/* Offering form inline inputs */
+.offering-form input[type="text"],
+.offering-form input[type="number"],
+.offering-form select {
+    background: white;
+    border: 1px solid #ddd;
+    color: #111827;
+}
+.offering-form input[type="file"] {
+    border: 1px solid #ddd;
+    background: white;
+    color: #111827;
+}
+
+/* Dark mode overrides */
+[data-theme="dark"] .offering-form {
+    background: #111827 !important;
+}
+[data-theme="dark"] .offering-subtitle {
+    color: #9ca3af !important;
+}
+[data-theme="dark"] .offering-item {
+    border-bottom-color: #374151 !important;
+}
+[data-theme="dark"] .offering-thumb {
+    border-color: #374151 !important;
+}
+[data-theme="dark"] .offering-icon-placeholder {
+    background: linear-gradient(135deg, #042f2e, #0d9488) !important;
+}
+[data-theme="dark"] .offering-title {
+    color: #f1f5f9 !important;
+    -webkit-text-fill-color: #f1f5f9 !important;
+}
+[data-theme="dark"] .offering-desc {
+    color: #9ca3af !important;
+    -webkit-text-fill-color: #9ca3af !important;
+}
+[data-theme="dark"] .offering-duration {
+    color: #6b7280 !important;
+    -webkit-text-fill-color: #6b7280 !important;
+}
+[data-theme="dark"] .offering-price {
+    color: #2dd4bf !important;
+    -webkit-text-fill-color: #2dd4bf !important;
+}
+[data-theme="dark"] .offering-price-type {
+    color: #6b7280 !important;
+    -webkit-text-fill-color: #6b7280 !important;
+}
+[data-theme="dark"] .offering-form input[type="text"],
+[data-theme="dark"] .offering-form input[type="number"],
+[data-theme="dark"] .offering-form select {
+    background: #1f2937 !important;
+    border-color: #374151 !important;
+    color: #f1f5f9 !important;
+}
+[data-theme="dark"] .offering-form input[type="file"] {
+    background: #1f2937 !important;
+    border-color: #374151 !important;
+    color: #d1d5db !important;
+}
+[data-theme="dark"] .offering-form label {
+    color: #d1d5db !important;
+    -webkit-text-fill-color: #d1d5db !important;
+}
+/* Upload placeholder */
+[data-theme="dark"] .upload-placeholder {
+    background: #111827 !important;
+    border-color: #374151 !important;
+    color: #9ca3af !important;
+}
+[data-theme="dark"] .input-caption {
+    background: #1f2937 !important;
+    border-color: #374151 !important;
+    color: #f1f5f9 !important;
+}
+/* Form labels & textareas inside dashboard */
+[data-theme="dark"] .profile-form label {
+    color: #d1d5db !important;
+    -webkit-text-fill-color: #d1d5db !important;
+}
+[data-theme="dark"] .profile-form textarea {
+    background: #111827 !important;
+    border-color: #374151 !important;
+    color: #f1f5f9 !important;
+}
