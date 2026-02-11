@@ -295,23 +295,21 @@ async function loadOfferingsForCards(providerIds) {
             const container = document.getElementById('offerings-' + provId);
             const priceRangeEl = document.getElementById('price-range-' + provId);
 
-            // Compute price range
+            // Compute price range + average
             if (priceRangeEl) {
                 const prices = grouped[provId].map(o => parseFloat(o.price)).filter(p => !isNaN(p) && p > 0);
                 if (prices.length > 0) {
                     const minPrice = Math.min(...prices);
                     const maxPrice = Math.max(...prices);
+                    const avgPrice = (prices.reduce((a, b) => a + b, 0) / prices.length).toFixed(1);
                     priceRangeEl.style.display = 'block';
-                    if (minPrice === maxPrice) {
-                        priceRangeEl.innerHTML = `💰 ${minPrice} د.أ`;
-                    } else {
-                        priceRangeEl.innerHTML = `💰 ${minPrice} - ${maxPrice} د.أ`;
-                    }
-                    // Store price range data on the card for filtering
+                    priceRangeEl.innerHTML = `💰 متوسط السعر: <strong>${avgPrice}</strong> د.أ`;
+                    // Store price data on the card for filtering/sorting
                     const card = document.querySelector(`[data-provider-id="${provId}"]`);
                     if (card) {
                         card.dataset.minPrice = minPrice;
                         card.dataset.maxPrice = maxPrice;
+                        card.dataset.avgPrice = avgPrice;
                     }
                 }
             }
