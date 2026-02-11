@@ -281,7 +281,7 @@ async function loadOfferingsForCards(providerIds) {
             .eq('is_active', true)
             .order('sort_order', { ascending: true });
 
-        if (error || !offerings || offerings.length === 0) return;
+        if (error || !offerings) offerings = [];
 
         // Group by provider
         const grouped = {};
@@ -290,33 +290,38 @@ async function loadOfferingsForCards(providerIds) {
             grouped[o.provider_id].push(o);
         });
 
-        // Render top 3 offerings per provider as compact pills + price range
-        Object.keys(grouped).forEach(provId => {
-            const container = document.getElementById('offerings-' + provId);
+        // For ALL providers (including ones with no offerings), update price display
+        providerIds.forEach(provId => {
             const priceRangeEl = document.getElementById('price-range-' + provId);
+            const container = document.getElementById('offerings-' + provId);
+            const provOfferings = grouped[provId] || [];
 
-            // Compute price range + average
+            // Compute average price
             if (priceRangeEl) {
-                const prices = grouped[provId].map(o => parseFloat(o.price)).filter(p => !isNaN(p) && p > 0);
+                const prices = provOfferings.map(o => parseFloat(o.price)).filter(p => !isNaN(p) && p > 0);
                 if (prices.length > 0) {
                     const minPrice = Math.min(...prices);
                     const maxPrice = Math.max(...prices);
                     const avgPrice = (prices.reduce((a, b) => a + b, 0) / prices.length).toFixed(1);
                     priceRangeEl.style.display = 'block';
                     priceRangeEl.innerHTML = `💰 متوسط السعر: <strong>${avgPrice}</strong> د.أ`;
-                    // Store price data on the card for filtering/sorting
                     const card = document.querySelector(`[data-provider-id="${provId}"]`);
                     if (card) {
                         card.dataset.minPrice = minPrice;
                         card.dataset.maxPrice = maxPrice;
                         card.dataset.avgPrice = avgPrice;
                     }
+                } else {
+                    priceRangeEl.style.display = 'block';
+                    priceRangeEl.innerHTML = `💰 لا توجد أسعار محددة`;
+                    priceRangeEl.style.color = '#9ca3af';
                 }
             }
 
-            if (!container) return;
+            // Render top 3 offerings as pills
+            if (!container || provOfferings.length === 0) return;
 
-            const top3 = grouped[provId].slice(0, 3);
+            const top3 = provOfferings.slice(0, 3);
             container.style.display = 'flex';
             container.innerHTML = top3.map(o => `
                 <div style="display:inline-flex; align-items:center; gap:4px; background:#f0fdfa; border:1px solid #ccfbf1; border-radius:20px; padding:3px 10px 3px 6px; font-size:0.75rem; white-space:nowrap;">
