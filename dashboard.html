@@ -167,7 +167,8 @@
                 <h2>👤 ملفي الشخصي</h2>
                 <p class="offering-subtitle" style="font-size:0.9rem; margin-bottom:20px;">معلوماتك الأساسية التي يراها العملاء</p>
                 <form id="profileForm" class="profile-form" onsubmit="updateProfile(event)">
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                    <!-- Row 1: Name, City, Neighborhood -->
+                    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:16px;">
                         <div class="form-group" style="margin-bottom:0;">
                             <label>الاسم</label>
                             <input type="text" id="profileName" required>
@@ -181,37 +182,41 @@
                                 <option value="العقبة">العقبة</option>
                             </select>
                         </div>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label>المنطقة</label>
+                            <input type="text" id="profileLocation" placeholder="مثال: طبربور، الياسمين">
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>المنطقة</label>
-                        <input type="text" id="profileLocation" placeholder="مثال: طبربور، الياسمين">
-                    </div>
+
+                    <!-- Row 2: Services selector (full width) -->
                     <div class="form-group">
                         <label>الخدمات التي تقدمها</label>
                         <div class="services-selector" id="servicesSelector">
                             <div class="loading-spinner">جاري تحميل الخدمات...</div>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label>نبذة عنك</label>
-                        <textarea id="profileBio" placeholder="اكتب نبذة قصيرة عن خبراتك..." rows="3"></textarea>
-                    </div>
 
-                    <!-- Social Media Links - Compact -->
-                    <div class="form-group">
-                        <label>روابط التواصل (اختياري)</label>
-                        <div class="social-inputs" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;">
-                            <div class="input-with-icon">
-                                <span class="input-icon">📘</span>
-                                <input type="url" id="socialFacebook" placeholder="فيسبوك">
-                            </div>
-                            <div class="input-with-icon">
-                                <span class="input-icon">📷</span>
-                                <input type="url" id="socialInstagram" placeholder="انستغرام">
-                            </div>
-                            <div class="input-with-icon">
-                                <span class="input-icon">🌐</span>
-                                <input type="url" id="socialWebsite" placeholder="موقع">
+                    <!-- Row 3: Bio + Social links side by side -->
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label>نبذة عنك</label>
+                            <textarea id="profileBio" placeholder="اكتب نبذة قصيرة عن خبراتك..." rows="4" style="height:100%;min-height:100px;"></textarea>
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label>روابط التواصل (اختياري)</label>
+                            <div style="display:flex; flex-direction:column; gap:8px;">
+                                <div class="input-with-icon" style="display:flex; align-items:center; gap:6px;">
+                                    <span class="input-icon" style="font-size:1.1rem; flex-shrink:0;">📘</span>
+                                    <input type="url" id="socialFacebook" placeholder="فيسبوك" style="width:100%; padding:8px 10px; border:1px solid #ddd; border-radius:8px; font-family:inherit; font-size:0.85rem;">
+                                </div>
+                                <div class="input-with-icon" style="display:flex; align-items:center; gap:6px;">
+                                    <span class="input-icon" style="font-size:1.1rem; flex-shrink:0;">📷</span>
+                                    <input type="url" id="socialInstagram" placeholder="انستغرام" style="width:100%; padding:8px 10px; border:1px solid #ddd; border-radius:8px; font-family:inherit; font-size:0.85rem;">
+                                </div>
+                                <div class="input-with-icon" style="display:flex; align-items:center; gap:6px;">
+                                    <span class="input-icon" style="font-size:1.1rem; flex-shrink:0;">🌐</span>
+                                    <input type="url" id="socialWebsite" placeholder="موقع" style="width:100%; padding:8px 10px; border:1px solid #ddd; border-radius:8px; font-family:inherit; font-size:0.85rem;">
+                                </div>
                             </div>
                         </div>
                     </div>

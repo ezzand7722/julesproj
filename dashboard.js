@@ -181,17 +181,23 @@ async function loadServices() {
         const style = document.createElement('style');
         style.id = 'service-selection-styles';
         style.textContent = `
-            .services-grid-selection { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+            .services-grid-selection { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; }
             .service-checkbox-item { cursor: pointer; position: relative; }
             .service-checkbox-item input { position: absolute; opacity: 0; }
             .service-checkbox-item .service-content { 
-                display: flex; flex-direction: column; align-items: center; 
-                padding: 10px; border: 2px solid #eee; border-radius: 8px; transition: all 0.2s;
+                display: flex; flex-direction: row; align-items: center; gap: 8px;
+                padding: 10px 14px; border: 2px solid #e5e7eb; border-radius: 10px; transition: all 0.2s;
+                background: #f9fafb; white-space: nowrap;
             }
+            .service-checkbox-item .service-content:hover { border-color: #0d9488; background: #f0fdfa; }
             .service-checkbox-item input:checked + .service-content {
-                border-color: var(--primary); background: rgba(var(--primary-rgb), 0.05); color: var(--primary);
+                border-color: var(--primary, #0d9488); background: #f0fdfa; color: var(--primary, #0d9488); font-weight: 600;
+                box-shadow: 0 0 0 1px var(--primary, #0d9488);
             }
-            .service-icon { font-size: 1.5rem; margin-bottom: 5px; }
+            .service-icon { font-size: 1.3rem; flex-shrink: 0; }
+            .service-name { font-size: 0.88rem; }
+            @media (min-width: 600px) { .services-grid-selection { grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); } }
+            @media (min-width: 900px) { .services-grid-selection { grid-template-columns: repeat(4, 1fr); } }
         `;
         document.head.appendChild(style);
     }

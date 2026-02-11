@@ -1092,6 +1092,22 @@ button, .btn, a {
 [data-theme="dark"] .dashboard-card h2 {
     color: #f1f5f9 !important;
 }
+/* Dark mode for service selector items */
+[data-theme="dark"] .service-checkbox-item .service-content {
+    background: #111827 !important;
+    border-color: #374151 !important;
+    color: #d1d5db !important;
+}
+[data-theme="dark"] .service-checkbox-item .service-content:hover {
+    border-color: #2dd4bf !important;
+    background: rgba(45, 212, 191, 0.08) !important;
+}
+[data-theme="dark"] .service-checkbox-item input:checked + .service-content {
+    border-color: #2dd4bf !important;
+    background: rgba(45, 212, 191, 0.12) !important;
+    color: #2dd4bf !important;
+    box-shadow: 0 0 0 1px #2dd4bf !important;
+}
 
 /* ============== Providers Filter/Sort Bar ============== */
 .providers-filter-bar {
