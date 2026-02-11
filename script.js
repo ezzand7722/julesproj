@@ -274,14 +274,14 @@ async function loadProviders(filter = {}) {
 async function loadOfferingsForCards(providerIds) {
     if (!providerIds || providerIds.length === 0) return;
     try {
-        const { data: offerings, error } = await supabaseClient
+        const { data, error } = await supabaseClient
             .from('service_offerings')
             .select('id, provider_id, title, price, price_type, image_url')
             .in('provider_id', providerIds)
             .eq('is_active', true)
             .order('sort_order', { ascending: true });
 
-        if (error || !offerings) offerings = [];
+        const offerings = (error || !data) ? [] : data;
 
         // Group by provider
         const grouped = {};
@@ -342,8 +342,8 @@ let currentSort = 'rating';
 
 function sortProviders(sortBy) {
     currentSort = sortBy;
-    // Update active button
-    document.querySelectorAll('.providers-filter-bar .filter-btn').forEach(btn => btn.classList.remove('active'));
+    // Update active button (only sort buttons, not the apply button)
+    document.querySelectorAll('#sortRating, #sortPriceLow, #sortPriceHigh').forEach(btn => btn.classList.remove('active'));
     const btnId = sortBy === 'rating' ? 'sortRating' : sortBy === 'price_low' ? 'sortPriceLow' : 'sortPriceHigh';
     const btn = document.getElementById(btnId);
     if (btn) btn.classList.add('active');
@@ -388,14 +388,18 @@ function applyPriceFilter() {
     if (!grid) return;
     const cards = grid.querySelectorAll('.provider-card');
 
+    let hiddenCount = 0;
     cards.forEach(card => {
-        const minP = parseFloat(card.dataset.minPrice);
-        if (!isNaN(minP) && minP > maxPrice) {
+        const avgP = parseFloat(card.dataset.avgPrice);
+        if (!isNaN(avgP) && avgP > maxPrice) {
             card.style.display = 'none';
+            hiddenCount++;
         } else {
             card.style.display = '';
         }
     });
+    // Re-apply current sort after filtering
+    if (currentSort) sortProviders(currentSort);
 }
 
 // Load reviews from database
