@@ -32,7 +32,10 @@ alter table public.service_offerings enable row level security;
 -- Everyone can view active offerings
 create policy "Service offerings are viewable by everyone"
 on public.service_offerings for select
-using (is_active = true);
+using (
+    is_active = true 
+    OR provider_id in (select id from public.providers where user_id = auth.uid())
+);
 
 -- Providers can manage their own offerings
 create policy "Providers can insert own offerings"

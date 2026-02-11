@@ -255,7 +255,7 @@
                         <div style="border-top: 1px solid var(--neutral-200); margin: 8px 0;"></div>
                         <div class="flex justify-between">
                             <span class="text-neutral-900 font-bold">السعر التقديري</span>
-                            <span class="text-primary font-bold text-lg">يحدد بعد المعاينة</span>
+                            <span class="text-primary font-bold text-lg" id="confirmPrice">يحدد بعد المعاينة</span>
                         </div>
                     </div>
 
@@ -535,10 +535,10 @@
 
             // Pre-fill if coming from a specific service
             if (preSelectedService) {
-                document.getElementById('bookingNotes').value = `الخدمة المطلوبة: ${decodeURIComponent(preSelectedService)}`;
+                document.getElementById('bookingNotes').value = `الخدمة المطلوبة: ${preSelectedService}`;
             }
             if (preSelectedPrice) {
-                const confirmPriceEl = document.querySelector('#step-3 .text-primary.font-bold');
+                const confirmPriceEl = document.getElementById('confirmPrice');
                 if (confirmPriceEl) {
                     confirmPriceEl.textContent = `${preSelectedPrice} د.أ`;
                 }
@@ -737,9 +737,15 @@
                     ? `${offerings[0].price} د.أ` 
                     : `يبدأ من ${Math.min(...offerings.map(o => parseFloat(o.price)))} د.أ`;
                 
-                const confirmPriceEl = document.querySelector('#step-3 .text-primary.font-bold');
-                if (confirmPriceEl) {
+                const confirmPriceEl = document.getElementById('confirmPrice');
+                if (confirmPriceEl && !preSelectedPrice) {
                     confirmPriceEl.textContent = priceDisplay;
+                }
+
+                // Also update the success modal price
+                const successPriceEl = document.getElementById('successPrice');
+                if (successPriceEl) {
+                    successPriceEl.textContent = preSelectedPrice ? `${preSelectedPrice} د.أ` : priceDisplay;
                 }
 
             } catch (err) {
