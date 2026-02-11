@@ -26,7 +26,7 @@
     justify-content: center;
     align-items: center;
     z-index: 10;
-    border: 5px solid #0e3b5e;
+    border: 5px solid #0d9488;
     transform: translate(-50%, -50%);
 }
 
@@ -38,8 +38,8 @@
 
 .center-logo h1 {
     font-size: 1.8rem;
-    color: #0e3b5e;
-    /* Dark Blue */
+    color: #115e59;
+    /* Warm Teal */
     margin: 0;
     line-height: 1;
     font-weight: 800;
@@ -47,7 +47,7 @@
 
 .center-logo p {
     font-size: 1.2rem;
-    color: #0e3b5e;
+    color: #115e59;
     margin: 0;
     font-weight: 700;
 }
@@ -66,7 +66,7 @@
     cursor: pointer;
     /* transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); -> Causes potential layout thrashing */
     transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease, background-color 0.3s ease, color 0.3s ease;
-    border: 3px solid #0e3b5e;
+    border: 3px solid #0d9488;
     /* Theme color border */
     text-decoration: none;
     color: #333;
@@ -80,9 +80,9 @@
 .service-item:hover {
     /* Key change: scale combined with the base translate */
     transform: translate(-50%, -50%) scale(1.15);
-    box-shadow: 0 8px 25px rgba(14, 59, 94, 0.25);
+    box-shadow: 0 8px 25px rgba(13, 148, 136, 0.25);
     z-index: 20;
-    background: #0e3b5e;
+    background: #115e59;
     color: white;
 }
 

@@ -759,3 +759,27 @@ function handleNewNotification(notification) {
     const type = notification.type === 'alert' ? 'error' : 'info';
     showNotification(`🔔 ${notification.title}: ${notification.message}`, type);
 }
+
+// ===== Dark Mode =====
+function toggleDarkMode() {
+    const html = document.documentElement;
+    const isDark = html.getAttribute('data-theme') === 'dark';
+    if (isDark) {
+        html.removeAttribute('data-theme');
+        localStorage.setItem('theme', 'light');
+    } else {
+        html.setAttribute('data-theme', 'dark');
+        localStorage.setItem('theme', 'dark');
+    }
+    updateThemeIcons();
+}
+
+function updateThemeIcons() {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    document.querySelectorAll('.theme-toggle').forEach(btn => {
+        btn.textContent = isDark ? '☀️' : '🌙';
+    });
+}
+
+// Apply saved theme icons on DOM ready
+document.addEventListener('DOMContentLoaded', updateThemeIcons);
