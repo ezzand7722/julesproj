@@ -435,23 +435,27 @@ body {
 .services {
     padding: 100px 0;
     background: var(--gray-100);
+    position: relative;
+    overflow: hidden;
 }
 
 .services-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 24px;
+    gap: 28px;
 }
 
 .service-card {
     background: var(--white);
     border-radius: var(--radius-lg);
-    padding: 32px;
+    padding: 36px 32px;
     text-align: center;
-    transition: all 0.4s ease;
+    transition: all 0.4s cubic-bezier(.25,.8,.25,1);
     cursor: pointer;
     position: relative;
     overflow: hidden;
+    border: 2px solid var(--gray-200);
+    box-shadow: 0 4px 16px rgba(8, 145, 178, 0.06), 0 1px 4px rgba(0,0,0,0.04);
 }
 
 .service-card::before {
@@ -460,19 +464,35 @@ body {
     top: 0;
     left: 0;
     right: 0;
-    height: 4px;
+    height: 5px;
     background: var(--gradient-primary);
     transform: scaleX(0);
-    transition: transform 0.3s;
+    transition: transform 0.4s cubic-bezier(.25,.8,.25,1);
+}
+
+.service-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-lg);
+    opacity: 0;
+    background: radial-gradient(circle at 50% 0%, rgba(8,145,178,0.06) 0%, transparent 70%);
+    transition: opacity 0.4s ease;
+    pointer-events: none;
 }
 
 .service-card:hover {
-    transform: translateY(-10px);
-    box-shadow: var(--shadow-xl);
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(8, 145, 178, 0.12), 0 8px 16px rgba(0,0,0,0.06);
+    border-color: var(--primary-light);
 }
 
 .service-card:hover::before {
     transform: scaleX(1);
+}
+
+.service-card:hover::after {
+    opacity: 1;
 }
 
 /* AI Search Button */
@@ -514,9 +534,23 @@ body {
 }
 
 .service-icon {
-    font-size: 3rem;
-    margin-bottom: 16px;
-    display: block;
+    font-size: 3.2rem;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    margin-left: auto;
+    margin-right: auto;
+    background: linear-gradient(135deg, rgba(8,145,178,0.08), rgba(139,92,246,0.08));
+    border-radius: 20px;
+    transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.service-card:hover .service-icon {
+    transform: scale(1.1) rotate(-3deg);
+    background: linear-gradient(135deg, rgba(8,145,178,0.15), rgba(139,92,246,0.15));
 }
 
 .service-card h3 {
@@ -534,12 +568,130 @@ body {
 
 .service-count {
     display: inline-block;
-    background: var(--gray-100);
+    background: linear-gradient(135deg, rgba(8,145,178,0.1), rgba(139,92,246,0.1));
     color: var(--primary);
-    padding: 6px 14px;
+    padding: 8px 18px;
     border-radius: 50px;
     font-size: 0.85rem;
     font-weight: 600;
+    border: 1px solid rgba(8,145,178,0.15);
+    transition: all 0.3s ease;
+}
+
+.service-card:hover .service-count {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+/* ===== Fixed Decorative Elements ===== */
+.page-decorations {
+    pointer-events: none;
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.deco-blob {
+    position: absolute;
+    opacity: 0.07;
+    animation: decoFloat 20s ease-in-out infinite;
+}
+
+.deco-blob--1 {
+    top: 10%;
+    left: -60px;
+    width: 200px;
+    height: 200px;
+    animation-delay: 0s;
+}
+
+.deco-blob--2 {
+    top: 40%;
+    right: -50px;
+    width: 160px;
+    height: 160px;
+    animation-delay: -5s;
+}
+
+.deco-blob--3 {
+    bottom: 15%;
+    left: -40px;
+    width: 140px;
+    height: 140px;
+    animation-delay: -10s;
+}
+
+.deco-blob--4 {
+    top: 65%;
+    right: -70px;
+    width: 180px;
+    height: 180px;
+    animation-delay: -15s;
+}
+
+.deco-blob--5 {
+    top: 5%;
+    right: 40px;
+    width: 120px;
+    height: 120px;
+    animation-delay: -8s;
+}
+
+.deco-dots {
+    position: absolute;
+    opacity: 0.05;
+}
+
+.deco-dots--1 {
+    top: 20%;
+    right: 20px;
+}
+
+.deco-dots--2 {
+    bottom: 30%;
+    left: 20px;
+}
+
+.deco-ring {
+    position: absolute;
+    opacity: 0.06;
+    animation: decoSpin 40s linear infinite;
+}
+
+.deco-ring--1 {
+    top: 30%;
+    left: 20px;
+    width: 100px;
+    height: 100px;
+}
+
+.deco-ring--2 {
+    bottom: 20%;
+    right: 30px;
+    width: 80px;
+    height: 80px;
+    animation-direction: reverse;
+}
+
+@keyframes decoFloat {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-20px) rotate(5deg); }
+    50% { transform: translateY(10px) rotate(-3deg); }
+    75% { transform: translateY(-15px) rotate(4deg); }
+}
+
+@keyframes decoSpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Hide decorations on very small screens for perf */
+@media (max-width: 480px) {
+    .page-decorations {
+        display: none;
+    }
 }
 
 /* How It Works */
