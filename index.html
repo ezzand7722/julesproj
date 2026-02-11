@@ -62,7 +62,85 @@
         style="min-height: 900px; position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; overflow: hidden; padding-bottom: 100px;">
         <div class="hero-bg">
             <div class="hero-gradient"></div>
-            <!-- Retain shapes if desired, or remove for cleaner look -->
+            <!-- Decorative hero illustrations -->
+            <svg class="hero-illustration hero-illustration--left" viewBox="0 0 400 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Worker with wrench -->
+                <g opacity="0.12" fill="white">
+                    <!-- Person silhouette -->
+                    <circle cx="200" cy="80" r="45"/>
+                    <path d="M130 160 C130 130, 270 130, 270 160 L280 340 C280 360, 120 360, 120 340 Z"/>
+                    <rect x="120" y="340" width="40" height="120" rx="15"/>
+                    <rect x="240" y="340" width="40" height="120" rx="15"/>
+                    <!-- Wrench in hand -->
+                    <rect x="275" y="180" width="120" height="18" rx="9" transform="rotate(-30 275 180)"/>
+                    <circle cx="370" cy="140" r="25" stroke="white" stroke-width="10" fill="none"/>
+                </g>
+                <!-- Gear -->
+                <g opacity="0.08" transform="translate(50, 350)">
+                    <path d="M60 10 L70 0 L80 10 L85 0 L90 12 A40 40 0 0 1 90 88 L85 100 L80 90 L70 100 L60 90 L55 100 L50 88 A40 40 0 0 1 50 12 Z" fill="white"/>
+                    <circle cx="70" cy="50" r="18" fill="white" opacity="0.5"/>
+                </g>
+                <!-- Light bulb -->
+                <g opacity="0.1" transform="translate(280, 380)">
+                    <path d="M40 0 A35 35 0 1 1 40 70 Q40 85, 30 90 L50 90 Q40 85, 40 70" fill="white"/>
+                    <rect x="28" y="90" width="24" height="8" rx="2" fill="white"/>
+                    <rect x="30" y="100" width="20" height="6" rx="2" fill="white"/>
+                </g>
+            </svg>
+            <svg class="hero-illustration hero-illustration--right" viewBox="0 0 400 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- City skyline -->
+                <g opacity="0.08" fill="white">
+                    <rect x="20" y="250" width="60" height="250"/>
+                    <rect x="25" y="270" width="12" height="16" rx="2" opacity="0.5"/>
+                    <rect x="43" y="270" width="12" height="16" rx="2" opacity="0.5"/>
+                    <rect x="61" y="270" width="12" height="16" rx="2" opacity="0.5"/>
+                    <rect x="25" y="300" width="12" height="16" rx="2" opacity="0.5"/>
+                    <rect x="43" y="300" width="12" height="16" rx="2" opacity="0.5"/>
+                    <rect x="61" y="300" width="12" height="16" rx="2" opacity="0.5"/>
+                    <rect x="100" y="180" width="80" height="320"/>
+                    <rect x="110" y="200" width="14" height="18" rx="2" opacity="0.5"/>
+                    <rect x="130" y="200" width="14" height="18" rx="2" opacity="0.5"/>
+                    <rect x="150" y="200" width="14" height="18" rx="2" opacity="0.5"/>
+                    <rect x="110" y="235" width="14" height="18" rx="2" opacity="0.5"/>
+                    <rect x="130" y="235" width="14" height="18" rx="2" opacity="0.5"/>
+                    <rect x="150" y="235" width="14" height="18" rx="2" opacity="0.5"/>
+                    <rect x="110" y="270" width="14" height="18" rx="2" opacity="0.5"/>
+                    <rect x="130" y="270" width="14" height="18" rx="2" opacity="0.5"/>
+                    <rect x="150" y="270" width="14" height="18" rx="2" opacity="0.5"/>
+                    <!-- Tall tower -->
+                    <rect x="200" y="100" width="50" height="400"/>
+                    <polygon points="200,100 225,50 250,100"/>
+                    <rect x="210" y="130" width="10" height="14" rx="2" opacity="0.5"/>
+                    <rect x="230" y="130" width="10" height="14" rx="2" opacity="0.5"/>
+                    <rect x="210" y="160" width="10" height="14" rx="2" opacity="0.5"/>
+                    <rect x="230" y="160" width="10" height="14" rx="2" opacity="0.5"/>
+                    <rect x="210" y="190" width="10" height="14" rx="2" opacity="0.5"/>
+                    <rect x="230" y="190" width="10" height="14" rx="2" opacity="0.5"/>
+                    <!-- Small building -->
+                    <rect x="270" y="320" width="55" height="180"/>
+                    <rect x="280" y="340" width="15" height="20" rx="2" opacity="0.5"/>
+                    <rect x="300" y="340" width="15" height="20" rx="2" opacity="0.5"/>
+                    <rect x="280" y="375" width="15" height="20" rx="2" opacity="0.5"/>
+                    <rect x="300" y="375" width="15" height="20" rx="2" opacity="0.5"/>
+                    <!-- Dome (mosque) -->
+                    <rect x="340" y="350" width="50" height="150"/>
+                    <path d="M340 350 Q365 290 390 350" />
+                    <rect x="395" y="280" width="8" height="110" rx="4"/>
+                    <circle cx="399" cy="275" r="8"/>
+                </g>
+                <!-- Paintbrush -->
+                <g opacity="0.1" transform="translate(30, 60)">
+                    <rect x="0" y="60" width="14" height="80" rx="3" fill="white" transform="rotate(-15 7 60)"/>
+                    <path d="M-5 60 Q7 30 20 60" fill="white" transform="rotate(-15 7 60)"/>
+                </g>
+                <!-- Snowflake (AC) -->
+                <g opacity="0.08" transform="translate(320, 100)">
+                    <line x1="30" y1="0" x2="30" y2="60" stroke="white" stroke-width="4"/>
+                    <line x1="0" y1="30" x2="60" y2="30" stroke="white" stroke-width="4"/>
+                    <line x1="8" y1="8" x2="52" y2="52" stroke="white" stroke-width="3"/>
+                    <line x1="52" y1="8" x2="8" y2="52" stroke="white" stroke-width="3"/>
+                </g>
+            </svg>
         </div>
 
         <div class="circular-menu-container">

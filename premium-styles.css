@@ -329,35 +329,48 @@ footer, .footer {
 /* ============================================
    CHAT
    ============================================ */
-.chat-container, .conversation-list, .messages-area {
-    background: transparent !important;
-}
-.message-bubble, .message-input-container {
-    background-color: var(--bg-surface) !important;
+.chat-container {
+    background: white !important;
     border: 1px solid var(--border-light) !important;
-    backdrop-filter: none !important;
+}
+.chat-sidebar {
+    background: var(--bg-surface, #f9fafb) !important;
+    border-left: 1px solid var(--border-light) !important;
+}
+.chat-main {
+    background: white !important;
+}
+.chat-header {
+    background: white !important;
+    border-bottom: 1px solid var(--border-light) !important;
+}
+.chat-messages {
+    background: #f9fafb !important;
+}
+.chat-input-area {
+    background: white !important;
+    border-top: 1px solid var(--border-light) !important;
 }
 .conversation-item {
-    background-color: var(--bg-surface) !important;
+    background-color: var(--bg-surface, white) !important;
     border-bottom: 1px solid var(--border-light) !important;
 }
 .conversation-item.active {
-    background-color: var(--brand-primary-light) !important;
-    border-left: 3px solid var(--brand-primary) !important;
+    background-color: var(--brand-primary-light, #e0f2fe) !important;
+    border-right: 4px solid var(--brand-primary) !important;
 }
-.message-sent {
+.message.sent {
     background: var(--brand-primary) !important;
-    border-radius: 12px 12px 4px 12px;
     color: var(--text-inverse) !important;
 }
-.message-sent span, .message-sent p {
-    color: var(--text-inverse) !important;
-    -webkit-text-fill-color: var(--text-inverse) !important;
+.message.sent span, .message.sent .message-time {
+    color: rgba(255,255,255,0.85) !important;
+    -webkit-text-fill-color: rgba(255,255,255,0.85) !important;
 }
-.message-received {
-    background: #F4F5F7 !important;
+.message.received {
+    background: white !important;
     color: var(--text-primary) !important;
-    border-radius: 12px 12px 12px 4px;
+    border: 1px solid var(--border-light, #e5e7eb) !important;
 }
 
 /* ============================================
@@ -555,16 +568,75 @@ button, .btn, a {
     background: #1f2937 !important;
     border-bottom-color: #374151 !important;
 }
+/* Chat dark mode overrides */
+[data-theme="dark"] .chat-container {
+    background: #1f2937 !important;
+    border-color: #374151 !important;
+}
+[data-theme="dark"] .chat-sidebar {
+    background: #111827 !important;
+    border-left-color: #374151 !important;
+}
+[data-theme="dark"] .chat-main {
+    background: #1f2937 !important;
+}
+[data-theme="dark"] .chat-header {
+    background: #1f2937 !important;
+    border-bottom-color: #374151 !important;
+}
+[data-theme="dark"] .chat-messages {
+    background: #111827 !important;
+}
+[data-theme="dark"] .chat-input-area {
+    background: #1f2937 !important;
+    border-top-color: #374151 !important;
+}
+[data-theme="dark"] .chat-input-area input {
+    background: #111827 !important;
+    border-color: #374151 !important;
+    color: #f1f5f9 !important;
+}
+[data-theme="dark"] .chat-search input {
+    background: #1f2937 !important;
+    border-color: #374151 !important;
+    color: #f1f5f9 !important;
+}
 [data-theme="dark"] .conversation-item {
     background: #1f2937 !important;
     border-bottom-color: #374151 !important;
 }
+[data-theme="dark"] .conversation-item:hover {
+    background: #374151 !important;
+}
 [data-theme="dark"] .conversation-item.active {
     background-color: #042f2e !important;
+    border-right-color: #2dd4bf !important;
 }
-[data-theme="dark"] .message-received {
+[data-theme="dark"] .conversation-name {
+    color: #f1f5f9 !important;
+}
+[data-theme="dark"] .conversation-preview {
+    color: #9ca3af !important;
+}
+[data-theme="dark"] .no-chat-selected {
+    color: #9ca3af !important;
+}
+[data-theme="dark"] .message.received {
     background: #374151 !important;
     color: #f1f5f9 !important;
+    border-color: #4b5563 !important;
+}
+[data-theme="dark"] .message.received span,
+[data-theme="dark"] .message.received .message-time {
+    color: #d1d5db !important;
+    -webkit-text-fill-color: #d1d5db !important;
+}
+[data-theme="dark"] .message.sent {
+    background: #0d9488 !important;
+    color: white !important;
+}
+[data-theme="dark"] #chatHeaderService {
+    color: #9ca3af !important;
 }
 [data-theme="dark"] .auth-form,
 [data-theme="dark"] .login-form,
