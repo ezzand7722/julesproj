@@ -266,17 +266,229 @@
                     <button class="btn btn-ghost mt-2" onclick="nextStep(2)">تعديل</button>
                 </div>
 
-                <!-- Success Message -->
-                <div id="success-screen" class="step-content text-center" style="padding: 2rem 1rem; padding-bottom: 2.5rem;">
-                    <div style="font-size: 4rem; margin-bottom: 1rem;">🎉</div>
-                    <h2 class="text-primary mb-2">تم الحجز بنجاح!</h2>
-                    <p class="mb-4">تم إرسال طلبك إلى مقدم الخدمة.<br>سيتم التواصل معك قريباً.</p>
-                    <a href="index.html" class="btn btn-primary" style="margin-bottom: 0.5rem;">العودة للرئيسية</a>
-                    <a href="customer-dashboard.html" class="btn btn-ghost mt-2" style="margin-bottom: 1rem;">عرض حجوزاتي</a>
+                <!-- Success Message (shown as responsive modal overlay) -->
+                <div id="success-screen" class="step-content" style="display:none;">
+                    <!-- This is just a placeholder; the real modal is below -->
                 </div>
             </div>
         </main>
     </div>
+
+    <!-- ===== Responsive Booking Success Modal ===== -->
+    <div id="successModal" class="success-modal-overlay">
+        <div class="success-modal-content">
+            <div class="success-modal-icon">🎉</div>
+            <h2 class="success-modal-title">تم الحجز بنجاح!</h2>
+            <p class="success-modal-desc">تم إرسال طلبك وسيتم التواصل معك قريباً</p>
+
+            <!-- Assigned Provider Card -->
+            <div class="assigned-provider-card" id="assignedProviderCard">
+                <div class="assigned-provider-label">تم إسناد المهمة لـ</div>
+                <div class="assigned-provider-info">
+                    <div class="assigned-avatar" id="assignedAvatar">--</div>
+                    <div class="assigned-details">
+                        <div class="assigned-name" id="assignedName">--</div>
+                        <div class="assigned-rating">
+                            <span class="assigned-stars" id="assignedStars">⭐⭐⭐⭐⭐</span>
+                            <span class="assigned-rating-num" id="assignedRatingNum">5.0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Booking Summary -->
+            <div class="success-summary">
+                <div class="success-summary-row">
+                    <span>📅 الموعد</span>
+                    <strong id="successDate">--</strong>
+                </div>
+                <div class="success-summary-row">
+                    <span>🕐 الوقت</span>
+                    <strong id="successTime">--</strong>
+                </div>
+                <div class="success-summary-row">
+                    <span>📍 الموقع</span>
+                    <strong id="successLocation">--</strong>
+                </div>
+                <div class="success-summary-row success-price-row">
+                    <span>💰 السعر التقديري</span>
+                    <strong id="successPrice">يحدد بعد المعاينة</strong>
+                </div>
+            </div>
+
+            <div class="success-modal-actions">
+                <a href="customer-dashboard.html" class="btn btn-primary success-btn-main">📋 عرض حجوزاتي</a>
+                <a href="index.html" class="btn btn-ghost success-btn-secondary">العودة للرئيسية</a>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* ===== Responsive Success Modal ===== */
+        .success-modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 99999;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+        }
+        .success-modal-overlay.active {
+            display: flex !important;
+            animation: fadeInOverlay 0.3s ease;
+        }
+        @keyframes fadeInOverlay {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .success-modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 36px 28px 28px;
+            max-width: 480px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            text-align: center;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
+            animation: slideUpModal 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes slideUpModal {
+            from { opacity: 0; transform: translateY(40px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .success-modal-icon {
+            font-size: 4rem;
+            margin-bottom: 12px;
+            animation: bounceIn 0.6s ease 0.2s both;
+        }
+        @keyframes bounceIn {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .success-modal-title {
+            font-size: 1.5rem;
+            color: #0891b2;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+        .success-modal-desc {
+            color: #6b7280;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+
+        /* Assigned Provider Card */
+        .assigned-provider-card {
+            background: linear-gradient(135deg, #f0fdfa, #ecfeff);
+            border: 2px solid #99f6e4;
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+        .assigned-provider-label {
+            font-size: 0.8rem;
+            color: #0d9488;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .assigned-provider-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            justify-content: center;
+        }
+        .assigned-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #0891b2, #0d9488);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+            font-size: 1.1rem;
+        }
+        .assigned-details {
+            text-align: right;
+        }
+        .assigned-name {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #111827;
+        }
+        .assigned-rating {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 2px;
+        }
+        .assigned-stars { font-size: 0.85rem; }
+        .assigned-rating-num {
+            font-weight: 600;
+            color: #f59e0b;
+            font-size: 0.9rem;
+        }
+
+        /* Booking Summary */
+        .success-summary {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 24px;
+            text-align: right;
+        }
+        .success-summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .success-summary-row:last-child { border-bottom: none; }
+        .success-summary-row span { color: #6b7280; }
+        .success-summary-row strong { color: #111827; }
+        .success-price-row strong { color: #0891b2; }
+
+        /* Action Buttons */
+        .success-modal-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .success-btn-main {
+            padding: 14px !important;
+            font-size: 1.05rem !important;
+            border-radius: 12px !important;
+        }
+        .success-btn-secondary {
+            padding: 12px !important;
+            font-size: 0.95rem !important;
+            color: #6b7280 !important;
+        }
+
+        /* Responsive */
+        @media (max-width: 400px) {
+            .success-modal-content {
+                padding: 28px 18px 20px;
+                border-radius: 16px;
+            }
+            .success-modal-title { font-size: 1.3rem; }
+            .assigned-provider-info { flex-direction: column; text-align: center; }
+            .assigned-details { text-align: center; }
+        }
+    </style>
 
     <script>
         const SUPABASE_URL = 'https://rkhkvmcnjuwoxammhsqn.supabase.co';
@@ -285,7 +497,10 @@
 
         const urlParams = new URLSearchParams(window.location.search);
         const providerId = urlParams.get('provider_id');
+        const preSelectedService = urlParams.get('service');
+        const preSelectedPrice = urlParams.get('price');
         let selectedDate = null;
+        let providerData = null;  // Store full provider data
 
         // Initialize
         async function init() {
@@ -308,12 +523,26 @@
                 return;
             }
 
+            providerData = provider;
             document.getElementById('providerName').textContent = provider.name;
             document.getElementById('providerAvatar').textContent = provider.name.substring(0, 2);
             document.getElementById('loading').style.display = 'none';
             document.getElementById('bookingContent').style.display = 'block';
 
+            // Load provider's service offerings for pricing display
+            loadServiceOfferings(providerId);
             initDatePicker();
+
+            // Pre-fill if coming from a specific service
+            if (preSelectedService) {
+                document.getElementById('bookingNotes').value = `الخدمة المطلوبة: ${decodeURIComponent(preSelectedService)}`;
+            }
+            if (preSelectedPrice) {
+                const confirmPriceEl = document.querySelector('#step-3 .text-primary.font-bold');
+                if (confirmPriceEl) {
+                    confirmPriceEl.textContent = `${preSelectedPrice} د.أ`;
+                }
+            }
         }
 
         function initDatePicker() {
@@ -409,15 +638,19 @@
                 // Get customer ID if logged in
                 const { data: { user } } = await supabaseBookingClient.auth.getUser();
 
+                const selectedTime = document.querySelector('input[name="time"]:checked').value;
+                const city = document.getElementById('bgCity').value;
+                const addressDetails = document.getElementById('addressDetails').value;
+
                 const bookingData = {
                     provider_id: providerId,
                     customer_id: user ? user.id : null,
                     customer_name: document.getElementById('customerName').value,
                     customer_phone: document.getElementById('customerPhone').value,
                     service_date: selectedDate.full,
-                    preferred_time: document.querySelector('input[name="time"]:checked').value,
+                    preferred_time: selectedTime,
                     notes: document.getElementById('bookingNotes').value +
-                        `\nالعنوان: ${document.getElementById('bgCity').value} - ${document.getElementById('addressDetails').value}`,
+                        `\nالعنوان: ${city} - ${addressDetails}`,
                     status: 'pending'
                 };
 
@@ -427,8 +660,25 @@
 
                 if (error) throw error;
 
+                // Hide the booking flow
                 document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
-                document.getElementById('success-screen').classList.add('active');
+
+                // Populate success modal with provider info
+                if (providerData) {
+                    document.getElementById('assignedAvatar').textContent = providerData.name.substring(0, 2);
+                    document.getElementById('assignedName').textContent = providerData.name;
+                    const rating = providerData.rating || 0;
+                    document.getElementById('assignedStars').textContent = '⭐'.repeat(Math.round(rating));
+                    document.getElementById('assignedRatingNum').textContent = rating.toFixed(1);
+                }
+
+                // Populate summary
+                document.getElementById('successDate').textContent = selectedDate.display + ' - ' + selectedDate.full;
+                document.getElementById('successTime').textContent = selectedTime;
+                document.getElementById('successLocation').textContent = `${city} - ${addressDetails}`;
+
+                // Show the responsive modal
+                document.getElementById('successModal').classList.add('active');
 
             } catch (err) {
                 console.error(err);
@@ -437,6 +687,72 @@
                 btn.disabled = false;
                 btn.textContent = 'تأكيد الحجز ✅';
             }
+        }
+
+        // Load service offerings (pricing) for the provider
+        async function loadServiceOfferings(provId) {
+            try {
+                const { data: offerings, error } = await supabaseBookingClient
+                    .from('service_offerings')
+                    .select('*')
+                    .eq('provider_id', provId)
+                    .eq('is_active', true)
+                    .order('sort_order', { ascending: true });
+
+                if (error || !offerings || offerings.length === 0) return;
+
+                // Insert pricing section after provider info card
+                const providerCard = document.querySelector('#bookingContent > .card');
+                if (!providerCard) return;
+
+                const priceLabels = {
+                    'fixed': 'سعر ثابت',
+                    'hourly': 'بالساعة',
+                    'starting_at': 'يبدأ من'
+                };
+
+                const pricingHTML = `
+                    <div class="pricing-preview card mb-4" style="padding: 0.75rem;">
+                        <div style="font-weight: 600; margin-bottom: 8px; font-size: 0.9rem; color: var(--primary, #0891b2);">💰 الأسعار التقديرية</div>
+                        ${offerings.map(o => `
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f3f4f6;">
+                                <div>
+                                    <div style="font-weight: 600; font-size: 0.9rem;">${escapeHtml(o.title)}</div>
+                                    ${o.estimated_duration ? `<div style="font-size: 0.75rem; color: #6b7280;">⏱ ${escapeHtml(o.estimated_duration)}</div>` : ''}
+                                </div>
+                                <div style="text-align: left;">
+                                    <div style="font-weight: 700; color: #0891b2; font-size: 1rem;">${o.price} د.أ</div>
+                                    <div style="font-size: 0.7rem; color: #9ca3af;">${priceLabels[o.price_type] || 'سعر ثابت'}</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+
+                providerCard.insertAdjacentHTML('afterend', pricingHTML);
+
+                // Also update the confirmation step with real price
+                const totalMin = offerings.reduce((sum, o) => sum + parseFloat(o.price), 0);
+                const priceDisplay = offerings.length === 1 
+                    ? `${offerings[0].price} د.أ` 
+                    : `يبدأ من ${Math.min(...offerings.map(o => parseFloat(o.price)))} د.أ`;
+                
+                const confirmPriceEl = document.querySelector('#step-3 .text-primary.font-bold');
+                if (confirmPriceEl) {
+                    confirmPriceEl.textContent = priceDisplay;
+                }
+
+            } catch (err) {
+                console.error('Error loading offerings:', err);
+            }
+        }
+
+        // Utility: escape HTML
+        function escapeHtml(text) {
+            if (!text) return '';
+            const d = document.createElement('div');
+            d.textContent = text;
+            return d.innerHTML;
         }
 
         init();

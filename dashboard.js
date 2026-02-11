@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     await loadProviderData();
     await loadBookings();
     await loadReviews();
+    await loadServiceOfferings();
 
     // Initialize Chat
     if (window.initChat) {
@@ -721,5 +722,188 @@ window.processPayment = async function () {
     } finally {
         btn.disabled = false;
         btn.textContent = 'تأكيد الدفع';
+    }
+}
+
+// =============================================
+// SERVICE OFFERINGS MANAGEMENT (CRUD)
+// =============================================
+let editingOfferingId = null;
+
+// Load all offerings for this provider
+async function loadServiceOfferings() {
+    if (!currentProvider) return;
+    const list = document.getElementById('offeringsList');
+    if (!list) return;
+
+    try {
+        const { data: offerings, error } = await supabaseDashboard
+            .from('service_offerings')
+            .select('*')
+            .eq('provider_id', currentProvider.id)
+            .order('sort_order', { ascending: true });
+
+        if (error) throw error;
+
+        if (!offerings || offerings.length === 0) {
+            list.innerHTML = `
+                <div style="text-align:center; padding:24px; color:#9ca3af;">
+                    <div style="font-size:2.5rem; margin-bottom:8px;">💰</div>
+                    <p style="font-weight:500;">لم تضف أي خدمات بعد</p>
+                    <p style="font-size:0.85rem;">أضف خدماتك مع الأسعار ليراها العملاء</p>
+                </div>`;
+            return;
+        }
+
+        const priceLabels = { 'fixed': 'سعر ثابت', 'hourly': 'بالساعة', 'starting_at': 'يبدأ من' };
+
+        list.innerHTML = offerings.map(o => `
+            <div class="offering-item" style="display:flex; align-items:center; justify-content:space-between; padding:14px 0; border-bottom:1px solid #f3f4f6; gap:10px;">
+                <div style="flex:1; min-width:0;">
+                    <div style="font-weight:600; font-size:0.95rem; color:#111827;">${escapeHtml(o.title)}</div>
+                    ${o.description ? `<div style="font-size:0.8rem; color:#6b7280; margin-top:2px;">${escapeHtml(o.description)}</div>` : ''}
+                    ${o.estimated_duration ? `<div style="font-size:0.75rem; color:#9ca3af; margin-top:2px;">⏱ ${escapeHtml(o.estimated_duration)}</div>` : ''}
+                </div>
+                <div style="display:flex; align-items:center; gap:12px; flex-shrink:0;">
+                    <div style="text-align:left;">
+                        <div style="font-weight:700; color:#0891b2; font-size:1.05rem;">${o.price} د.أ</div>
+                        <div style="font-size:0.7rem; color:#9ca3af;">${priceLabels[o.price_type] || ''}</div>
+                    </div>
+                    <div style="display:flex; gap:4px;">
+                        <button onclick="editOffering('${o.id}')" style="background:none; border:none; cursor:pointer; font-size:1.1rem; padding:4px;" title="تعديل">✏️</button>
+                        <button onclick="deleteOffering('${o.id}')" style="background:none; border:none; cursor:pointer; font-size:1.1rem; padding:4px;" title="حذف">🗑️</button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    } catch (err) {
+        console.error('Error loading offerings:', err);
+        list.innerHTML = '<p style="color:red;">خطأ في تحميل الخدمات</p>';
+    }
+}
+
+// Escape HTML utility (if not already defined)
+function escapeHtml(text) {
+    if (!text) return '';
+    const d = document.createElement('div');
+    d.textContent = text;
+    return d.innerHTML;
+}
+
+// Add or update a service offering
+window.addServiceOffering = async function() {
+    const title = document.getElementById('offeringTitle').value.trim();
+    const price = parseFloat(document.getElementById('offeringPrice').value);
+    const priceType = document.getElementById('offeringPriceType').value;
+    const description = document.getElementById('offeringDesc').value.trim();
+    const duration = document.getElementById('offeringDuration').value.trim();
+
+    if (!title || isNaN(price) || price < 0) {
+        showNotification('الرجاء إدخال اسم الخدمة والسعر', 'warning');
+        return;
+    }
+
+    const btn = document.getElementById('addOfferingBtn');
+    btn.disabled = true;
+    btn.textContent = 'جاري الحفظ...';
+
+    try {
+        const offeringData = {
+            provider_id: currentProvider.id,
+            title,
+            description: description || null,
+            price,
+            price_type: priceType,
+            estimated_duration: duration || null
+        };
+
+        if (editingOfferingId) {
+            // Update existing
+            const { error } = await supabaseDashboard
+                .from('service_offerings')
+                .update(offeringData)
+                .eq('id', editingOfferingId);
+            if (error) throw error;
+            showNotification('تم تعديل الخدمة بنجاح ✅', 'success');
+        } else {
+            // Insert new
+            const { error } = await supabaseDashboard
+                .from('service_offerings')
+                .insert([offeringData]);
+            if (error) throw error;
+            showNotification('تمت إضافة الخدمة بنجاح ✅', 'success');
+        }
+
+        // Reset form
+        cancelEditOffering();
+        await loadServiceOfferings();
+    } catch (err) {
+        console.error('Error saving offering:', err);
+        showNotification('خطأ: ' + err.message, 'error');
+    } finally {
+        btn.disabled = false;
+        btn.textContent = editingOfferingId ? 'حفظ التعديلات' : '+ إضافة خدمة';
+    }
+}
+
+// Edit an offering - populate form
+window.editOffering = async function(id) {
+    try {
+        const { data: offering, error } = await supabaseDashboard
+            .from('service_offerings')
+            .select('*')
+            .eq('id', id)
+            .single();
+
+        if (error || !offering) {
+            showNotification('لم يتم العثور على الخدمة', 'error');
+            return;
+        }
+
+        editingOfferingId = id;
+        document.getElementById('offeringTitle').value = offering.title;
+        document.getElementById('offeringDesc').value = offering.description || '';
+        document.getElementById('offeringPrice').value = offering.price;
+        document.getElementById('offeringPriceType').value = offering.price_type;
+        document.getElementById('offeringDuration').value = offering.estimated_duration || '';
+
+        document.getElementById('addOfferingBtn').textContent = 'حفظ التعديلات';
+        document.getElementById('cancelEditOfferingBtn').style.display = 'inline-block';
+
+        // Scroll to form
+        document.getElementById('offeringForm').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } catch (err) {
+        console.error('Error editing offering:', err);
+    }
+}
+
+// Cancel edit mode
+window.cancelEditOffering = function() {
+    editingOfferingId = null;
+    document.getElementById('offeringTitle').value = '';
+    document.getElementById('offeringDesc').value = '';
+    document.getElementById('offeringPrice').value = '';
+    document.getElementById('offeringPriceType').value = 'fixed';
+    document.getElementById('offeringDuration').value = '';
+    document.getElementById('addOfferingBtn').textContent = '+ إضافة خدمة';
+    document.getElementById('cancelEditOfferingBtn').style.display = 'none';
+}
+
+// Delete an offering
+window.deleteOffering = async function(id) {
+    if (!confirm('هل تريد حذف هذه الخدمة؟')) return;
+
+    try {
+        const { error } = await supabaseDashboard
+            .from('service_offerings')
+            .delete()
+            .eq('id', id);
+
+        if (error) throw error;
+        showNotification('تم حذف الخدمة ✅', 'success');
+        await loadServiceOfferings();
+    } catch (err) {
+        console.error('Error deleting offering:', err);
+        showNotification('خطأ في الحذف: ' + err.message, 'error');
     }
 }

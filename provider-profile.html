@@ -174,6 +174,90 @@
             transform: translateY(-2px);
             box-shadow: 0 8px 16px rgba(37, 99, 235, 0.3);
         }
+
+        /* ===== Pricing Menu ===== */
+        .pricing-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+        .pricing-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 0;
+            border-bottom: 1px solid #f3f4f6;
+            gap: 12px;
+        }
+        .pricing-item:last-child { border-bottom: none; }
+
+        .pricing-item-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .pricing-item-title {
+            font-weight: 600;
+            font-size: 1rem;
+            color: #111827;
+            margin-bottom: 2px;
+        }
+        .pricing-item-desc {
+            font-size: 0.85rem;
+            color: #6b7280;
+            margin-bottom: 4px;
+        }
+        .pricing-item-duration {
+            font-size: 0.78rem;
+            color: #9ca3af;
+        }
+
+        .pricing-item-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+        .pricing-price {
+            font-weight: 700;
+            font-size: 1.15rem;
+            color: #0891b2;
+            white-space: nowrap;
+        }
+        .pricing-type {
+            font-size: 0.7rem;
+            color: #9ca3af;
+            font-weight: 500;
+        }
+        .pricing-book-btn {
+            background: linear-gradient(135deg, #0891b2, #0d9488);
+            color: white;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .pricing-book-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(8, 145, 178, 0.3);
+        }
+
+        @media (max-width: 480px) {
+            .pricing-item {
+                flex-wrap: wrap;
+            }
+            .pricing-item-right {
+                flex-direction: row;
+                align-items: center;
+                width: 100%;
+                justify-content: space-between;
+                margin-top: 8px;
+            }
+        }
     </style>
 </head>
 
@@ -232,6 +316,14 @@
             <h3 class="section-title">🔧 الخدمات المقدمة</h3>
             <div class="services-grid" id="servicesGrid">
                 <span class="service-tag">جاري التحميل...</span>
+            </div>
+        </div>
+
+        <!-- ===== Pricing Menu Card ===== -->
+        <div class="profile-card" id="pricingCard" style="display:none;">
+            <h3 class="section-title">💰 قائمة الأسعار</h3>
+            <div id="pricingMenu" class="pricing-menu">
+                <p>جاري تحميل الأسعار...</p>
             </div>
         </div>
 
@@ -598,8 +690,62 @@
             if (e.target.id === 'bookingModal') closeBookingModal();
         });
 
+        // Load service offerings (pricing menu)
+        async function loadServiceOfferings() {
+            if (!providerId) return;
+            try {
+                const { data: offerings, error } = await supabaseProfile
+                    .from('service_offerings')
+                    .select('*')
+                    .eq('provider_id', providerId)
+                    .eq('is_active', true)
+                    .order('sort_order', { ascending: true });
+
+                if (error || !offerings || offerings.length === 0) return;
+
+                const priceLabels = {
+                    'fixed': 'سعر ثابت',
+                    'hourly': 'بالساعة',
+                    'starting_at': 'يبدأ من'
+                };
+
+                const pricingMenu = document.getElementById('pricingMenu');
+                const pricingCard = document.getElementById('pricingCard');
+                pricingCard.style.display = 'block';
+
+                pricingMenu.innerHTML = offerings.map(o => `
+                    <div class="pricing-item">
+                        <div class="pricing-item-info">
+                            <div class="pricing-item-title">${escapeHtml(o.title)}</div>
+                            ${o.description ? `<div class="pricing-item-desc">${escapeHtml(o.description)}</div>` : ''}
+                            ${o.estimated_duration ? `<div class="pricing-item-duration">⏱ ${escapeHtml(o.estimated_duration)}</div>` : ''}
+                        </div>
+                        <div class="pricing-item-right">
+                            <div>
+                                <span class="pricing-price">${o.price} د.أ</span>
+                                <span class="pricing-type">${priceLabels[o.price_type] || ''}</span>
+                            </div>
+                            <button class="pricing-book-btn" onclick="bookService('${escapeHtml(o.title)}', ${o.price})">
+                                📅 احجز
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (err) {
+                console.error('Error loading offerings:', err);
+            }
+        }
+
+        // Book a specific service - goes to booking page with prefilled info
+        function bookService(serviceName, price) {
+            if (!providerId) return;
+            const url = `booking.html?provider_id=${providerId}&service=${encodeURIComponent(serviceName)}&price=${price}`;
+            window.location.href = url;
+        }
+
         loadProfile();
         loadPortfolio();
+        loadServiceOfferings();
     </script>
 </body>
 

@@ -382,6 +382,53 @@
                     </div>
                 </div>
 
+                <!-- ===== Service Offerings / Pricing Management ===== -->
+                <div class="dashboard-card">
+                    <h2>💰 قائمة خدماتي وأسعاري</h2>
+                    <p style="color: #6b7280; font-size: 0.9rem; margin-bottom: 16px;">أضف خدماتك مع الأسعار ليراها العملاء في ملفك الشخصي</p>
+                    
+                    <!-- Add New Offering Form -->
+                    <div id="offeringForm" class="offering-form" style="background: #f9fafb; border-radius: 12px; padding: 16px; margin-bottom: 20px;">
+                        <div style="display: grid; gap: 12px;">
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label style="font-size:0.85rem; font-weight:600;">اسم الخدمة</label>
+                                <input type="text" id="offeringTitle" placeholder="مثال: تنظيف مكيف سبليت" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-family:inherit;">
+                            </div>
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label style="font-size:0.85rem; font-weight:600;">الوصف (اختياري)</label>
+                                <input type="text" id="offeringDesc" placeholder="تفاصيل ما يشمله السعر" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-family:inherit;">
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label style="font-size:0.85rem; font-weight:600;">السعر (د.أ)</label>
+                                    <input type="number" id="offeringPrice" placeholder="20" min="0" step="0.5" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-family:inherit;">
+                                </div>
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label style="font-size:0.85rem; font-weight:600;">نوع السعر</label>
+                                    <select id="offeringPriceType" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-family:inherit;">
+                                        <option value="fixed">سعر ثابت</option>
+                                        <option value="starting_at">يبدأ من</option>
+                                        <option value="hourly">بالساعة</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label style="font-size:0.85rem; font-weight:600;">المدة التقديرية</label>
+                                    <input type="text" id="offeringDuration" placeholder="ساعة واحدة" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-family:inherit;">
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 8px;">
+                                <button class="btn btn-primary" onclick="addServiceOffering()" id="addOfferingBtn" style="flex:1;">+ إضافة خدمة</button>
+                                <button class="btn btn-ghost" onclick="cancelEditOffering()" id="cancelEditOfferingBtn" style="display:none;">إلغاء</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Offerings List -->
+                    <div id="offeringsList" style="display: flex; flex-direction: column; gap: 0;">
+                        <div class="loading-spinner">جاري التحميل...</div>
+                    </div>
+                </div>
+
                 <div class="dashboard-card">
                     <h2>⭐ آخر التقييمات</h2>
                     <div id="reviewsList">
