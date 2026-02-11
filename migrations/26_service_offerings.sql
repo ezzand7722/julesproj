@@ -15,11 +15,16 @@ create table if not exists public.service_offerings (
     price_type text not null default 'fixed' 
         check (price_type in ('fixed', 'hourly', 'starting_at')),
     estimated_duration text,                -- e.g. "ساعة واحدة", "2-3 ساعات"
+    image_url text,                         -- photo for this specific service
     is_active boolean default true,
     sort_order integer default 0,
     created_at timestamptz default now(),
     updated_at timestamptz default now()
 );
+
+-- If table already exists, add the image_url column
+alter table public.service_offerings 
+    add column if not exists image_url text;
 
 -- 2. INDEX for fast lookups
 create index if not exists idx_service_offerings_provider 

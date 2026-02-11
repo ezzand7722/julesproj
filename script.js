@@ -247,6 +247,7 @@ async function loadProviders(filter = {}) {
                     <span class="stars">${'⭐'.repeat(Math.round(provider.rating))}</span>
                     <span>${provider.rating} (${provider.review_count} تقييم)</span>
                 </div>
+                <div class="provider-offerings-preview" id="offerings-${provider.id}" style="display:none; margin-top:8px; display:flex; flex-wrap:wrap; gap:5px;"></div>
                 <div class="provider-actions" style="display: flex; gap: 8px; margin-top: 10px;">
                     <button class="btn btn-primary" style="flex: 1;" onclick="event.stopPropagation(); window.location.href='booking.html?provider_id=${escapeHtml(provider.id)}'">احجز الآن</button>
                     ${provider.user_id ? `
@@ -257,11 +258,54 @@ async function loadProviders(filter = {}) {
             </div>
         `).join('');
 
+        // Load offerings preview for all providers (batch)
+        loadOfferingsForCards(providers.map(p => p.id));
+
         // Re-apply animations
         applyScrollAnimations();
     } catch (err) {
         console.error('Error loading providers:', err);
         grid.innerHTML = '<p class="error">خطأ في تحميل مقدمي الخدمات</p>';
+    }
+}
+
+// Load service offerings preview pills for provider cards on homepage
+async function loadOfferingsForCards(providerIds) {
+    if (!providerIds || providerIds.length === 0) return;
+    try {
+        const { data: offerings, error } = await supabaseClient
+            .from('service_offerings')
+            .select('id, provider_id, title, price, price_type, image_url')
+            .in('provider_id', providerIds)
+            .eq('is_active', true)
+            .order('sort_order', { ascending: true });
+
+        if (error || !offerings || offerings.length === 0) return;
+
+        // Group by provider
+        const grouped = {};
+        offerings.forEach(o => {
+            if (!grouped[o.provider_id]) grouped[o.provider_id] = [];
+            grouped[o.provider_id].push(o);
+        });
+
+        // Render top 3 offerings per provider as compact pills
+        Object.keys(grouped).forEach(provId => {
+            const container = document.getElementById('offerings-' + provId);
+            if (!container) return;
+
+            const top3 = grouped[provId].slice(0, 3);
+            container.style.display = 'flex';
+            container.innerHTML = top3.map(o => `
+                <div style="display:inline-flex; align-items:center; gap:4px; background:#f0fdfa; border:1px solid #ccfbf1; border-radius:20px; padding:3px 10px 3px 6px; font-size:0.75rem; white-space:nowrap;">
+                    ${o.image_url ? `<img src="${o.image_url}" style="width:18px; height:18px; border-radius:50%; object-fit:cover;">` : `<span style="font-size:0.7rem;">🔧</span>`}
+                    <span style="color:#374151; font-weight:500;">${escapeHtml(o.title)}</span>
+                    <span style="color:#0891b2; font-weight:700;">${o.price}د.أ</span>
+                </div>
+            `).join('');
+        });
+    } catch (err) {
+        console.error('Error loading offerings for cards:', err);
     }
 }
 

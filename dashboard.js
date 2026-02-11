@@ -759,6 +759,7 @@ async function loadServiceOfferings() {
 
         list.innerHTML = offerings.map(o => `
             <div class="offering-item" style="display:flex; align-items:center; justify-content:space-between; padding:14px 0; border-bottom:1px solid #f3f4f6; gap:10px;">
+                ${o.image_url ? `<img src="${o.image_url}" style="width:48px; height:48px; border-radius:8px; object-fit:cover; flex-shrink:0; border:1px solid #e5e7eb;">` : `<div style="width:48px; height:48px; border-radius:8px; background:linear-gradient(135deg,#e0f2fe,#dbeafe); display:flex; align-items:center; justify-content:center; font-size:1.4rem; flex-shrink:0;">🔧</div>`}
                 <div style="flex:1; min-width:0;">
                     <div style="font-weight:600; font-size:0.95rem; color:#111827;">${escapeHtml(o.title)}</div>
                     ${o.description ? `<div style="font-size:0.8rem; color:#6b7280; margin-top:2px;">${escapeHtml(o.description)}</div>` : ''}
@@ -790,7 +791,7 @@ function escapeHtml(text) {
     return d.innerHTML;
 }
 
-// Add or update a service offering
+// Add or update a service offering (with optional image upload)
 window.addServiceOffering = async function() {
     const title = document.getElementById('offeringTitle').value.trim();
     const price = parseFloat(document.getElementById('offeringPrice').value);
@@ -808,6 +809,30 @@ window.addServiceOffering = async function() {
     btn.textContent = 'جاري الحفظ...';
 
     try {
+        // Handle image upload if a file is selected
+        let imageUrl = null;
+        const fileInput = document.getElementById('offeringImage');
+        const file = fileInput && fileInput.files[0];
+
+        if (file) {
+            const fileExt = file.name.split('.').pop();
+            const fileName = `offerings/${currentProvider.id}/${Math.random().toString(36).substring(2)}.${fileExt}`;
+
+            const { data: uploadData, error: uploadError } = await supabaseDashboard
+                .storage
+                .from('portfolio')
+                .upload(fileName, file);
+
+            if (uploadError) throw uploadError;
+
+            const { data: { publicUrl } } = supabaseDashboard
+                .storage
+                .from('portfolio')
+                .getPublicUrl(fileName);
+
+            imageUrl = publicUrl;
+        }
+
         const offeringData = {
             provider_id: currentProvider.id,
             title,
@@ -817,7 +842,17 @@ window.addServiceOffering = async function() {
             estimated_duration: duration || null
         };
 
+        // Include image_url only if a new image was uploaded, or keep existing on edit
+        if (imageUrl) {
+            offeringData.image_url = imageUrl;
+        }
+
         if (editingOfferingId) {
+            // If no new image and user cleared the preview, remove image
+            const preview = document.getElementById('offeringImagePreview');
+            if (!file && preview && preview.style.display === 'none' && preview.dataset.cleared === 'true') {
+                offeringData.image_url = null;
+            }
             // Update existing
             const { error } = await supabaseDashboard
                 .from('service_offerings')
@@ -826,6 +861,7 @@ window.addServiceOffering = async function() {
             if (error) throw error;
             showNotification('تم تعديل الخدمة بنجاح ✅', 'success');
         } else {
+            if (!imageUrl) offeringData.image_url = null;
             // Insert new
             const { error } = await supabaseDashboard
                 .from('service_offerings')
@@ -867,6 +903,21 @@ window.editOffering = async function(id) {
         document.getElementById('offeringPriceType').value = offering.price_type;
         document.getElementById('offeringDuration').value = offering.estimated_duration || '';
 
+        // Show existing image preview if available
+        const preview = document.getElementById('offeringImagePreview');
+        const fileInput = document.getElementById('offeringImage');
+        if (preview) {
+            if (offering.image_url) {
+                preview.src = offering.image_url;
+                preview.style.display = 'block';
+                preview.dataset.cleared = 'false';
+            } else {
+                preview.style.display = 'none';
+                preview.dataset.cleared = 'false';
+            }
+        }
+        if (fileInput) fileInput.value = '';
+
         document.getElementById('addOfferingBtn').textContent = 'حفظ التعديلات';
         document.getElementById('cancelEditOfferingBtn').style.display = 'inline-block';
 
@@ -885,6 +936,11 @@ window.cancelEditOffering = function() {
     document.getElementById('offeringPrice').value = '';
     document.getElementById('offeringPriceType').value = 'fixed';
     document.getElementById('offeringDuration').value = '';
+    // Clear image
+    const fileInput = document.getElementById('offeringImage');
+    const preview = document.getElementById('offeringImagePreview');
+    if (fileInput) fileInput.value = '';
+    if (preview) { preview.style.display = 'none'; preview.src = ''; preview.dataset.cleared = 'false'; }
     document.getElementById('addOfferingBtn').textContent = '+ إضافة خدمة';
     document.getElementById('cancelEditOfferingBtn').style.display = 'none';
 }
@@ -907,3 +963,23 @@ window.deleteOffering = async function(id) {
         showNotification('خطأ في الحذف: ' + err.message, 'error');
     }
 }
+
+// Image preview for offering image upload
+document.addEventListener('DOMContentLoaded', function() {
+    const imgInput = document.getElementById('offeringImage');
+    if (imgInput) {
+        imgInput.addEventListener('change', function() {
+            const preview = document.getElementById('offeringImagePreview');
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(this.files[0]);
+            } else {
+                preview.style.display = 'none';
+            }
+        });
+    }
+});

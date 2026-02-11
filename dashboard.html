@@ -398,6 +398,13 @@
                                 <label style="font-size:0.85rem; font-weight:600;">الوصف (اختياري)</label>
                                 <input type="text" id="offeringDesc" placeholder="تفاصيل ما يشمله السعر" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-family:inherit;">
                             </div>
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label style="font-size:0.85rem; font-weight:600;">صورة الخدمة (اختياري)</label>
+                                <div style="display:flex; align-items:center; gap:10px;">
+                                    <input type="file" id="offeringImage" accept="image/*" style="flex:1; padding:8px; border:1px solid #ddd; border-radius:8px; font-family:inherit; font-size:0.85rem;">
+                                    <img id="offeringImagePreview" src="" style="width:48px; height:48px; border-radius:8px; object-fit:cover; display:none; border:1px solid #ddd;">
+                                </div>
+                            </div>
                             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
                                 <div class="form-group" style="margin-bottom:0;">
                                     <label style="font-size:0.85rem; font-weight:600;">السعر (د.أ)</label>
