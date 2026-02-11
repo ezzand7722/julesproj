@@ -247,6 +247,7 @@ async function loadProviders(filter = {}) {
                     <span class="stars">${'⭐'.repeat(Math.round(provider.rating))}</span>
                     <span>${provider.rating} (${provider.review_count} تقييم)</span>
                 </div>
+                <div class="provider-price-range" id="price-range-${provider.id}" style="display:none; margin-top:6px; padding:5px 12px; background:#f0fdfa; border:1px solid #ccfbf1; border-radius:8px; text-align:center; font-size:0.85rem; font-weight:600; color:#0d9488;"></div>
                 <div class="provider-offerings-preview" id="offerings-${provider.id}" style="display:none; margin-top:8px; display:flex; flex-wrap:wrap; gap:5px;"></div>
                 <div class="provider-actions" style="display: flex; gap: 8px; margin-top: 10px;">
                     <button class="btn btn-primary" style="flex: 1;" onclick="event.stopPropagation(); window.location.href='booking.html?provider_id=${escapeHtml(provider.id)}'">احجز الآن</button>
@@ -289,9 +290,32 @@ async function loadOfferingsForCards(providerIds) {
             grouped[o.provider_id].push(o);
         });
 
-        // Render top 3 offerings per provider as compact pills
+        // Render top 3 offerings per provider as compact pills + price range
         Object.keys(grouped).forEach(provId => {
             const container = document.getElementById('offerings-' + provId);
+            const priceRangeEl = document.getElementById('price-range-' + provId);
+
+            // Compute price range
+            if (priceRangeEl) {
+                const prices = grouped[provId].map(o => parseFloat(o.price)).filter(p => !isNaN(p) && p > 0);
+                if (prices.length > 0) {
+                    const minPrice = Math.min(...prices);
+                    const maxPrice = Math.max(...prices);
+                    priceRangeEl.style.display = 'block';
+                    if (minPrice === maxPrice) {
+                        priceRangeEl.innerHTML = `💰 ${minPrice} د.أ`;
+                    } else {
+                        priceRangeEl.innerHTML = `💰 ${minPrice} - ${maxPrice} د.أ`;
+                    }
+                    // Store price range data on the card for filtering
+                    const card = document.querySelector(`[data-provider-id="${provId}"]`);
+                    if (card) {
+                        card.dataset.minPrice = minPrice;
+                        card.dataset.maxPrice = maxPrice;
+                    }
+                }
+            }
+
             if (!container) return;
 
             const top3 = grouped[provId].slice(0, 3);
@@ -307,6 +331,68 @@ async function loadOfferingsForCards(providerIds) {
     } catch (err) {
         console.error('Error loading offerings for cards:', err);
     }
+}
+
+// ============ SORTING & FILTERING ============
+
+let currentSort = 'rating';
+
+function sortProviders(sortBy) {
+    currentSort = sortBy;
+    // Update active button
+    document.querySelectorAll('.providers-filter-bar .filter-btn').forEach(btn => btn.classList.remove('active'));
+    const btnId = sortBy === 'rating' ? 'sortRating' : sortBy === 'price_low' ? 'sortPriceLow' : 'sortPriceHigh';
+    const btn = document.getElementById(btnId);
+    if (btn) btn.classList.add('active');
+
+    const grid = document.getElementById('providersGrid');
+    if (!grid) return;
+    const cards = Array.from(grid.querySelectorAll('.provider-card'));
+    if (cards.length === 0) return;
+
+    cards.sort((a, b) => {
+        if (sortBy === 'rating') {
+            // Find rating from the allProviders array
+            const provA = allProviders.find(p => p.id === a.dataset.providerId);
+            const provB = allProviders.find(p => p.id === b.dataset.providerId);
+            const ratingA = provA ? provA.rating : 0;
+            const ratingB = provB ? provB.rating : 0;
+            return ratingB - ratingA;
+        } else if (sortBy === 'price_low') {
+            const pA = parseFloat(a.dataset.minPrice) || 9999;
+            const pB = parseFloat(b.dataset.minPrice) || 9999;
+            return pA - pB;
+        } else if (sortBy === 'price_high') {
+            const pA = parseFloat(a.dataset.maxPrice) || 0;
+            const pB = parseFloat(b.dataset.maxPrice) || 0;
+            return pB - pA;
+        }
+        return 0;
+    });
+
+    // Re-append in sorted order
+    cards.forEach(card => grid.appendChild(card));
+}
+
+function updatePriceFilterLabel(value) {
+    const label = document.getElementById('maxPriceLabel');
+    if (label) label.textContent = value + ' د.أ';
+}
+
+function applyPriceFilter() {
+    const maxPrice = parseFloat(document.getElementById('maxPriceFilter').value);
+    const grid = document.getElementById('providersGrid');
+    if (!grid) return;
+    const cards = grid.querySelectorAll('.provider-card');
+
+    cards.forEach(card => {
+        const minP = parseFloat(card.dataset.minPrice);
+        if (!isNaN(minP) && minP > maxPrice) {
+            card.style.display = 'none';
+        } else {
+            card.style.display = '';
+        }
+    });
 }
 
 // Load reviews from database

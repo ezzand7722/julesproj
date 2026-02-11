@@ -88,275 +88,200 @@
             </div>
         </div>
 
-        <!-- Top Up Modal -->
-        <div id="topUpModal" class="modal"
-            style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; overflow-y: auto;">
-            <div class="modal-content"
-                style="background: white; padding: 2rem; border-radius: 12px; width: 90%; max-width: 600px; position: relative; max-height: 90vh; overflow-y: auto; margin: 20px;">
-                <button onclick="closeTopUpModal()"
-                    style="position: absolute; top: 10px; left: 10px; background: none; border: none; font-size: 1.5rem; cursor: pointer; z-index: 10;">✕</button>
-                <h2 style="margin-bottom: 1.5rem; text-align: center;">شحن رصيد المحفظة 💰</h2>
+        <!-- ==================== MAIN TABS ==================== -->
+        <div class="dashboard-tabs provider-main-tabs">
+            <button class="tab-btn active" onclick="switchProviderTab('bookings')">📅 الحجوزات والمحادثات</button>
+            <button class="tab-btn" onclick="switchProviderTab('profile')">👤 ملفي الشخصي</button>
+            <button class="tab-btn" onclick="switchProviderTab('services')">💰 خدماتي وأسعاري</button>
+            <button class="tab-btn" onclick="switchProviderTab('portfolio')">🖼️ أعمالي وتقييماتي</button>
+        </div>
 
-                <!-- Step 1: Select Package -->
-                <div id="step1" class="payment-step">
-                    <h3 style="margin-bottom: 1rem; font-size: 1.1rem;">اختر الباقة المناسبة</h3>
-                    <div class="packages-grid" style="display: grid; gap: 1rem;">
-                        <div class="package-card" onclick="selectPackage(10, 'باقة البداية', 5)"
-                            style="border: 2px solid #eee; padding: 1rem; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; justify-content: space-between; align-items: center;">
-                            <div>
-                                <h4 style="margin: 0;">باقة البداية</h4>
-                                <p style="margin: 0; color: #666; font-size: 0.9rem;">10 عملات</p>
-                            </div>
-                            <div class="price" style="font-weight: bold; color: var(--primary); font-size: 1.2rem;">5 JD</div>
-                        </div>
-
-                        <div class="package-card" onclick="selectPackage(50, 'باقة المحترفين', 20)"
-                            style="border: 2px solid var(--primary); background: var(--primary-50); padding: 1rem; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; justify-content: space-between; align-items: center;">
-                            <div>
-                                <h4 style="margin: 0;">باقة المحترفين 🔥</h4>
-                                <p style="margin: 0; color: #666; font-size: 0.9rem;">50 عملة</p>
-                                <span style="background: #fbbf24; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; margin-top: 4px; display: inline-block;">الأفضل قيمة</span>
-                            </div>
-                            <div class="price" style="font-weight: bold; color: var(--primary); font-size: 1.2rem;">20 JD</div>
-                        </div>
-
-                        <div class="package-card" onclick="selectPackage(100, 'باقة الأعمال', 35)"
-                            style="border: 2px solid #eee; padding: 1rem; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; justify-content: space-between; align-items: center;">
-                            <div>
-                                <h4 style="margin: 0;">باقة الأعمال</h4>
-                                <p style="margin: 0; color: #666; font-size: 0.9rem;">100 عملة</p>
-                            </div>
-                            <div class="price" style="font-weight: bold; color: var(--primary); font-size: 1.2rem;">35 JD</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Step 2: Select Payment Method -->
-                <div id="step2" class="payment-step" style="display: none;">
-                    <h3 style="margin-bottom: 1rem; font-size: 1.1rem;">اختر طريقة الدفع</h3>
-                    <p style="color: #666; margin-bottom: 1rem; font-size: 0.9rem;">
-                        المبلغ المطلوب: <strong><span id="selectedPrice">0</span> JD</strong> | 
-                        الباقة: <strong><span id="selectedPackageName">-</span></strong>
-                    </p>
-
-                    <div class="payment-methods" style="display: grid; gap: 0.75rem;">
-                        <!-- Credit Card -->
-                        <div class="payment-method-card" onclick="selectPaymentMethod('credit_card')"
-                            style="border: 2px solid #eee; padding: 1rem; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 1rem;">
-                            <div style="font-size: 2rem;">💳</div>
-                            <div style="flex: 1;">
-                                <h4 style="margin: 0; font-size: 1rem;">بطاقة ائتمان/خصم</h4>
-                                <p style="margin: 0; color: #666; font-size: 0.85rem;">Visa, MasterCard, Mada</p>
-                            </div>
-                            <div style="color: #10b981;">✓</div>
-                        </div>
-
-                        <!-- WhatsApp for Alternative Payments -->
-                        <div class="payment-method-card" onclick="contactWhatsApp()"
-                            style="border: 2px solid #25D366; padding: 1rem; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 1rem; background: #f0fdf4;">
-                            <div style="font-size: 2rem;">💬</div>
-                            <div style="flex: 1;">
-                                <h4 style="margin: 0; font-size: 1rem; color: #25D366;">الدفع عبر CliQ أو المحفظة الإلكترونية</h4>
-                                <p style="margin: 0; color: #666; font-size: 0.85rem;">تواصل معنا عبر واتساب للدفع بطرق أخرى</p>
-                            </div>
-                            <div style="color: #25D366; font-size: 1.5rem;">→</div>
-                        </div>
-                    </div>
-
-                    <div style="margin-top: 1rem; padding: 1rem; background: #fef3c7; border-radius: 8px; font-size: 0.9rem;">
-                        <strong>💡 طرق دفع إضافية:</strong>
-                        <p style="margin: 0.5rem 0 0 0; color: #666;">للدفع عبر CliQ، Orange Money، أو uWallet، تواصل معنا على واتساب وسنساعدك في إتمام العملية</p>
-                    </div>
-
-                    <button class="btn btn-ghost btn-block" onclick="backToPackages()" 
-                        style="margin-top: 1rem;">← العودة للباقات</button>
-                </div>
-
-                <!-- Step 3: Payment Details -->
-                <div id="step3" class="payment-step" style="display: none;">
-                    <h3 style="margin-bottom: 1rem; font-size: 1.1rem;">أدخل تفاصيل الدفع</h3>
-
-                    <!-- Credit Card Form -->
-                    <div id="creditCardForm" class="payment-form" style="display: none;">
-                        <p style="background: #fef3c7; padding: 0.75rem; border-radius: 6px; font-size: 0.9rem; margin-bottom: 1rem;">
-                            💡 سيتم فتح صفحة الدفع الآمنة في نافذة جديدة
-                        </p>
-                        <button id="payBtnCard" class="btn btn-primary btn-block" onclick="processCreditCardPayment()">
-                            متابعة للدفع الآمن 🔒
-                        </button>
-                    </div>
-
-                    <button class="btn btn-ghost btn-block" onclick="backToPaymentMethods()" 
-                        style="margin-top: 1rem;">← العودة لطرق الدفع</button>
-                </div>
-
-                <!-- Payment Processing -->
-                <div id="processingStep" class="payment-step" style="display: none; text-align: center; padding: 2rem 0;">
-                    <div style="font-size: 4rem; margin-bottom: 1rem;">⏳</div>
-                    <h3 style="margin-bottom: 0.5rem;">جاري معالجة الدفع...</h3>
-                    <p id="processingMessage" style="color: #666;">يرجى الانتظار</p>
-                    <div style="margin-top: 1rem;">
-                        <div class="spinner" style="border: 3px solid #f3f3f3; border-top: 3px solid var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto;"></div>
-                    </div>
-                </div>
-
+        <!-- ==================== TAB 1: BOOKINGS & CHAT ==================== -->
+        <div id="tab-bookings" class="provider-tab-content active">
+            <!-- Chat Section -->
+            <div class="dashboard-card" style="margin-bottom: 20px;">
                 <style>
-                    @keyframes spin {
-                        0% { transform: rotate(0deg); }
-                        100% { transform: rotate(360deg); }
+                    .chat-container {
+                        display: flex !important;
+                        height: 500px !important;
+                        border: none !important;
+                        box-shadow: none !important;
+                        margin-top: 0 !important;
                     }
-                    .payment-method-card:hover {
-                        border-color: var(--primary) !important;
-                        background: var(--primary-50);
-                    }
-                    .payment-method-card.selected {
-                        border-color: var(--primary) !important;
-                        background: var(--primary-50) !important;
+                    .chat-sidebar {
+                        border-radius: 8px 0 0 8px;
                     }
                 </style>
-            </div>
-        </div>
-
-        <!-- Messages Section -->
-        <div class="dashboard-card" style="margin-bottom: 20px;">
-            <style>
-                /* Provider Chat Layout Overrides */
-                .chat-container {
-                    display: flex !important;
-                    height: 500px !important;
-                    border: none !important;
-                    box-shadow: none !important;
-                    margin-top: 0 !important;
-                }
-
-                .chat-sidebar {
-                    border-radius: 8px 0 0 8px;
-                }
-            </style>
-            <div class="chat-container">
-                <!-- Sidebar -->
-                <div class="chat-sidebar">
-                    <div class="chat-header">
-                        <h3>💬 المحادثات</h3>
+                <div class="chat-container">
+                    <div class="chat-sidebar">
+                        <div class="chat-header">
+                            <h3>💬 المحادثات</h3>
+                        </div>
+                        <div id="conversationsList" class="conversations-list"></div>
                     </div>
-                    <div id="conversationsList" class="conversations-list">
-                        <!-- Conversations loaded by JS -->
-                    </div>
-                </div>
-
-                <!-- Main Chat -->
-                <div class="chat-main">
-                    <div id="noChatSelected" class="no-chat-selected">
-                        <div class="no-chat-icon">👋</div>
-                        <h3>مرحباً بك في المحادثات</h3>
-                        <p>تواصل مع عملائك لتأكيد الحجوزات</p>
-                    </div>
-
-                    <div id="activeChat" style="display: none; flex-direction: column; height: 100%;">
-                        <div class="chat-header" style="display: flex; align-items: center; justify-content: space-between; padding: 1rem;">
-                            <div style="display: flex; align-items: center; gap: 0.5rem; flex: 1;">
-                                <button class="back-btn" onclick="backToConversations()"
-                                    style="display:none; background:none; border:none; font-size:1.5rem; cursor:pointer; margin-left: 0.5rem;">←</button>
-                                <div>
-                                    <h3 id="chatHeaderName" style="margin: 0; font-size: 1rem; font-weight: 600;">اسم العميل</h3>
-                                    <p id="chatHeaderService" style="margin: 0; font-size: 0.875rem; color: #6b7280;">خدمة</p>
+                    <div class="chat-main">
+                        <div id="noChatSelected" class="no-chat-selected">
+                            <div class="no-chat-icon">👋</div>
+                            <h3>مرحباً بك في المحادثات</h3>
+                            <p>تواصل مع عملائك لتأكيد الحجوزات</p>
+                        </div>
+                        <div id="activeChat" style="display: none; flex-direction: column; height: 100%;">
+                            <div class="chat-header" style="display: flex; align-items: center; justify-content: space-between; padding: 1rem;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem; flex: 1;">
+                                    <button class="back-btn" onclick="backToConversations()" style="display:none; background:none; border:none; font-size:1.5rem; cursor:pointer; margin-left: 0.5rem;">←</button>
+                                    <div>
+                                        <h3 id="chatHeaderName" style="margin: 0; font-size: 1rem; font-weight: 600;">اسم العميل</h3>
+                                        <p id="chatHeaderService" style="margin: 0; font-size: 0.875rem; color: #6b7280;">خدمة</p>
+                                    </div>
                                 </div>
+                                <button onclick="callCustomer()" title="اتصال" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; padding: 0.5rem;">📞</button>
                             </div>
-                            <button onclick="callCustomer()" title="اتصال" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; padding: 0.5rem;">📞</button>
-                        </div>
-
-                        <div id="chatMessages" class="chat-messages">
-                            <!-- JS loads messages -->
-                        </div>
-
-                        <div class="chat-input-area">
-                            <input type="text" id="messageInput" placeholder="اكتب رسالتك هنا...">
-                            <button class="btn-send" onclick="sendMessage()">➤</button>
+                            <div id="chatMessages" class="chat-messages"></div>
+                            <div class="chat-input-area">
+                                <input type="text" id="messageInput" placeholder="اكتب رسالتك هنا...">
+                                <button class="btn-send" onclick="sendMessage()">➤</button>
+                            </div>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Bookings -->
+            <div class="dashboard-card">
+                <h2>📅 الحجوزات الجديدة</h2>
+                <div class="bookings-list" id="pendingBookingsList">
+                    <div class="loading-spinner">جاري التحميل...</div>
+                </div>
+            </div>
+            <div class="dashboard-card">
+                <h2>📋 جميع الحجوزات</h2>
+                <div class="bookings-list" id="allBookingsList">
+                    <div class="loading-spinner">جاري التحميل...</div>
                 </div>
             </div>
         </div>
 
-        <!-- Main Grid -->
-        <div class="dashboard-grid">
-            <!-- Bookings Section -->
-            <div class="bookings-section">
-                <div class="dashboard-card">
-                    <h2>📅 الحجوزات الجديدة</h2>
-                    <div class="bookings-list" id="pendingBookingsList">
-                        <div class="loading-spinner">جاري التحميل...</div>
-                    </div>
-                </div>
-
-                <div class="dashboard-card">
-                    <h2>📋 جميع الحجوزات</h2>
-                    <div class="bookings-list" id="allBookingsList">
-                        <div class="loading-spinner">جاري التحميل...</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Profile Section -->
-            <div class="profile-section">
-                <div class="dashboard-card">
-                    <h2>👤 ملفك الشخصي</h2>
-                    <form id="profileForm" class="profile-form" onsubmit="updateProfile(event)">
-                        <div class="form-group">
+        <!-- ==================== TAB 2: PROFILE ==================== -->
+        <div id="tab-profile" class="provider-tab-content" style="display:none;">
+            <div class="dashboard-card">
+                <h2>👤 ملفي الشخصي</h2>
+                <p class="offering-subtitle" style="font-size:0.9rem; margin-bottom:20px;">معلوماتك الأساسية التي يراها العملاء</p>
+                <form id="profileForm" class="profile-form" onsubmit="updateProfile(event)">
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                        <div class="form-group" style="margin-bottom:0;">
                             <label>الاسم</label>
                             <input type="text" id="profileName" required>
                         </div>
-                        <div class="form-group">
-                            <label>الخدمات التي تقدمها</label>
-                            <div class="services-selector" id="servicesSelector">
-                                <div class="loading-spinner">جاري تحميل الخدمات...</div>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label>المدينة</label>
+                            <select id="profileCity">
+                                <option value="عمّان">عمّان</option>
+                                <option value="إربد">إربد</option>
+                                <option value="الزرقاء">الزرقاء</option>
+                                <option value="العقبة">العقبة</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>المنطقة</label>
+                        <input type="text" id="profileLocation" placeholder="مثال: طبربور، الياسمين">
+                    </div>
+                    <div class="form-group">
+                        <label>الخدمات التي تقدمها</label>
+                        <div class="services-selector" id="servicesSelector">
+                            <div class="loading-spinner">جاري تحميل الخدمات...</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>نبذة عنك</label>
+                        <textarea id="profileBio" placeholder="اكتب نبذة قصيرة عن خبراتك..." rows="3"></textarea>
+                    </div>
+
+                    <!-- Social Media Links - Compact -->
+                    <div class="form-group">
+                        <label>روابط التواصل (اختياري)</label>
+                        <div class="social-inputs" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;">
+                            <div class="input-with-icon">
+                                <span class="input-icon">📘</span>
+                                <input type="url" id="socialFacebook" placeholder="فيسبوك">
+                            </div>
+                            <div class="input-with-icon">
+                                <span class="input-icon">📷</span>
+                                <input type="url" id="socialInstagram" placeholder="انستغرام">
+                            </div>
+                            <div class="input-with-icon">
+                                <span class="input-icon">🌐</span>
+                                <input type="url" id="socialWebsite" placeholder="موقع">
                             </div>
                         </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>المدينة</label>
-                                <select id="profileCity">
-                                    <option value="عمّان">عمّان</option>
-                                    <option value="إربد">إربد</option>
-                                    <option value="الزرقاء">الزرقاء</option>
-                                    <option value="العقبة">العقبة</option>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block" id="saveProfileBtn">💾 حفظ التغييرات</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- ==================== TAB 3: SERVICES & PRICING ==================== -->
+        <div id="tab-services" class="provider-tab-content" style="display:none;">
+            <div class="dashboard-card">
+                <h2>💰 قائمة خدماتي وأسعاري</h2>
+                <p class="offering-subtitle" style="font-size: 0.9rem; margin-bottom: 16px;">أضف خدماتك مع الأسعار ليراها العملاء في ملفك الشخصي وعند الحجز</p>
+                
+                <!-- Add New Offering Form -->
+                <div id="offeringForm" class="offering-form" style="border-radius: 12px; padding: 16px; margin-bottom: 20px;">
+                    <div style="display: grid; gap: 12px;">
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label style="font-size:0.85rem; font-weight:600;">اسم الخدمة</label>
+                                <input type="text" id="offeringTitle" placeholder="مثال: تنظيف مكيف سبليت" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-family:inherit;">
+                            </div>
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label style="font-size:0.85rem; font-weight:600;">الوصف (اختياري)</label>
+                                <input type="text" id="offeringDesc" placeholder="تفاصيل ما يشمله السعر" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-family:inherit;">
+                            </div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px;">
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label style="font-size:0.85rem; font-weight:600;">السعر (د.أ)</label>
+                                <input type="number" id="offeringPrice" placeholder="20" min="0" step="0.5" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-family:inherit;">
+                            </div>
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label style="font-size:0.85rem; font-weight:600;">نوع السعر</label>
+                                <select id="offeringPriceType" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-family:inherit;">
+                                    <option value="fixed">سعر ثابت</option>
+                                    <option value="starting_at">يبدأ من</option>
+                                    <option value="hourly">بالساعة</option>
                                 </select>
                             </div>
-                            <div class="form-group">
-                                <label>المنطقة</label>
-                                <input type="text" id="profileLocation">
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label style="font-size:0.85rem; font-weight:600;">المدة التقديرية</label>
+                                <input type="text" id="offeringDuration" placeholder="ساعة واحدة" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-family:inherit;">
                             </div>
-                        </div>
-
-                        <!-- Social Media Links -->
-                        <div class="form-group">
-                            <label>روابط التواصل الاجتماعي (اختياري)</label>
-                            <div class="social-inputs">
-                                <div class="input-with-icon">
-                                    <span class="input-icon">📘</span>
-                                    <input type="url" id="socialFacebook" placeholder="رابط فيسبوك">
-                                </div>
-                                <div class="input-with-icon">
-                                    <span class="input-icon">📷</span>
-                                    <input type="url" id="socialInstagram" placeholder="رابط انستغرام">
-                                </div>
-                                <div class="input-with-icon">
-                                    <span class="input-icon">🌐</span>
-                                    <input type="url" id="socialWebsite" placeholder="موقع إلكتروني">
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label style="font-size:0.85rem; font-weight:600;">صورة (اختياري)</label>
+                                <div style="display:flex; align-items:center; gap:6px;">
+                                    <input type="file" id="offeringImage" accept="image/*" style="flex:1; padding:8px; border:1px solid #ddd; border-radius:8px; font-family:inherit; font-size:0.8rem;">
+                                    <img id="offeringImagePreview" src="" style="width:38px; height:38px; border-radius:6px; object-fit:cover; display:none; border:1px solid #ddd;">
                                 </div>
                             </div>
                         </div>
-
-                        <div class="form-group">
-                            <label>نبذة عنك</label>
-                            <textarea id="profileBio" placeholder="اكتب نبذة قصيرة عن خبراتك..."></textarea>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn btn-primary" onclick="addServiceOffering()" id="addOfferingBtn" style="flex:1;">+ إضافة خدمة</button>
+                            <button class="btn btn-ghost" onclick="cancelEditOffering()" id="cancelEditOfferingBtn" style="display:none;">إلغاء</button>
                         </div>
-                        <button type="submit" class="btn btn-primary btn-block" id="saveProfileBtn">حفظ
-                            التغييرات</button>
-                    </form>
+                    </div>
                 </div>
 
-                <!-- Portfolio Section -->
+                <!-- Offerings List -->
+                <div id="offeringsList" style="display: flex; flex-direction: column; gap: 0;">
+                    <div class="loading-spinner">جاري التحميل...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB 4: PORTFOLIO & REVIEWS ==================== -->
+        <div id="tab-portfolio" class="provider-tab-content" style="display:none;">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
                 <div class="dashboard-card">
                     <h2>🖼️ معرض أعمالي</h2>
                     <div class="portfolio-upload-area">
@@ -368,8 +293,7 @@
                         </div>
                         <div id="uploadPreview" style="display: none; margin-top: 10px;">
                             <img id="previewImg" style="max-width: 100%; border-radius: 8px; display: none;">
-                            <video id="previewVideo" controls
-                                style="max-width: 100%; border-radius: 8px; display: none;"></video>
+                            <video id="previewVideo" controls style="max-width: 100%; border-radius: 8px; display: none;"></video>
                             <input type="text" id="portfolioCaption" placeholder="أضف وصفاً..." class="input-caption">
                             <div class="upload-actions">
                                 <button class="btn btn-primary" onclick="uploadPortfolioItem()">رفع</button>
@@ -377,62 +301,7 @@
                             </div>
                         </div>
                     </div>
-
                     <div id="portfolioGrid" class="portfolio-grid">
-                        <div class="loading-spinner">جاري التحميل...</div>
-                    </div>
-                </div>
-
-                <!-- ===== Service Offerings / Pricing Management ===== -->
-                <div class="dashboard-card">
-                    <h2>💰 قائمة خدماتي وأسعاري</h2>
-                    <p class="offering-subtitle" style="font-size: 0.9rem; margin-bottom: 16px;">أضف خدماتك مع الأسعار ليراها العملاء في ملفك الشخصي</p>
-                    
-                    <!-- Add New Offering Form -->
-                    <div id="offeringForm" class="offering-form" style="border-radius: 12px; padding: 16px; margin-bottom: 20px;">
-                        <div style="display: grid; gap: 12px;">
-                            <div class="form-group" style="margin-bottom:0;">
-                                <label style="font-size:0.85rem; font-weight:600;">اسم الخدمة</label>
-                                <input type="text" id="offeringTitle" placeholder="مثال: تنظيف مكيف سبليت" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-family:inherit;">
-                            </div>
-                            <div class="form-group" style="margin-bottom:0;">
-                                <label style="font-size:0.85rem; font-weight:600;">الوصف (اختياري)</label>
-                                <input type="text" id="offeringDesc" placeholder="تفاصيل ما يشمله السعر" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-family:inherit;">
-                            </div>
-                            <div class="form-group" style="margin-bottom:0;">
-                                <label style="font-size:0.85rem; font-weight:600;">صورة الخدمة (اختياري)</label>
-                                <div style="display:flex; align-items:center; gap:10px;">
-                                    <input type="file" id="offeringImage" accept="image/*" style="flex:1; padding:8px; border:1px solid #ddd; border-radius:8px; font-family:inherit; font-size:0.85rem;">
-                                    <img id="offeringImagePreview" src="" style="width:48px; height:48px; border-radius:8px; object-fit:cover; display:none; border:1px solid #ddd;">
-                                </div>
-                            </div>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
-                                <div class="form-group" style="margin-bottom:0;">
-                                    <label style="font-size:0.85rem; font-weight:600;">السعر (د.أ)</label>
-                                    <input type="number" id="offeringPrice" placeholder="20" min="0" step="0.5" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-family:inherit;">
-                                </div>
-                                <div class="form-group" style="margin-bottom:0;">
-                                    <label style="font-size:0.85rem; font-weight:600;">نوع السعر</label>
-                                    <select id="offeringPriceType" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-family:inherit;">
-                                        <option value="fixed">سعر ثابت</option>
-                                        <option value="starting_at">يبدأ من</option>
-                                        <option value="hourly">بالساعة</option>
-                                    </select>
-                                </div>
-                                <div class="form-group" style="margin-bottom:0;">
-                                    <label style="font-size:0.85rem; font-weight:600;">المدة التقديرية</label>
-                                    <input type="text" id="offeringDuration" placeholder="ساعة واحدة" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-family:inherit;">
-                                </div>
-                            </div>
-                            <div style="display: flex; gap: 8px;">
-                                <button class="btn btn-primary" onclick="addServiceOffering()" id="addOfferingBtn" style="flex:1;">+ إضافة خدمة</button>
-                                <button class="btn btn-ghost" onclick="cancelEditOffering()" id="cancelEditOfferingBtn" style="display:none;">إلغاء</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Offerings List -->
-                    <div id="offeringsList" style="display: flex; flex-direction: column; gap: 0;">
                         <div class="loading-spinner">جاري التحميل...</div>
                     </div>
                 </div>
@@ -447,12 +316,115 @@
         </div>
     </div>
 
+    <!-- Top Up Modal -->
+    <div id="topUpModal" class="modal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; overflow-y: auto;">
+        <div class="modal-content"
+            style="padding: 2rem; border-radius: 12px; width: 90%; max-width: 600px; position: relative; max-height: 90vh; overflow-y: auto; margin: 20px;">
+            <button onclick="closeTopUpModal()"
+                style="position: absolute; top: 10px; left: 10px; background: none; border: none; font-size: 1.5rem; cursor: pointer; z-index: 10;">✕</button>
+            <h2 style="margin-bottom: 1.5rem; text-align: center;">شحن رصيد المحفظة 💰</h2>
+
+            <div id="step1" class="payment-step">
+                <h3 style="margin-bottom: 1rem; font-size: 1.1rem;">اختر الباقة المناسبة</h3>
+                <div class="packages-grid" style="display: grid; gap: 1rem;">
+                    <div class="package-card" onclick="selectPackage(10, 'باقة البداية', 5)"
+                        style="border: 2px solid #eee; padding: 1rem; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; justify-content: space-between; align-items: center;">
+                        <div><h4 style="margin: 0;">باقة البداية</h4><p style="margin: 0; color: #666; font-size: 0.9rem;">10 عملات</p></div>
+                        <div class="price" style="font-weight: bold; color: var(--primary); font-size: 1.2rem;">5 JD</div>
+                    </div>
+                    <div class="package-card" onclick="selectPackage(50, 'باقة المحترفين', 20)"
+                        style="border: 2px solid var(--primary); background: var(--primary-50); padding: 1rem; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; justify-content: space-between; align-items: center;">
+                        <div><h4 style="margin: 0;">باقة المحترفين 🔥</h4><p style="margin: 0; color: #666; font-size: 0.9rem;">50 عملة</p>
+                            <span style="background: #fbbf24; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; margin-top: 4px; display: inline-block;">الأفضل قيمة</span></div>
+                        <div class="price" style="font-weight: bold; color: var(--primary); font-size: 1.2rem;">20 JD</div>
+                    </div>
+                    <div class="package-card" onclick="selectPackage(100, 'باقة الأعمال', 35)"
+                        style="border: 2px solid #eee; padding: 1rem; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; justify-content: space-between; align-items: center;">
+                        <div><h4 style="margin: 0;">باقة الأعمال</h4><p style="margin: 0; color: #666; font-size: 0.9rem;">100 عملة</p></div>
+                        <div class="price" style="font-weight: bold; color: var(--primary); font-size: 1.2rem;">35 JD</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="step2" class="payment-step" style="display: none;">
+                <h3 style="margin-bottom: 1rem; font-size: 1.1rem;">اختر طريقة الدفع</h3>
+                <p style="color: #666; margin-bottom: 1rem; font-size: 0.9rem;">
+                    المبلغ المطلوب: <strong><span id="selectedPrice">0</span> JD</strong> | 
+                    الباقة: <strong><span id="selectedPackageName">-</span></strong>
+                </p>
+                <div class="payment-methods" style="display: grid; gap: 0.75rem;">
+                    <div class="payment-method-card" onclick="selectPaymentMethod('credit_card')"
+                        style="border: 2px solid #eee; padding: 1rem; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 1rem;">
+                        <div style="font-size: 2rem;">💳</div>
+                        <div style="flex: 1;"><h4 style="margin: 0; font-size: 1rem;">بطاقة ائتمان/خصم</h4><p style="margin: 0; color: #666; font-size: 0.85rem;">Visa, MasterCard, Mada</p></div>
+                        <div style="color: #10b981;">✓</div>
+                    </div>
+                    <div class="payment-method-card" onclick="contactWhatsApp()"
+                        style="border: 2px solid #25D366; padding: 1rem; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 1rem; background: #f0fdf4;">
+                        <div style="font-size: 2rem;">💬</div>
+                        <div style="flex: 1;"><h4 style="margin: 0; font-size: 1rem; color: #25D366;">الدفع عبر CliQ أو المحفظة</h4><p style="margin: 0; color: #666; font-size: 0.85rem;">تواصل معنا عبر واتساب</p></div>
+                        <div style="color: #25D366; font-size: 1.5rem;">→</div>
+                    </div>
+                </div>
+                <button class="btn btn-ghost btn-block" onclick="backToPackages()" style="margin-top: 1rem;">← العودة للباقات</button>
+            </div>
+
+            <div id="step3" class="payment-step" style="display: none;">
+                <h3 style="margin-bottom: 1rem; font-size: 1.1rem;">أدخل تفاصيل الدفع</h3>
+                <div id="creditCardForm" class="payment-form" style="display: none;">
+                    <p style="background: #fef3c7; padding: 0.75rem; border-radius: 6px; font-size: 0.9rem; margin-bottom: 1rem;">
+                        💡 سيتم فتح صفحة الدفع الآمنة في نافذة جديدة
+                    </p>
+                    <button id="payBtnCard" class="btn btn-primary btn-block" onclick="processCreditCardPayment()">متابعة للدفع الآمن 🔒</button>
+                </div>
+                <button class="btn btn-ghost btn-block" onclick="backToPaymentMethods()" style="margin-top: 1rem;">← العودة لطرق الدفع</button>
+            </div>
+
+            <div id="processingStep" class="payment-step" style="display: none; text-align: center; padding: 2rem 0;">
+                <div style="font-size: 4rem; margin-bottom: 1rem;">⏳</div>
+                <h3 style="margin-bottom: 0.5rem;">جاري معالجة الدفع...</h3>
+                <p id="processingMessage" style="color: #666;">يرجى الانتظار</p>
+                <div style="margin-top: 1rem;">
+                    <div class="spinner" style="border: 3px solid #f3f3f3; border-top: 3px solid var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto;"></div>
+                </div>
+            </div>
+
+            <style>
+                @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+                .payment-method-card:hover { border-color: var(--primary) !important; background: var(--primary-50); }
+                .payment-method-card.selected { border-color: var(--primary) !important; background: var(--primary-50) !important; }
+            </style>
+        </div>
+    </div>
     <script src="admin-config.js?v=2.0"></script>
     <script src="payment-gateway.js?v=2.0"></script>
     <script src="chat.js?v=2.0"></script>
     <script src="dashboard.js?v=2.0"></script>
     <script src="portfolio.js?v=2.0"></script>
     <script src="darkmode.js"></script>
+    <script>
+        // Tab switching for provider dashboard
+        function switchProviderTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.provider-tab-content').forEach(el => {
+                el.style.display = 'none';
+                el.classList.remove('active');
+            });
+            // Deactivate all tab buttons
+            document.querySelectorAll('.provider-main-tabs .tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            // Show selected tab
+            const tabEl = document.getElementById('tab-' + tabName);
+            if (tabEl) {
+                tabEl.style.display = 'block';
+                tabEl.classList.add('active');
+            }
+            // Activate button
+            event.currentTarget.classList.add('active');
+        }
+    </script>
 </body>
 
 </html>
