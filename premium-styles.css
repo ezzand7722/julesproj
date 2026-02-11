@@ -651,3 +651,212 @@ button, .btn, a {
     background-size: 200% 100% !important;
 }
 [data-theme="dark"] .page-decorations .deco-blob { opacity: 0.02 !important; }
+
+/* ============================================
+   DASHBOARD DARK MODE
+   ============================================ */
+[data-theme="dark"] .dashboard-nav {
+    background: #111827 !important;
+    border-bottom: 1px solid #374151 !important;
+}
+[data-theme="dark"] .dashboard-content {
+    background: #111827 !important;
+}
+[data-theme="dark"] .stat-card {
+    background: #1f2937 !important;
+    border-color: #374151 !important;
+}
+[data-theme="dark"] .stat-card-info p {
+    color: #9ca3af !important;
+}
+/* Booking cards */
+[data-theme="dark"] .booking-card {
+    background: #1f2937 !important;
+    border-color: #374151 !important;
+}
+[data-theme="dark"] .booking-header {
+    border-bottom-color: #374151 !important;
+}
+[data-theme="dark"] .booking-id {
+    background: #374151 !important;
+    color: #d1d5db !important;
+}
+[data-theme="dark"] .booking-grid {
+    background: #111827 !important;
+}
+[data-theme="dark"] .info-label {
+    color: #9ca3af !important;
+}
+[data-theme="dark"] .info-value {
+    color: #f1f5f9 !important;
+}
+[data-theme="dark"] .counterparty-info {
+    background: linear-gradient(to left, #111827, #1f2937) !important;
+    border-color: #374151 !important;
+}
+[data-theme="dark"] .party-details h4 {
+    color: #f1f5f9 !important;
+}
+[data-theme="dark"] .party-details p {
+    color: #9ca3af !important;
+}
+[data-theme="dark"] .booking-footer {
+    border-top-color: #374151 !important;
+}
+/* Status badges dark mode */
+[data-theme="dark"] .status-pending .booking-status-badge {
+    background: #78350f !important;
+    color: #fcd34d !important;
+    border-color: #92400e !important;
+}
+[data-theme="dark"] .status-confirmed .booking-status-badge {
+    background: #064e3b !important;
+    color: #6ee7b7 !important;
+    border-color: #065f46 !important;
+}
+[data-theme="dark"] .status-completed .booking-status-badge {
+    background: #1e3a5f !important;
+    color: #93c5fd !important;
+    border-color: #1e40af !important;
+}
+[data-theme="dark"] .status-cancelled .booking-status-badge {
+    background: #7f1d1d !important;
+    color: #fca5a5 !important;
+    border-color: #991b1b !important;
+}
+/* Legacy status badges (dashboard-extra) */
+[data-theme="dark"] .booking-status.pending {
+    background: #78350f !important;
+    color: #fcd34d !important;
+}
+[data-theme="dark"] .booking-status.confirmed {
+    background: #064e3b !important;
+    color: #6ee7b7 !important;
+}
+[data-theme="dark"] .booking-status.completed {
+    background: #1e3a5f !important;
+    color: #93c5fd !important;
+}
+[data-theme="dark"] .booking-status.cancelled {
+    background: #7f1d1d !important;
+    color: #fca5a5 !important;
+}
+/* Empty state */
+[data-theme="dark"] .empty-state {
+    background: #111827 !important;
+    border-color: #374151 !important;
+}
+/* Booking item (legacy) */
+[data-theme="dark"] .booking-item {
+    background: #1f2937 !important;
+    border-color: #374151 !important;
+}
+[data-theme="dark"] .booking-details {
+    border-top-color: #374151 !important;
+}
+/* Review items */
+[data-theme="dark"] .review-item {
+    background: #1f2937 !important;
+}
+[data-theme="dark"] .review-comment {
+    color: #d1d5db !important;
+}
+[data-theme="dark"] .review-date {
+    color: #6b7280 !important;
+}
+/* Service checkbox (dashboard sidebar) */
+[data-theme="dark"] .service-checkbox {
+    background: #111827 !important;
+    border-color: #374151 !important;
+    color: #e5e7eb !important;
+}
+[data-theme="dark"] .service-checkbox:hover {
+    background: #374151 !important;
+}
+[data-theme="dark"] .service-checkbox:has(input:checked) {
+    background: #042f2e !important;
+    border-color: #0d9488 !important;
+}
+/* Modal dark mode */
+[data-theme="dark"] .modal-content,
+[data-theme="dark"] .popup-content {
+    background: #1f2937 !important;
+    border-color: #374151 !important;
+}
+[data-theme="dark"] .modal-close {
+    color: #9ca3af !important;
+}
+/* Top-up payment cards */
+[data-theme="dark"] .package-card {
+    border-color: #374151 !important;
+    background: #111827 !important;
+}
+[data-theme="dark"] .payment-method-card {
+    border-color: #374151 !important;
+    background: #111827 !important;
+}
+[data-theme="dark"] .payment-method-card:hover {
+    border-color: #0d9488 !important;
+    background: #042f2e !important;
+}
+/* Social input icons */
+[data-theme="dark"] .input-with-icon input {
+    background: #111827 !important;
+    border-color: #374151 !important;
+    color: #f1f5f9 !important;
+}
+/* Loading spinners */
+[data-theme="dark"] .loading-spinner {
+    color: #9ca3af !important;
+}
+/* Dashboard sidebar */
+[data-theme="dark"] .dashboard-sidebar,
+[data-theme="dark"] .dashboard-header {
+    background: transparent !important;
+}
+/* Nav user area */
+[data-theme="dark"] .nav-user-name {
+    color: #f1f5f9 !important;
+}
+[data-theme="dark"] .nav-user-role {
+    color: #9ca3af !important;
+}
+/* Search box inside hero for dark */
+[data-theme="dark"] .search-input-wrapper,
+[data-theme="dark"] .location-wrapper {
+    background: #111827 !important;
+}
+/* Customer dashboard personalization cards */
+.reorder-card {
+    background: linear-gradient(to left, #f8f9fa, #ffffff) !important;
+}
+.popular-card {
+    background: linear-gradient(to left, #fff7ed, #ffffff) !important;
+}
+[data-theme="dark"] .reorder-card {
+    background: linear-gradient(to left, #1f2937, #111827) !important;
+}
+[data-theme="dark"] .popular-card {
+    background: linear-gradient(to left, #292524, #1f2937) !important;
+}
+/* Tabs */
+[data-theme="dark"] .dashboard-tabs {
+    border-bottom-color: #374151 !important;
+}
+[data-theme="dark"] .tab-btn {
+    color: #9ca3af !important;
+}
+[data-theme="dark"] .tab-btn:hover {
+    color: #2dd4bf !important;
+}
+[data-theme="dark"] .tab-btn.active {
+    color: #2dd4bf !important;
+    border-bottom-color: #2dd4bf !important;
+}
+/* No-chat-selected */
+[data-theme="dark"] .no-chat-selected h3 {
+    color: #d1d5db !important;
+}
+[data-theme="dark"] .no-chat-selected p {
+    color: #6b7280 !important;
+}
