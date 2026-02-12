@@ -389,13 +389,77 @@ function sortProviders(sortBy) {
     cards.forEach(card => grid.appendChild(card));
 }
 
-function updatePriceFilterLabel(value) {
-    const label = document.getElementById('maxPriceLabel');
-    if (label) label.textContent = value + ' د.أ';
+// Sync sliders when text inputs change
+function syncPriceSliders(which) {
+    const minInput = document.getElementById('minPriceInput');
+    const maxInput = document.getElementById('maxPriceInput');
+    const minSlider = document.getElementById('minPriceSlider');
+    const maxSlider = document.getElementById('maxPriceSlider');
+    
+    let minVal = parseInt(minInput.value) || 0;
+    let maxVal = parseInt(maxInput.value) || 500;
+    
+    // Ensure min <= max
+    if (which === 'min' && minVal > maxVal) {
+        minVal = maxVal;
+        minInput.value = minVal;
+    } else if (which === 'max' && maxVal < minVal) {
+        maxVal = minVal;
+        maxInput.value = maxVal;
+    }
+    
+    minSlider.value = minVal;
+    maxSlider.value = maxVal;
+    updateSliderTrack();
+}
+
+// Sync text inputs when sliders change
+function syncPriceInputs(which) {
+    const minInput = document.getElementById('minPriceInput');
+    const maxInput = document.getElementById('maxPriceInput');
+    const minSlider = document.getElementById('minPriceSlider');
+    const maxSlider = document.getElementById('maxPriceSlider');
+    
+    let minVal = parseInt(minSlider.value);
+    let maxVal = parseInt(maxSlider.value);
+    
+    // Prevent crossing
+    if (which === 'min' && minVal > maxVal) {
+        minVal = maxVal;
+        minSlider.value = minVal;
+    } else if (which === 'max' && maxVal < minVal) {
+        maxVal = minVal;
+        maxSlider.value = maxVal;
+    }
+    
+    minInput.value = minVal;
+    maxInput.value = maxVal;
+    updateSliderTrack();
+}
+
+// Update the colored track between the two handles
+function updateSliderTrack() {
+    const minSlider = document.getElementById('minPriceSlider');
+    const maxSlider = document.getElementById('maxPriceSlider');
+    const track = document.querySelector('.slider-track');
+    
+    if (!minSlider || !maxSlider || !track) return;
+    
+    const min = parseInt(minSlider.min);
+    const max = parseInt(minSlider.max);
+    const minVal = parseInt(minSlider.value);
+    const maxVal = parseInt(maxSlider.value);
+    
+    const minPercent = ((minVal - min) / (max - min)) * 100;
+    const maxPercent = ((maxVal - min) / (max - min)) * 100;
+    
+    track.style.left = minPercent + '%';
+    track.style.width = (maxPercent - minPercent) + '%';
 }
 
 function applyPriceFilter() {
-    const maxPrice = parseFloat(document.getElementById('maxPriceFilter').value);
+    const minPrice = parseFloat(document.getElementById('minPriceInput').value) || 0;
+    const maxPrice = parseFloat(document.getElementById('maxPriceInput').value) || 500;
     const grid = document.getElementById('providersGrid');
     if (!grid) return;
     const cards = grid.querySelectorAll('.provider-card');
@@ -403,7 +467,8 @@ function applyPriceFilter() {
     let hiddenCount = 0;
     cards.forEach(card => {
         const avgP = parseFloat(card.dataset.avgPrice);
-        if (!isNaN(avgP) && avgP > maxPrice) {
+        // Hide if price is outside the range (or show all if no price data)
+        if (!isNaN(avgP) && (avgP < minPrice || avgP > maxPrice)) {
             card.style.display = 'none';
             hiddenCount++;
         } else {
@@ -413,6 +478,11 @@ function applyPriceFilter() {
     // Re-apply current sort after filtering
     if (currentSort) sortProviders(currentSort);
 }
+
+// Initialize slider track on page load
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(updateSliderTrack, 100);
+});
 
 // Load reviews from database
 async function loadReviews() {
