@@ -525,7 +525,12 @@ async function loadOfferingsForCards(providerIds) {
             .eq('is_active', true)
             .order('sort_order', { ascending: true });
 
-        const offerings = (error || !data) ? [] : data;
+        if (error) {
+            console.warn('⚠️ service_offerings query failed (table may not exist):', error.message);
+            return; // Silently fail - offerings are optional
+        }
+
+        const offerings = data || [];
 
         // Group by provider
         const grouped = {};
