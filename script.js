@@ -1,11 +1,9 @@
 // Khedmati - Jordan Local Services Platform
 // Full Supabase Integration
 
-// Supabase Configuration
-const SUPABASE_URL = 'https://rkhkvmcnjuwoxammhsqn.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJraGt2bWNuanV3b3hhbW1oc3FuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAzODk0MjcsImV4cCI6MjA4NTk2NTQyN30.iGTVKa7iap8MLZ8v0efCvzsqzviNBbacVfEDxQGDsZQ';
-
-const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Use the singleton Supabase client (from supabaseClient.js)
+// No more duplicate createClient() calls!
+const supabaseClient = window.getSupabaseClient ? window.getSupabaseClient() : window.__supabaseInstance;
 
 // Global state
 let allProviders = [];
@@ -32,15 +30,17 @@ document.addEventListener('DOMContentLoaded', async function () {
     const fetchStart = performance.now();
     
     let services, providers;
+    let usedCache = false;
     
-    // Check if data was prefetched in <head>
+    // Check if data was prefetched in <head> (from localStorage cache)
     if (window.__PREFETCHED_SERVICES && window.__PREFETCHED_PROVIDERS) {
-        // INSTANT - data already loaded!
+        // INSTANT - data already loaded from cache!
         services = window.__PREFETCHED_SERVICES;
         providers = window.__PREFETCHED_PROVIDERS;
         allServices = services;
         allProviders = providers;
-        console.log(`⚡ [PERF] Using prefetched data (0ms wait)`);
+        usedCache = window.__FROM_CACHE === true;
+        console.log(`⚡ [PERF] Using ${usedCache ? 'cached' : 'prefetched'} data (${(performance.now() - fetchStart).toFixed(1)}ms wait)`);
     } else if (window.__PREFETCH_PROMISE) {
         // Data is loading, wait for it
         const result = await window.__PREFETCH_PROMISE;
@@ -65,6 +65,12 @@ document.addEventListener('DOMContentLoaded', async function () {
     renderServices(services);
     renderProviders(providers);
     console.log(`🎨 [PERF] Rendered in ${(performance.now() - renderStart).toFixed(0)}ms`);
+    
+    // STALE-WHILE-REVALIDATE: If we used cache, update it in background
+    if (usedCache && typeof window.__BACKGROUND_REFRESH === 'function') {
+        console.log('🔄 [PERF] Starting background cache refresh...');
+        window.__BACKGROUND_REFRESH().catch(err => console.warn('Background refresh failed:', err));
+    }
     
     // Non-critical content - load after main content
     await sessionPromise;

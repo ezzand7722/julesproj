@@ -1,14 +1,24 @@
 // Khedmati - Authentication System
+// Uses singleton from supabaseClient.js when available, fallback to local init
 const SUPABASE_URL = 'https://rkhkvmcnjuwoxammhsqn.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJraGt2bWNuanV3b3hhbW1oc3FuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAzODk0MjcsImV4cCI6MjA4NTk2NTQyN30.iGTVKa7iap8MLZ8v0efCvzsqzviNBbacVfEDxQGDsZQ';
 
 let supabaseClient;
 
-// Initialize Supabase safely
+// Initialize Supabase - use singleton if available
 try {
-    if (window.supabase) {
+    // Try singleton first (from supabaseClient.js)
+    if (window.getSupabaseClient) {
+        supabaseClient = window.getSupabaseClient();
+        console.log('✅ Supabase initialized (singleton)');
+    } else if (window.__supabaseInstance) {
+        supabaseClient = window.__supabaseInstance;
+        console.log('✅ Supabase using existing instance');
+    } else if (window.supabase) {
+        // Fallback: create client (for pages without supabaseClient.js)
         supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        console.log('✅ Supabase initialized successfully');
+        window.__supabaseInstance = supabaseClient; // Store for other scripts
+        console.log('✅ Supabase initialized (fallback)');
     } else {
         console.error('❌ Supabase library not found! Check your internet connection.');
         showNotification('فشل تحميل النظام. تأكد من الاتصال بالإنترنت', 'error');

@@ -86,52 +86,92 @@
     <!-- Supabase SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
-    <!-- 🚀 EARLY DATA FETCH: Start loading data BEFORE DOM is ready -->
+    <!-- Supabase Singleton - MUST load after SDK -->
+    <script src="supabaseClient.js"></script>
+    
+    <!-- 🚀 STALE-WHILE-REVALIDATE: Instant render from cache, background refresh -->
     <script>
-        // Initialize Supabase immediately
-        window.__SUPABASE_URL = 'https://rkhkvmcnjuwoxammhsqn.supabase.co';
-        window.__SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJraGt2bWNuanV3b3hhbW1oc3FuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAzODk0MjcsImV4cCI6MjA4NTk2NTQyN30.iGTVKa7iap8MLZ8v0efCvzsqzviNBbacVfEDxQGDsZQ';
-        
-        // Check sessionStorage cache first (instant if cached)
-        const cachedServices = sessionStorage.getItem('khedmati_services');
-        const cachedProviders = sessionStorage.getItem('khedmati_providers');
-        const cacheTime = sessionStorage.getItem('khedmati_cache_time');
-        const CACHE_TTL = 60000; // 1 minute cache
-        const isCacheValid = cacheTime && (Date.now() - parseInt(cacheTime)) < CACHE_TTL;
-        
-        if (isCacheValid && cachedServices && cachedProviders) {
-            // Use cached data (instant!)
-            window.__PREFETCHED_SERVICES = JSON.parse(cachedServices);
-            window.__PREFETCHED_PROVIDERS = JSON.parse(cachedProviders);
-            console.log('⚡ [CACHE HIT] Using cached data');
-        } else {
-            // Start fetching NOW (before DOM ready)
-            const earlyClient = window.supabase.createClient(window.__SUPABASE_URL, window.__SUPABASE_KEY);
+        (function() {
+            const CACHE_KEY_SERVICES = 'khedmati_services_v2';
+            const CACHE_KEY_PROVIDERS = 'khedmati_providers_v2';
+            const CACHE_KEY_TIME = 'khedmati_cache_time_v2';
             
-            // Fire ALL requests in parallel immediately (services + providers + session)
-            const sessionPromise = earlyClient.auth.getSession();
+            // STEP 1: Check localStorage for cached data (INSTANT)
+            const perfStart = performance.now();
+            try {
+                const cachedServices = localStorage.getItem(CACHE_KEY_SERVICES);
+                const cachedProviders = localStorage.getItem(CACHE_KEY_PROVIDERS);
+                
+                if (cachedServices && cachedProviders) {
+                    // INSTANT: Parse and use cached data immediately
+                    window.__PREFETCHED_SERVICES = JSON.parse(cachedServices);
+                    window.__PREFETCHED_PROVIDERS = JSON.parse(cachedProviders);
+                    window.__FROM_CACHE = true;
+                    console.log(`⚡ [CACHE HIT] Loaded from localStorage in ${(performance.now() - perfStart).toFixed(1)}ms`);
+                }
+            } catch (e) {
+                console.warn('Cache read error:', e);
+            }
             
-            window.__PREFETCH_PROMISE = Promise.all([
-                // OPTIMIZED: Select only fields needed for homepage cards
-                earlyClient.from('service_stats').select('id, name_ar, icon, description_ar, provider_count').order('provider_count', { ascending: false }),
-                earlyClient.from('providers').select('id, name, specialty, city, neighborhood, location, rating, review_count, is_featured, is_verified, price_range_min, price_range_max, user_id').order('is_featured', { ascending: false }).order('rating', { ascending: false }),
-                sessionPromise
-            ]).then(([servicesRes, providersRes, sessionRes]) => {
-                window.__PREFETCHED_SESSION = sessionRes.data?.session || null;
-                const services = servicesRes.data || [];
-                const providers = providersRes.data || [];
+            // STEP 2: Always fetch fresh data in background (Stale-While-Revalidate)
+            // This runs after render, updating cache for next page load
+            window.__BACKGROUND_REFRESH = function() {
+                const client = window.getSupabaseClient();
+                if (!client) return Promise.resolve();
                 
-                // Cache for next visit
-                sessionStorage.setItem('khedmati_services', JSON.stringify(services));
-                sessionStorage.setItem('khedmati_providers', JSON.stringify(providers));
-                sessionStorage.setItem('khedmati_cache_time', Date.now().toString());
-                
-                window.__PREFETCHED_SERVICES = services;
-                window.__PREFETCHED_PROVIDERS = providers;
-                console.log('⚡ [PREFETCH] Data ready before DOM');
-                return { services, providers };
-            });
-        }
+                const fetchStart = performance.now();
+                return Promise.all([
+                    client.from('service_stats').select('id, name_ar, icon, description_ar, provider_count').order('provider_count', { ascending: false }),
+                    client.from('providers').select('id, name, specialty, city, neighborhood, location, rating, review_count, is_featured, is_verified, price_range_min, price_range_max, user_id').order('is_featured', { ascending: false }).order('rating', { ascending: false })
+                ]).then(([servicesRes, providersRes]) => {
+                    const services = servicesRes.data || [];
+                    const providers = providersRes.data || [];
+                    
+                    // Update cache for next visit
+                    try {
+                        localStorage.setItem(CACHE_KEY_SERVICES, JSON.stringify(services));
+                        localStorage.setItem(CACHE_KEY_PROVIDERS, JSON.stringify(providers));
+                        localStorage.setItem(CACHE_KEY_TIME, Date.now().toString());
+                    } catch (e) {
+                        console.warn('Cache write error:', e);
+                    }
+                    
+                    console.log(`🔄 [BACKGROUND] Cache updated in ${(performance.now() - fetchStart).toFixed(0)}ms`);
+                    return { services, providers };
+                });
+            };
+            
+            // STEP 3: If no cache, we need to fetch BEFORE render (first visit)
+            if (!window.__PREFETCHED_SERVICES || !window.__PREFETCHED_PROVIDERS) {
+                console.log('📡 [FIRST VISIT] No cache, fetching now...');
+                const client = window.getSupabaseClient();
+                if (client) {
+                    window.__PREFETCH_PROMISE = Promise.all([
+                        client.from('service_stats').select('id, name_ar, icon, description_ar, provider_count').order('provider_count', { ascending: false }),
+                        client.from('providers').select('id, name, specialty, city, neighborhood, location, rating, review_count, is_featured, is_verified, price_range_min, price_range_max, user_id').order('is_featured', { ascending: false }).order('rating', { ascending: false }),
+                        client.auth.getSession()
+                    ]).then(([servicesRes, providersRes, sessionRes]) => {
+                        window.__PREFETCHED_SESSION = sessionRes.data?.session || null;
+                        const services = servicesRes.data || [];
+                        const providers = providersRes.data || [];
+                        
+                        // Cache for next visit
+                        try {
+                            localStorage.setItem(CACHE_KEY_SERVICES, JSON.stringify(services));
+                            localStorage.setItem(CACHE_KEY_PROVIDERS, JSON.stringify(providers));
+                            localStorage.setItem(CACHE_KEY_TIME, Date.now().toString());
+                        } catch (e) {
+                            console.warn('Cache write error:', e);
+                        }
+                        
+                        window.__PREFETCHED_SERVICES = services;
+                        window.__PREFETCHED_PROVIDERS = providers;
+                        console.log(`⚡ [PREFETCH] Data ready in ${(performance.now() - perfStart).toFixed(0)}ms`);
+                        return { services, providers };
+                    });
+                }
+            }
+        })();
     </script>
     
     <!-- Non-blocking font loading -->
