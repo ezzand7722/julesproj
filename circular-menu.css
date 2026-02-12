@@ -145,51 +145,141 @@
     left: calc(50% - 170px);
 }
 
+/* ===== MOBILE SERVICES GRID ===== */
+/* Hidden by default on desktop */
+.mobile-services-grid {
+    display: none;
+}
+
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
+    /* Hide circular menu on mobile */
     .circular-menu-container {
-        width: 100%;
-        height: auto;
-        flex-direction: column;
+        display: none !important;
+    }
+
+    /* Show mobile grid on mobile */
+    .mobile-services-grid {
         display: flex;
-        gap: 20px;
-        padding: 40px 20px;
-        border-radius: 0;
-        border: none;
-        box-shadow: none;
-    }
-
-    .center-logo {
-        position: relative;
-        top: auto;
-        left: auto;
-        transform: none;
-        margin-bottom: 30px;
-        width: 160px;
-        height: 160px;
-    }
-
-    .service-item {
-        position: relative;
-        top: auto !important;
-        left: auto !important;
-        transform: none !important;
-        /* Reset positioning */
+        flex-direction: column;
+        align-items: center;
+        padding: 30px 20px;
         width: 100%;
-        max-width: 300px;
-        height: 80px;
+    }
+
+    .mobile-center-logo {
+        text-align: center;
+        margin-bottom: 25px;
+    }
+
+    .mobile-center-logo .mobile-logo-icon {
+        font-size: 3rem;
+        margin-bottom: 8px;
+    }
+
+    .mobile-center-logo h2 {
+        font-size: 1.8rem;
+        color: white;
+        margin: 0 0 5px 0;
+        font-weight: 800;
+    }
+
+    .mobile-center-logo p {
+        font-size: 1rem;
+        color: rgba(255, 255, 255, 0.8);
+        margin: 0;
+    }
+
+    .mobile-services-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        width: 100%;
+        max-width: 400px;
+    }
+
+    .mobile-service-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: white;
+        border-radius: 16px;
+        padding: 20px 15px;
+        text-decoration: none;
+        color: #1f2937;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        border: 2px solid transparent;
+        transition: all 0.2s ease;
+        min-height: 100px;
+    }
+
+    .mobile-service-item:active {
+        transform: scale(0.95);
+        border-color: #0d9488;
+        background: #f0fdfa;
+    }
+
+    .mobile-service-icon {
+        font-size: 2.2rem;
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    .mobile-service-label {
+        font-size: 0.95rem;
+        font-weight: 700;
+        text-align: center;
+        color: #374151;
+    }
+
+    .mobile-service-all {
+        background: linear-gradient(135deg, #0d9488, #115e59);
+        color: white;
+    }
+
+    .mobile-service-all .mobile-service-label {
+        color: white;
+    }
+
+    /* Dark mode support for mobile grid */
+    [data-theme="dark"] .mobile-service-item {
+        background: #1f2937;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    [data-theme="dark"] .mobile-service-item:active {
+        background: #374151;
+    }
+
+    [data-theme="dark"] .mobile-service-label {
+        color: #f3f4f6;
+    }
+
+    [data-theme="dark"] .mobile-service-all {
+        background: linear-gradient(135deg, #0d9488, #115e59);
+    }
+}
+
+/* Extra small screens - 3 columns for better thumb reach */
+@media (max-width: 480px) {
+    .mobile-services-container {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+
+    .mobile-service-item {
+        padding: 15px 10px;
+        min-height: 85px;
         border-radius: 12px;
-        flex-direction: row;
-        justify-content: flex-start;
-        padding: 0 20px;
-        gap: 15px;
     }
 
-    .service-item:hover {
-        transform: scale(1.02) !important;
+    .mobile-service-icon {
+        font-size: 1.8rem;
+        margin-bottom: 6px;
     }
 
-    .service-item .icon {
-        margin-bottom: 0;
+    .mobile-service-label {
+        font-size: 0.8rem;
     }
 }
