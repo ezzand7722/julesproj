@@ -404,20 +404,17 @@ function updatePriceBar() {
     minVal = Math.max(0, Math.min(500, minVal));
     maxVal = Math.max(0, Math.min(500, maxVal));
     
-    // Ensure min <= max
-    if (minVal > maxVal) {
-        const temp = minVal;
-        minVal = maxVal;
-        maxVal = temp;
-        minInput.value = minVal;
+    // Don't swap - just clamp max to be at least min
+    if (maxVal < minVal) {
+        maxVal = minVal;
         maxInput.value = maxVal;
     }
     
     const minPercent = (minVal / 500) * 100;
     const maxPercent = (maxVal / 500) * 100;
     
-    // For RTL: right = minPercent, width = maxPercent - minPercent
-    fill.style.right = minPercent + '%';
+    // Bar fills from left (min) to right (max) using left positioning
+    fill.style.left = minPercent + '%';
     fill.style.width = (maxPercent - minPercent) + '%';
 }
 

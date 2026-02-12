@@ -1168,6 +1168,7 @@ button, .btn, a {
     display: flex;
     align-items: center;
     gap: 10px;
+    direction: ltr; /* Force LTR so min is on left, max on right */
 }
 
 .price-field {
@@ -1177,17 +1178,18 @@ button, .btn, a {
 }
 
 .price-label {
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     color: #6b7280;
     white-space: nowrap;
+    font-weight: 500;
 }
 
 .price-input {
-    width: 60px;
-    padding: 5px 8px;
+    width: 70px;
+    padding: 8px 10px;
     border: 1px solid #d1d5db;
-    border-radius: 6px;
-    font-size: 0.85rem;
+    border-radius: 8px;
+    font-size: 1rem;
     text-align: center;
     font-family: inherit;
 }
@@ -1199,9 +1201,10 @@ button, .btn, a {
 }
 
 .price-unit {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     color: #6b7280;
     white-space: nowrap;
+    font-weight: 500;
 }
 
 .price-bar-container {
@@ -1226,7 +1229,7 @@ button, .btn, a {
     height: 100%;
     background: var(--primary, #0d9488);
     border-radius: 3px;
-    right: 0;
+    left: 0;
     width: 100%;
     transition: all 0.15s ease;
 }
@@ -1326,9 +1329,11 @@ button, .btn, a {
         margin-top: 6px;
     }
     .price-bar-container {
-        width: 60px;
+        width: 50px;
     }
     .price-input {
-        width: 50px;
+        width: 60px;
+        padding: 6px 8px;
+        font-size: 0.9rem;
     }
 }
