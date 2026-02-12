@@ -292,7 +292,7 @@ function renderServices(services) {
     }
     
     grid.innerHTML = services.map(service => `
-        <div class="service-card" data-service-id="${escapeHtml(service.id)}" onclick="filterByService('${escapeHtml(service.name_ar)}')">
+        <div class="service-card fade-in-card" data-service-id="${escapeHtml(service.id)}" onclick="filterByService('${escapeHtml(service.name_ar)}')">
             <div class="service-icon">${service.icon}</div>
             <h3>${escapeHtml(service.name_ar)}</h3>
             <p>${escapeHtml(service.description_ar || '')}</p>
@@ -317,7 +317,7 @@ function renderProviders(providers) {
         const avgPrice = (minPrice != null && maxPrice != null) ? ((minPrice + maxPrice) / 2) : (minPrice || maxPrice || null);
         
         return `
-        <div class="provider-card" data-provider-id="${escapeHtml(provider.id)}" data-min-price="${minPrice || ''}" data-max-price="${maxPrice || ''}" data-avg-price="${avgPrice || ''}" onclick="window.location.href='provider-profile.html?id=${escapeHtml(provider.id)}'" style="cursor: pointer;">
+        <div class="provider-card fade-in-card" data-provider-id="${escapeHtml(provider.id)}" data-min-price="${minPrice || ''}" data-max-price="${maxPrice || ''}" data-avg-price="${avgPrice || ''}" onclick="window.location.href='provider-profile.html?id=${escapeHtml(provider.id)}'" style="cursor: pointer;">
             ${provider.is_featured ? '<div class="provider-badge">⭐ مميز</div>' : ''}
             ${provider.is_verified ? '<div class="verified-badge">✓ موثق</div>' : ''}
             <div class="provider-avatar">

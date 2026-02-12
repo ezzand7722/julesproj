@@ -1619,3 +1619,50 @@ body {
     color: var(--gray-500);
     margin-bottom: 20px;
 }
+
+/* ============ SMOOTH CARD FADE-IN ANIMATIONS ============ */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in-card {
+    animation: fadeInUp 0.3s ease-out forwards;
+    opacity: 0;
+}
+
+/* Staggered delays for cards */
+.providers-grid .fade-in-card:nth-child(1) { animation-delay: 0ms; }
+.providers-grid .fade-in-card:nth-child(2) { animation-delay: 50ms; }
+.providers-grid .fade-in-card:nth-child(3) { animation-delay: 100ms; }
+.providers-grid .fade-in-card:nth-child(4) { animation-delay: 150ms; }
+.providers-grid .fade-in-card:nth-child(5) { animation-delay: 200ms; }
+.providers-grid .fade-in-card:nth-child(6) { animation-delay: 250ms; }
+
+.services-grid .fade-in-card:nth-child(1) { animation-delay: 0ms; }
+.services-grid .fade-in-card:nth-child(2) { animation-delay: 30ms; }
+.services-grid .fade-in-card:nth-child(3) { animation-delay: 60ms; }
+.services-grid .fade-in-card:nth-child(4) { animation-delay: 90ms; }
+.services-grid .fade-in-card:nth-child(5) { animation-delay: 120ms; }
+.services-grid .fade-in-card:nth-child(6) { animation-delay: 150ms; }
+.services-grid .fade-in-card:nth-child(7) { animation-delay: 180ms; }
+.services-grid .fade-in-card:nth-child(8) { animation-delay: 210ms; }
+
+/* Min-height containers to prevent layout shift */
+.services-grid {
+    min-height: 200px;
+}
+
+.providers-grid {
+    min-height: 400px;
+}
+
+.testimonials-slider {
+    min-height: 200px;
+}
