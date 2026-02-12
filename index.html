@@ -323,14 +323,14 @@
                 <div class="filter-separator"></div>
                 <label class="filter-range-label">نطاق السعر:</label>
                 <div class="price-range-container">
-                    <input type="number" id="minPriceInput" class="price-input" min="0" max="500" value="0" placeholder="من" oninput="syncPriceSliders('min')">
+                    <span class="price-unit">د.أ</span>
+                    <input type="number" id="maxPriceInput" class="price-input" min="0" max="500" value="500" placeholder="إلى" oninput="syncPriceSliders('max')">
                     <div class="dual-range-slider">
                         <input type="range" id="minPriceSlider" min="0" max="500" value="0" class="range-min" oninput="syncPriceInputs('min')">
                         <input type="range" id="maxPriceSlider" min="0" max="500" value="500" class="range-max" oninput="syncPriceInputs('max')">
                         <div class="slider-track"></div>
                     </div>
-                    <input type="number" id="maxPriceInput" class="price-input" min="0" max="500" value="500" placeholder="إلى" oninput="syncPriceSliders('max')">
-                    <span class="price-unit">د.أ</span>
+                    <input type="number" id="minPriceInput" class="price-input" min="0" max="500" value="0" placeholder="من" oninput="syncPriceSliders('min')">
                 </div>
                 <button class="filter-btn filter-btn-apply" onclick="applyPriceFilter()">تطبيق</button>
             </div>

@@ -1168,6 +1168,7 @@ button, .btn, a {
     display: flex;
     align-items: center;
     gap: 8px;
+    direction: rtl; /* Ensure RTL order: max on left, min on right */
 }
 
 .price-input {
@@ -1197,6 +1198,7 @@ button, .btn, a {
     position: relative;
     width: 120px;
     height: 24px;
+    direction: ltr; /* Force LTR for slider so min is on left, max on right */
 }
 
 .slider-track {
@@ -1234,6 +1236,7 @@ button, .btn, a {
     margin: 0;
     padding: 0;
     height: 5px;
+    direction: ltr;
 }
 
 .dual-range-slider .range-min {
