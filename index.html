@@ -15,6 +15,27 @@
     <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
     <link rel="apple-touch-icon" href="icons/icon.svg">
     
+    <!-- PRIORITY: Preconnect to ALL external domains FIRST -->
+    <link rel="preconnect" href="https://rkhkvmcnjuwoxammhsqn.supabase.co">
+    <link rel="dns-prefetch" href="https://rkhkvmcnjuwoxammhsqn.supabase.co">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    
+    <!-- Preload critical resources (parallel download) -->
+    <link rel="preload" href="style.css" as="style">
+    <link rel="preload" href="premium-styles.css" as="style">
+    <link rel="preload" href="script.js" as="script">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" as="script" crossorigin>
+    
+    <!-- Prefetch pages user likely visits next -->
+    <link rel="prefetch" href="login.html">
+    <link rel="prefetch" href="provider-profile.html">
+    <link rel="prefetch" href="booking.html">
+    
+    <!-- Dark mode instant check (before any CSS) -->
+    <script>if(localStorage.getItem('theme')==='dark')document.documentElement.setAttribute('data-theme','dark')</script>
+    
     <!-- Critical inline CSS for instant first paint -->
     <style>
         :root{--primary:#0d9488;--white:#fff;--gray-100:#f3f4f6;--gray-800:#1f2937}
@@ -29,28 +50,64 @@
         .skeleton-title{height:24px;width:70%;margin:0 auto 12px}
         .skeleton-text{height:16px;margin-bottom:8px}
         .skeleton-btn{height:44px;width:100%;margin-top:16px;border-radius:8px}
+        .hidden{display:none!important}
         [data-theme="dark"]{--white:#1f2937;--gray-100:#111827;--gray-800:#f3f4f6}
         [data-theme="dark"] .skeleton{background:linear-gradient(90deg,#374151 25%,#4b5563 50%,#374151 75%);background-size:200% 100%}
     </style>
     
-    <!-- Preconnect for faster font loading -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://rkhkvmcnjuwoxammhsqn.supabase.co">
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
-    <!-- Non-blocking font loading (reduced weights) -->
+    <!-- 🚀 EARLY DATA FETCH: Start loading data BEFORE DOM is ready -->
+    <script>
+        // Initialize Supabase immediately
+        window.__SUPABASE_URL = 'https://rkhkvmcnjuwoxammhsqn.supabase.co';
+        window.__SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJraGt2bWNuanV3b3hhbW1oc3FuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAzODk0MjcsImV4cCI6MjA4NTk2NTQyN30.iGTVKa7iap8MLZ8v0efCvzsqzviNBbacVfEDxQGDsZQ';
+        
+        // Check sessionStorage cache first (instant if cached)
+        const cachedServices = sessionStorage.getItem('khedmati_services');
+        const cachedProviders = sessionStorage.getItem('khedmati_providers');
+        const cacheTime = sessionStorage.getItem('khedmati_cache_time');
+        const CACHE_TTL = 60000; // 1 minute cache
+        const isCacheValid = cacheTime && (Date.now() - parseInt(cacheTime)) < CACHE_TTL;
+        
+        if (isCacheValid && cachedServices && cachedProviders) {
+            // Use cached data (instant!)
+            window.__PREFETCHED_SERVICES = JSON.parse(cachedServices);
+            window.__PREFETCHED_PROVIDERS = JSON.parse(cachedProviders);
+            console.log('⚡ [CACHE HIT] Using cached data');
+        } else {
+            // Start fetching NOW (before DOM ready)
+            const earlyClient = window.supabase.createClient(window.__SUPABASE_URL, window.__SUPABASE_KEY);
+            
+            // Fire both requests in parallel immediately
+            window.__PREFETCH_PROMISE = Promise.all([
+                earlyClient.from('service_stats').select('*').order('provider_count', { ascending: false }),
+                earlyClient.from('providers').select('*').order('is_featured', { ascending: false }).order('rating', { ascending: false })
+            ]).then(([servicesRes, providersRes]) => {
+                const services = servicesRes.data || [];
+                const providers = providersRes.data || [];
+                
+                // Cache for next visit
+                sessionStorage.setItem('khedmati_services', JSON.stringify(services));
+                sessionStorage.setItem('khedmati_providers', JSON.stringify(providers));
+                sessionStorage.setItem('khedmati_cache_time', Date.now().toString());
+                
+                window.__PREFETCHED_SERVICES = services;
+                window.__PREFETCHED_PROVIDERS = providers;
+                console.log('⚡ [PREFETCH] Data ready before DOM');
+                return { services, providers };
+            });
+        }
+    </script>
+    
+    <!-- Non-blocking font loading -->
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap"></noscript>
     
-    <!-- CSS loaded after critical styles -->
+    <!-- CSS (already preloaded above) -->
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="premium-styles.css">
-    
-    <!-- Dark mode instant check -->
-    <script>if(localStorage.getItem('theme')==='dark')document.documentElement.setAttribute('data-theme','dark')</script>
-    
-    <!-- Supabase (loaded sync, needed before script.js) -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>

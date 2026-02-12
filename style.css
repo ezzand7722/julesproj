@@ -721,12 +721,21 @@ body {
     inset: 0;
     z-index: 0;
     overflow: hidden;
+    content-visibility: auto; /* Browser can skip if not visible */
+    contain: strict; /* Isolate from layout recalc */
+    opacity: 0;
+    animation: decoFadeIn 0.5s ease-out 0.3s forwards; /* Fade in after content loads */
+}
+
+@keyframes decoFadeIn {
+    to { opacity: 1; }
 }
 
 .deco-blob {
     position: absolute;
     opacity: 0.07;
     animation: decoFloat 20s ease-in-out infinite;
+    will-change: transform; /* GPU acceleration */
 }
 
 .deco-blob--1 {

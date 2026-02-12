@@ -25,19 +25,40 @@ document.addEventListener('DOMContentLoaded', async function () {
         console.log('⚠️ Service Worker disabled (requires HTTPS or localhost)');
     }
 
-    // Initialize the app - PARALLEL loading for speed
+    // Initialize the app - USE PREFETCHED DATA if available
     const sessionPromise = checkSession();
     
-    // Load critical above-the-fold content first (in parallel)
-    console.log('📡 [PERF] Starting parallel data fetch...');
+    console.log('📡 [PERF] Checking for prefetched data...');
     const fetchStart = performance.now();
     
-    const [services, providers] = await Promise.all([
-        loadServicesData(),
-        loadProvidersData()
-    ]);
+    let services, providers;
     
-    console.log(`📡 [PERF] Data fetched in ${(performance.now() - fetchStart).toFixed(0)}ms (services: ${services?.length || 0}, providers: ${providers?.length || 0})`);
+    // Check if data was prefetched in <head>
+    if (window.__PREFETCHED_SERVICES && window.__PREFETCHED_PROVIDERS) {
+        // INSTANT - data already loaded!
+        services = window.__PREFETCHED_SERVICES;
+        providers = window.__PREFETCHED_PROVIDERS;
+        allServices = services;
+        allProviders = providers;
+        console.log(`⚡ [PERF] Using prefetched data (0ms wait)`);
+    } else if (window.__PREFETCH_PROMISE) {
+        // Data is loading, wait for it
+        const result = await window.__PREFETCH_PROMISE;
+        services = result.services;
+        providers = result.providers;
+        allServices = services;
+        allProviders = providers;
+        console.log(`⚡ [PERF] Prefetch completed in ${(performance.now() - fetchStart).toFixed(0)}ms`);
+    } else {
+        // Fallback: fetch now (shouldn't happen normally)
+        console.log('📡 [PERF] No prefetch, fetching now...');
+        [services, providers] = await Promise.all([
+            loadServicesData(),
+            loadProvidersData()
+        ]);
+    }
+    
+    console.log(`📡 [PERF] Data ready in ${(performance.now() - fetchStart).toFixed(0)}ms (services: ${services?.length || 0}, providers: ${providers?.length || 0})`);
     
     // Render immediately
     const renderStart = performance.now();
