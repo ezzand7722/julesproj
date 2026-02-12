@@ -79,11 +79,16 @@
             // Start fetching NOW (before DOM ready)
             const earlyClient = window.supabase.createClient(window.__SUPABASE_URL, window.__SUPABASE_KEY);
             
-            // Fire both requests in parallel immediately
+            // Fire ALL requests in parallel immediately (services + providers + session)
+            const sessionPromise = earlyClient.auth.getSession();
+            
             window.__PREFETCH_PROMISE = Promise.all([
-                earlyClient.from('service_stats').select('*').order('provider_count', { ascending: false }),
-                earlyClient.from('providers').select('*').order('is_featured', { ascending: false }).order('rating', { ascending: false })
-            ]).then(([servicesRes, providersRes]) => {
+                // OPTIMIZED: Select only fields needed for homepage cards
+                earlyClient.from('service_stats').select('id, name_ar, icon, description_ar, provider_count').order('provider_count', { ascending: false }),
+                earlyClient.from('providers').select('id, name, specialty, city, neighborhood, location, rating, review_count, is_featured, is_verified, price_range_min, price_range_max, user_id').order('is_featured', { ascending: false }).order('rating', { ascending: false }),
+                sessionPromise
+            ]).then(([servicesRes, providersRes, sessionRes]) => {
+                window.__PREFETCHED_SESSION = sessionRes.data?.session || null;
                 const services = servicesRes.data || [];
                 const providers = providersRes.data || [];
                 

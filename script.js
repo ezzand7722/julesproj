@@ -80,11 +80,23 @@ document.addEventListener('DOMContentLoaded', async function () {
 });
 
 // Check Session & Update UI
+// OPTIMIZED: Uses prefetched session if available
 async function checkSession() {
     console.log('🔍 Checking session...');
     console.log('🔗 Connected to:', SUPABASE_URL);
     try {
-        const { data: { session } } = await supabaseClient.auth.getSession();
+        let session;
+        
+        // Use prefetched session if available (from parallel fetch in <head>)
+        if (window.__PREFETCHED_SESSION !== undefined) {
+            session = window.__PREFETCHED_SESSION;
+            console.log('⚡ [PERF] Using prefetched session');
+        } else {
+            // Fallback: fetch session now
+            const result = await supabaseClient.auth.getSession();
+            session = result.data?.session;
+        }
+        
         console.log('📦 Session result:', session ? 'LOGGED IN' : 'NOT LOGGED IN');
         if (session) {
             console.log('👤 User:', session.user.email);
@@ -227,12 +239,13 @@ window.escapeHtml = escapeHtml;
 // ============ FAST DATA FETCHERS (separate from rendering) ============
 
 // Fetch services data only (no DOM manipulation)
+// OPTIMIZED: Select only fields needed for homepage cards
 async function loadServicesData() {
     const start = performance.now();
     try {
         const { data: services, error } = await supabaseClient
             .from('service_stats')
-            .select('*')
+            .select('id, name_ar, icon, description_ar, provider_count')
             .order('provider_count', { ascending: false });
         console.log(`   📦 services fetched in ${(performance.now() - start).toFixed(0)}ms`);
         if (error) throw error;
@@ -245,10 +258,12 @@ async function loadServicesData() {
 }
 
 // Fetch providers data only (no DOM manipulation)
+// OPTIMIZED: Select only fields needed for homepage cards
 async function loadProvidersData(filter = {}) {
     const start = performance.now();
     try {
-        let query = supabaseClient.from('providers').select('*');
+        // Only select fields we actually render
+        let query = supabaseClient.from('providers').select('id, name, specialty, city, neighborhood, location, rating, review_count, is_featured, is_verified, price_range_min, price_range_max, user_id');
         if (filter.city) query = query.eq('city', filter.city);
         if (filter.neighborhood) query = query.eq('neighborhood', filter.neighborhood);
         if (filter.search) query = query.or(`name.ilike.%${filter.search}%,specialty.ilike.%${filter.search}%`);
@@ -315,14 +330,14 @@ function renderProviders(providers) {
                 <span class="stars">${'⭐'.repeat(Math.round(provider.rating))}</span>
                 <span>${provider.rating} (${provider.review_count} تقييم)</span>
             </div>
-            <div class="provider-price-range" id="price-range-${provider.id}" style="margin-top:6px; padding:5px 12px; background:#f0fdfa; border:1px solid #ccfbf1; border-radius:8px; text-align:center; font-size:0.85rem; font-weight:600; color:#0d9488;">
+            <div class="provider-price-range" data-price-range="${provider.id}" style="margin-top:6px; padding:5px 12px; background:#f0fdfa; border:1px solid #ccfbf1; border-radius:8px; text-align:center; font-size:0.85rem; font-weight:600; color:#0d9488;">
                 ${provider.price_range_min != null && provider.price_range_max != null
                     ? `💰 ${provider.price_range_min} - ${provider.price_range_max} د.أ`
                     : provider.price_range_min != null
                         ? `💰 يبدأ من ${provider.price_range_min} د.أ`
                         : `<span style="color:#9ca3af; font-weight:500;">💰 لا توجد أسعار محددة</span>`}
             </div>
-            <div class="provider-offerings-preview" id="offerings-${provider.id}" style="display:none; margin-top:8px; display:flex; flex-wrap:wrap; gap:5px;"></div>
+            <div class="provider-offerings-preview" data-offerings="${provider.id}" style="display:none; margin-top:8px; display:flex; flex-wrap:wrap; gap:5px;"></div>
             <div class="provider-actions" style="display: flex; gap: 8px; margin-top: 10px;">
                 <button class="btn btn-primary" style="flex: 1;" onclick="event.stopPropagation(); window.location.href='booking.html?provider_id=${escapeHtml(provider.id)}'">احجز الآن</button>
                 ${provider.user_id ? `
@@ -562,14 +577,17 @@ async function loadOfferingsForCards(providerIds) {
 
         // For ALL providers (including ones with no offerings), update price display
         providerIds.forEach(provId => {
-            const priceRangeEl = document.getElementById('price-range-' + provId);
-            const container = document.getElementById('offerings-' + provId);
+            // Use data attributes instead of IDs to avoid duplicate ID warnings
+            const card = document.querySelector(`[data-provider-id="${provId}"]`);
+            if (!card) return;
+            
+            const priceRangeEl = card.querySelector('[data-price-range]');
+            const container = card.querySelector('[data-offerings]');
             const provOfferings = grouped[provId] || [];
 
             // Only override price if provider didn't manually set a range
-            const card = document.querySelector(`[data-provider-id="${provId}"]`);
-            const hasManualRange = card && card.querySelector('.provider-price-range') && 
-                !card.querySelector('.provider-price-range').innerHTML.includes('لا توجد أسعار محددة');
+            const hasManualRange = priceRangeEl && 
+                !priceRangeEl.innerHTML.includes('لا توجد أسعار محددة');
 
             // Compute average price from offerings (for sorting/filtering)
             const prices = provOfferings.map(o => parseFloat(o.price)).filter(p => !isNaN(p) && p > 0);
