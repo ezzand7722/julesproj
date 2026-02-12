@@ -233,8 +233,14 @@ async function loadProviders(filter = {}) {
             return;
         }
 
-        grid.innerHTML = providers.map(provider => `
-            <div class="provider-card" data-provider-id="${escapeHtml(provider.id)}" onclick="window.location.href='provider-profile.html?id=${escapeHtml(provider.id)}'" style="cursor: pointer;">
+        grid.innerHTML = providers.map(provider => {
+            // Set initial price data from provider's price range
+            const minPrice = provider.price_range_min != null ? provider.price_range_min : null;
+            const maxPrice = provider.price_range_max != null ? provider.price_range_max : null;
+            const avgPrice = (minPrice != null && maxPrice != null) ? ((minPrice + maxPrice) / 2) : (minPrice || maxPrice || null);
+            
+            return `
+            <div class="provider-card" data-provider-id="${escapeHtml(provider.id)}" data-min-price="${minPrice || ''}" data-max-price="${maxPrice || ''}" data-avg-price="${avgPrice || ''}" onclick="window.location.href='provider-profile.html?id=${escapeHtml(provider.id)}'" style="cursor: pointer;">
                 ${provider.is_featured ? '<div class="provider-badge">⭐ مميز</div>' : ''}
                 ${provider.is_verified ? '<div class="verified-badge">✓ موثق</div>' : ''}
                 <div class="provider-avatar">
@@ -263,7 +269,7 @@ async function loadProviders(filter = {}) {
                     </button>` : ''}
                 </div>
             </div>
-        `).join('');
+        `}).join('');
 
         // Load offerings preview for all providers (batch)
         loadOfferingsForCards(providers.map(p => p.id));
