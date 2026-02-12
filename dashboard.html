@@ -149,17 +149,50 @@
             <!-- Lifecycle Notifications -->
             <div id="lifecycleNotifContainer"></div>
 
-            <!-- Bookings -->
+            <!-- Bookings Tabs -->
             <div class="dashboard-card">
-                <h2>📅 الحجوزات الجديدة</h2>
-                <div class="bookings-list" id="pendingBookingsList">
-                    <div class="loading-spinner">جاري التحميل...</div>
+                <h2>📅 إدارة الحجوزات</h2>
+                <div class="booking-tabs">
+                    <button class="booking-tab-btn active" onclick="switchBookingTab('pending')" id="tabPending">
+                        ⏳ قيد الانتظار <span class="tab-count" id="pendingCount">0</span>
+                    </button>
+                    <button class="booking-tab-btn" onclick="switchBookingTab('confirmed')" id="tabConfirmed">
+                        ✅ مؤكدة <span class="tab-count" id="confirmedCount">0</span>
+                    </button>
+                    <button class="booking-tab-btn" onclick="switchBookingTab('completed')" id="tabCompleted">
+                        ✅ مكتملة <span class="tab-count" id="completedCount">0</span>
+                    </button>
+                    <button class="booking-tab-btn" onclick="switchBookingTab('cancelled')" id="tabCancelled">
+                        ❌ ملغاة <span class="tab-count" id="cancelledCount">0</span>
+                    </button>
                 </div>
-            </div>
-            <div class="dashboard-card">
-                <h2>📋 جميع الحجوزات</h2>
-                <div class="bookings-list" id="allBookingsList">
-                    <div class="loading-spinner">جاري التحميل...</div>
+                
+                <!-- Pending Bookings -->
+                <div id="bookingsTabPending" class="bookings-tab-content active">
+                    <div class="bookings-list" id="pendingBookingsList">
+                        <div class="loading-spinner">جاري التحميل...</div>
+                    </div>
+                </div>
+                
+                <!-- Confirmed Bookings -->
+                <div id="bookingsTabConfirmed" class="bookings-tab-content" style="display:none;">
+                    <div class="bookings-list" id="confirmedBookingsList">
+                        <div class="loading-spinner">جاري التحميل...</div>
+                    </div>
+                </div>
+                
+                <!-- Completed Bookings -->
+                <div id="bookingsTabCompleted" class="bookings-tab-content" style="display:none;">
+                    <div class="bookings-list" id="completedBookingsList">
+                        <div class="loading-spinner">جاري التحميل...</div>
+                    </div>
+                </div>
+                
+                <!-- Cancelled Bookings -->
+                <div id="bookingsTabCancelled" class="bookings-tab-content" style="display:none;">
+                    <div class="bookings-list" id="cancelledBookingsList">
+                        <div class="loading-spinner">جاري التحميل...</div>
+                    </div>
                 </div>
             </div>
         </div>

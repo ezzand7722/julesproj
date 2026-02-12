@@ -258,11 +258,8 @@ async function loadProviderData() {
 }
 
 // Load Bookings
-// Load Bookings
 async function loadBookings() {
     console.log('Loading bookings...');
-    const list = document.getElementById('allBookingsList');
-    const pendingList = document.getElementById('pendingBookingsList');
 
     // 1. Fetch Bookings (straight select, no join to avoid 400 error)
     const { data: bookings, error } = await supabaseDashboard
@@ -274,7 +271,8 @@ async function loadBookings() {
 
     if (error) {
         console.error('Error loading bookings:', error);
-        if (list) list.innerHTML = '<div class="error-state">فشل تحميل الحجوزات</div>';
+        const pendingList = document.getElementById('pendingBookingsList');
+        if (pendingList) pendingList.innerHTML = '<div class="error-state">فشل تحميل الحجوزات</div>';
         return;
     }
 
@@ -297,21 +295,55 @@ async function loadBookings() {
         profiles: profilesMap[b.customer_id] || null
     }));
 
-    // Update stats
+    // Filter by status
     const pending = enrichedBookings.filter(b => b.status === 'pending');
-    const completed = enrichedBookings.filter(b => b.status === 'completed');
+    const confirmed = enrichedBookings.filter(b => b.status === 'confirmed');
+    const completed = enrichedBookings.filter(b => b.status === 'completed' || b.status === 'auto_completed');
+    const cancelled = enrichedBookings.filter(b => b.status === 'cancelled' || b.status === 'auto_cancelled');
 
+    // Update counts
+    if (document.getElementById('pendingCount')) document.getElementById('pendingCount').textContent = pending.length;
+    if (document.getElementById('confirmedCount')) document.getElementById('confirmedCount').textContent = confirmed.length;
+    if (document.getElementById('completedCount')) document.getElementById('completedCount').textContent = completed.length;
+    if (document.getElementById('cancelledCount')) document.getElementById('cancelledCount').textContent = cancelled.length;
+    
+    // Update stats (if they exist)
     if (document.getElementById('totalBookings')) document.getElementById('totalBookings').textContent = enrichedBookings.length;
     if (document.getElementById('pendingBookings')) document.getElementById('pendingBookings').textContent = pending.length;
     if (document.getElementById('completedBookings')) document.getElementById('completedBookings').textContent = completed.length;
 
-    // Render lists
-    if (list) {
-        list.innerHTML = enrichedBookings.length ? enrichedBookings.map(b => renderBookingItem(b)).join('') : '<p class="empty-state">لا توجد حجوزات</p>';
-    }
+    // Render each section
+    const pendingList = document.getElementById('pendingBookingsList');
+    const confirmedList = document.getElementById('confirmedBookingsList');
+    const completedList = document.getElementById('completedBookingsList');
+    const cancelledList = document.getElementById('cancelledBookingsList');
+
     if (pendingList) {
-        pendingList.innerHTML = pending.length ? pending.map(b => renderBookingItem(b)).join('') : '<p class="empty-state">لا توجد طلبات جديدة</p>';
+        pendingList.innerHTML = pending.length ? pending.map(b => renderBookingItem(b)).join('') : '<p class="empty-state">لا توجد طلبات قيد الانتظار</p>';
     }
+    if (confirmedList) {
+        confirmedList.innerHTML = confirmed.length ? confirmed.map(b => renderBookingItem(b)).join('') : '<p class="empty-state">لا توجد حجوزات مؤكدة</p>';
+    }
+    if (completedList) {
+        completedList.innerHTML = completed.length ? completed.map(b => renderBookingItem(b)).join('') : '<p class="empty-state">لا توجد حجوزات مكتملة</p>';
+    }
+    if (cancelledList) {
+        cancelledList.innerHTML = cancelled.length ? cancelled.map(b => renderBookingItem(b)).join('') : '<p class="empty-state">لا توجد حجوزات ملغاة</p>';
+    }
+}
+
+// Switch between booking tabs
+function switchBookingTab(tabName) {
+    // Hide all tabs
+    document.querySelectorAll('.bookings-tab-content').forEach(tab => tab.style.display = 'none');
+    document.querySelectorAll('.booking-tab-btn').forEach(btn => btn.classList.remove('active'));
+    
+    // Show selected tab
+    const tabContent = document.getElementById('bookingsTab' + tabName.charAt(0).toUpperCase() + tabName.slice(1));
+    const tabBtn = document.getElementById('tab' + tabName.charAt(0).toUpperCase() + tabName.slice(1));
+    
+    if (tabContent) tabContent.style.display = 'block';
+    if (tabBtn) tabBtn.classList.add('active');
 }
 
 // Render Booking Item
