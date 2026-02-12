@@ -520,7 +520,7 @@ async function loadOfferingsForCards(providerIds) {
     try {
         const { data, error } = await supabaseClient
             .from('service_offerings')
-            .select('id, provider_id, title, price, price_type, image_url')
+            .select('id, provider_id, title, price, price_type')
             .in('provider_id', providerIds)
             .eq('is_active', true)
             .order('sort_order', { ascending: true });
@@ -574,7 +574,7 @@ async function loadOfferingsForCards(providerIds) {
             container.style.display = 'flex';
             container.innerHTML = top3.map(o => `
                 <div style="display:inline-flex; align-items:center; gap:4px; background:#f0fdfa; border:1px solid #ccfbf1; border-radius:20px; padding:3px 10px 3px 6px; font-size:0.75rem; white-space:nowrap;">
-                    ${o.image_url ? `<img src="${o.image_url}" style="width:18px; height:18px; border-radius:50%; object-fit:cover;">` : `<span style="font-size:0.7rem;">🔧</span>`}
+                    <span style="font-size:0.7rem;">🔧</span>
                     <span style="color:#374151; font-weight:500;">${escapeHtml(o.title)}</span>
                     <span style="color:#0891b2; font-weight:700;">${o.price}د.أ</span>
                 </div>
