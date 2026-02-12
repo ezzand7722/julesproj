@@ -1508,8 +1508,18 @@ body {
 .skeleton {
     background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
     background-size: 200% 100%;
-    animation: skeleton-loading 1.5s infinite;
+    animation: skeleton-loading 1.2s ease-in-out infinite;
     border-radius: var(--radius-sm);
+}
+
+@keyframes skeleton-loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+@keyframes skeleton-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
 }
 
 .skeleton-card {
@@ -1517,6 +1527,7 @@ body {
     border-radius: var(--radius-lg);
     padding: 24px;
     box-shadow: var(--shadow-md);
+    animation: skeleton-pulse 1.5s ease-in-out infinite;
 }
 
 .skeleton-avatar {
@@ -1547,6 +1558,35 @@ body {
     margin-top: 16px;
     border-radius: var(--radius-sm);
 }
+
+/* Service card skeleton */
+.skeleton-service {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+    animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+.skeleton-service .skeleton-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    margin: 0 auto 12px;
+}
+
+.skeleton-service .skeleton-text {
+    width: 60%;
+    margin: 0 auto;
+}
+
+/* Staggered animation for multiple skeletons */
+.skeleton-card:nth-child(2), .skeleton-service:nth-child(2) { animation-delay: 0.1s; }
+.skeleton-card:nth-child(3), .skeleton-service:nth-child(3) { animation-delay: 0.2s; }
+.skeleton-card:nth-child(4), .skeleton-service:nth-child(4) { animation-delay: 0.3s; }
+.skeleton-card:nth-child(5), .skeleton-service:nth-child(5) { animation-delay: 0.4s; }
+.skeleton-card:nth-child(6), .skeleton-service:nth-child(6) { animation-delay: 0.5s; }
 
 /* Empty State Styles */
 .empty-state {

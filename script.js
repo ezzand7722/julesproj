@@ -22,12 +22,25 @@ document.addEventListener('DOMContentLoaded', async function () {
         console.log('⚠️ Service Worker disabled (requires HTTPS or localhost)');
     }
 
-    // Initialize the app
-    await checkSession();
-    await loadServices();
-    await loadProviders();
-    await loadReviews();
-    await loadStats();
+    // Initialize the app - PARALLEL loading for speed
+    const sessionPromise = checkSession();
+    
+    // Load critical above-the-fold content first (in parallel)
+    const [services, providers] = await Promise.all([
+        loadServicesData(),
+        loadProvidersData()
+    ]);
+    
+    // Render immediately
+    renderServices(services);
+    renderProviders(providers);
+    
+    // Non-critical content - load after main content
+    await sessionPromise;
+    
+    // Load below-fold content with intersection observer (lazy)
+    setupLazyLoading();
+    
     setupEventListeners();
     setupAnimations();
     console.log('🛠️ خدمتي - تم تحميل الموقع بنجاح!');
@@ -178,7 +191,247 @@ function escapeHtml(text) {
 // Make escapeHtml global
 window.escapeHtml = escapeHtml;
 
-// Load services from database
+// ============ FAST DATA FETCHERS (separate from rendering) ============
+
+// Fetch services data only (no DOM manipulation)
+async function loadServicesData() {
+    try {
+        const { data: services, error } = await supabaseClient
+            .from('service_stats')
+            .select('*')
+            .order('provider_count', { ascending: false });
+        if (error) throw error;
+        allServices = services || [];
+        return services || [];
+    } catch (err) {
+        console.error('Error fetching services:', err);
+        return [];
+    }
+}
+
+// Fetch providers data only (no DOM manipulation)
+async function loadProvidersData(filter = {}) {
+    try {
+        let query = supabaseClient.from('providers').select('*');
+        if (filter.city) query = query.eq('city', filter.city);
+        if (filter.neighborhood) query = query.eq('neighborhood', filter.neighborhood);
+        if (filter.search) query = query.or(`name.ilike.%${filter.search}%,specialty.ilike.%${filter.search}%`);
+        
+        const { data: providers, error } = await query
+            .order('is_featured', { ascending: false })
+            .order('rating', { ascending: false });
+        if (error) throw error;
+        allProviders = providers || [];
+        return providers || [];
+    } catch (err) {
+        console.error('Error fetching providers:', err);
+        return [];
+    }
+}
+
+// Render services to DOM
+function renderServices(services) {
+    const grid = document.getElementById('servicesGrid');
+    if (!grid) return;
+    
+    if (!services || services.length === 0) {
+        grid.innerHTML = '<p class="error">لا توجد خدمات</p>';
+        return;
+    }
+    
+    grid.innerHTML = services.map(service => `
+        <div class="service-card" data-service-id="${escapeHtml(service.id)}" onclick="filterByService('${escapeHtml(service.name_ar)}')">
+            <div class="service-icon">${service.icon}</div>
+            <h3>${escapeHtml(service.name_ar)}</h3>
+            <p>${escapeHtml(service.description_ar || '')}</p>
+            <span class="service-count">${service.provider_count || 0}+ مقدم خدمة</span>
+        </div>
+    `).join('');
+}
+
+// Render providers to DOM
+function renderProviders(providers) {
+    const grid = document.getElementById('providersGrid');
+    if (!grid) return;
+    
+    if (!providers || providers.length === 0) {
+        grid.innerHTML = '<p class="no-results">لا توجد نتائج. جرب بحث آخر.</p>';
+        return;
+    }
+    
+    grid.innerHTML = providers.map(provider => {
+        const minPrice = provider.price_range_min != null ? provider.price_range_min : null;
+        const maxPrice = provider.price_range_max != null ? provider.price_range_max : null;
+        const avgPrice = (minPrice != null && maxPrice != null) ? ((minPrice + maxPrice) / 2) : (minPrice || maxPrice || null);
+        
+        return `
+        <div class="provider-card" data-provider-id="${escapeHtml(provider.id)}" data-min-price="${minPrice || ''}" data-max-price="${maxPrice || ''}" data-avg-price="${avgPrice || ''}" onclick="window.location.href='provider-profile.html?id=${escapeHtml(provider.id)}'" style="cursor: pointer;">
+            ${provider.is_featured ? '<div class="provider-badge">⭐ مميز</div>' : ''}
+            ${provider.is_verified ? '<div class="verified-badge">✓ موثق</div>' : ''}
+            <div class="provider-avatar">
+                <div class="avatar-placeholder">${escapeHtml(provider.name).substring(0, 2)}</div>
+            </div>
+            <h3>${escapeHtml(provider.name)}</h3>
+            <p class="provider-specialty">${escapeHtml(provider.specialty)}</p>
+            <div class="provider-location">📍 ${escapeHtml(provider.city)}${provider.neighborhood ? ' - ' + escapeHtml(provider.neighborhood) : ''} - ${escapeHtml(provider.location)}</div>
+            <div class="provider-rating">
+                <span class="stars">${'⭐'.repeat(Math.round(provider.rating))}</span>
+                <span>${provider.rating} (${provider.review_count} تقييم)</span>
+            </div>
+            <div class="provider-price-range" id="price-range-${provider.id}" style="margin-top:6px; padding:5px 12px; background:#f0fdfa; border:1px solid #ccfbf1; border-radius:8px; text-align:center; font-size:0.85rem; font-weight:600; color:#0d9488;">
+                ${provider.price_range_min != null && provider.price_range_max != null
+                    ? `💰 ${provider.price_range_min} - ${provider.price_range_max} د.أ`
+                    : provider.price_range_min != null
+                        ? `💰 يبدأ من ${provider.price_range_min} د.أ`
+                        : `<span style="color:#9ca3af; font-weight:500;">💰 لا توجد أسعار محددة</span>`}
+            </div>
+            <div class="provider-offerings-preview" id="offerings-${provider.id}" style="display:none; margin-top:8px; display:flex; flex-wrap:wrap; gap:5px;"></div>
+            <div class="provider-actions" style="display: flex; gap: 8px; margin-top: 10px;">
+                <button class="btn btn-primary" style="flex: 1;" onclick="event.stopPropagation(); window.location.href='booking.html?provider_id=${escapeHtml(provider.id)}'">احجز الآن</button>
+                ${provider.user_id ? `
+                <button onclick="event.stopPropagation(); window.location.href='customer-dashboard.html?tab=messages&chat_with=${provider.user_id}&name=${encodeURIComponent(provider.name)}'" class="btn btn-outline" style="display: flex; align-items: center; justify-content: center; width: 40px; padding: 0; border: 1px solid var(--primary); color: var(--primary);" title="مراسلة">
+                    💬
+                </button>` : ''}
+            </div>
+        </div>
+    `}).join('');
+    
+    // Load offerings preview for all providers (batch)
+    loadOfferingsForCards(providers.map(p => p.id));
+    
+    // Re-apply animations
+    applyScrollAnimations();
+}
+
+// ============ LAZY LOADING WITH INTERSECTION OBSERVER ============
+
+// Data cache for prefetched content
+const dataCache = {
+    reviews: null,
+    stats: null
+};
+
+// Setup lazy loading for below-fold content
+function setupLazyLoading() {
+    // Prefetch reviews and stats data immediately (but don't render yet)
+    prefetchBelowFoldData();
+    
+    // Use Intersection Observer to render when visible
+    const observerOptions = {
+        root: null,
+        rootMargin: '200px', // Start loading 200px before element comes into view
+        threshold: 0
+    };
+    
+    const lazyObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const target = entry.target;
+                
+                if (target.id === 'reviewsGrid' && !target.dataset.loaded) {
+                    renderReviews(dataCache.reviews);
+                    target.dataset.loaded = 'true';
+                    lazyObserver.unobserve(target);
+                }
+            }
+        });
+    }, observerOptions);
+    
+    // Observe sections that should lazy load
+    const reviewsGrid = document.getElementById('reviewsGrid');
+    if (reviewsGrid) lazyObserver.observe(reviewsGrid);
+    
+    // Load stats immediately (they're above fold in trust-stats bar)
+    renderStats();
+}
+
+// Prefetch data that will be needed soon
+async function prefetchBelowFoldData() {
+    // Fetch reviews and stats in parallel
+    const [reviews, stats] = await Promise.all([
+        fetchReviewsData(),
+        fetchStatsData()
+    ]);
+    
+    dataCache.reviews = reviews;
+    dataCache.stats = stats;
+}
+
+// Fetch reviews data only
+async function fetchReviewsData() {
+    try {
+        const { data: reviews, error } = await supabaseClient
+            .from('reviews')
+            .select('*')
+            .order('created_at', { ascending: false })
+            .limit(6);
+        if (error) throw error;
+        return reviews || [];
+    } catch (err) {
+        console.error('Error fetching reviews:', err);
+        return [];
+    }
+}
+
+// Fetch stats data only
+async function fetchStatsData() {
+    try {
+        const [providerResult, bookingResult] = await Promise.all([
+            supabaseClient.from('providers').select('*', { count: 'exact', head: true }),
+            supabaseClient.from('bookings').select('*', { count: 'exact', head: true })
+        ]);
+        return {
+            providerCount: providerResult.count || 8,
+            bookingCount: (bookingResult.count || 0) + 50
+        };
+    } catch (err) {
+        console.error('Error fetching stats:', err);
+        return { providerCount: 8, bookingCount: 50 };
+    }
+}
+
+// Render reviews to DOM
+function renderReviews(reviews) {
+    const grid = document.getElementById('reviewsGrid');
+    if (!grid) return;
+    
+    if (!reviews || reviews.length === 0) {
+        grid.innerHTML = '<p>لا توجد آراء بعد</p>';
+        return;
+    }
+    
+    grid.innerHTML = reviews.map(review => `
+        <div class="testimonial-card">
+            <div class="quote-icon">"</div>
+            <p class="testimonial-text">${escapeHtml(review.comment)}</p>
+            <div class="testimonial-author">
+                <div class="author-avatar">${escapeHtml(review.customer_name).substring(0, 2)}</div>
+                <div class="author-info">
+                    <span class="author-name">${escapeHtml(review.customer_name)}</span>
+                    <span class="author-rating">${'⭐'.repeat(review.rating)}</span>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Render stats to DOM
+function renderStats() {
+    // Use cached data if available, otherwise fetch fresh
+    if (dataCache.stats) {
+        animateNumber(document.getElementById('providerCount'), dataCache.stats.providerCount, '+');
+        animateNumber(document.getElementById('bookingCount'), dataCache.stats.bookingCount, '+');
+    } else {
+        // Fallback: fetch and render
+        fetchStatsData().then(stats => {
+            dataCache.stats = stats;
+            animateNumber(document.getElementById('providerCount'), stats.providerCount, '+');
+            animateNumber(document.getElementById('bookingCount'), stats.bookingCount, '+');
+        });
+    }
+}
+
+// Load services from database (legacy - kept for compatibility)
 async function loadServices() {
     const grid = document.getElementById('servicesGrid');
     try {
@@ -205,77 +458,37 @@ async function loadServices() {
     }
 }
 
-// Load providers from database
+// Load providers from database (used for searches/filters)
 async function loadProviders(filter = {}) {
     const grid = document.getElementById('providersGrid');
-    grid.innerHTML = '<div class="loading-spinner">جاري التحميل...</div>';
+    // Show skeleton loading instead of spinner
+    grid.innerHTML = `
+        <div class="skeleton-card">
+            <div class="skeleton skeleton-avatar"></div>
+            <div class="skeleton skeleton-title"></div>
+            <div class="skeleton skeleton-text"></div>
+            <div class="skeleton skeleton-text" style="width: 60%;"></div>
+            <div class="skeleton skeleton-btn"></div>
+        </div>
+        <div class="skeleton-card">
+            <div class="skeleton skeleton-avatar"></div>
+            <div class="skeleton skeleton-title"></div>
+            <div class="skeleton skeleton-text"></div>
+            <div class="skeleton skeleton-text" style="width: 60%;"></div>
+            <div class="skeleton skeleton-btn"></div>
+        </div>
+        <div class="skeleton-card">
+            <div class="skeleton skeleton-avatar"></div>
+            <div class="skeleton skeleton-title"></div>
+            <div class="skeleton skeleton-text"></div>
+            <div class="skeleton skeleton-text" style="width: 60%;"></div>
+            <div class="skeleton skeleton-btn"></div>
+        </div>
+    `;
 
     try {
-        let query = supabaseClient.from('providers').select('*');
-
-        if (filter.city) {
-            query = query.eq('city', filter.city);
-        }
-        if (filter.neighborhood) {
-            query = query.eq('neighborhood', filter.neighborhood);
-        }
-        if (filter.search) {
-            query = query.or(`name.ilike.%${filter.search}%,specialty.ilike.%${filter.search}%`);
-        }
-
-        const { data: providers, error } = await query.order('is_featured', { ascending: false }).order('rating', { ascending: false });
-
-        if (error) throw error;
-        allProviders = providers || [];
-
-        if (providers.length === 0) {
-            grid.innerHTML = '<p class="no-results">لا توجد نتائج. جرب بحث آخر.</p>';
-            return;
-        }
-
-        grid.innerHTML = providers.map(provider => {
-            // Set initial price data from provider's price range
-            const minPrice = provider.price_range_min != null ? provider.price_range_min : null;
-            const maxPrice = provider.price_range_max != null ? provider.price_range_max : null;
-            const avgPrice = (minPrice != null && maxPrice != null) ? ((minPrice + maxPrice) / 2) : (minPrice || maxPrice || null);
-            
-            return `
-            <div class="provider-card" data-provider-id="${escapeHtml(provider.id)}" data-min-price="${minPrice || ''}" data-max-price="${maxPrice || ''}" data-avg-price="${avgPrice || ''}" onclick="window.location.href='provider-profile.html?id=${escapeHtml(provider.id)}'" style="cursor: pointer;">
-                ${provider.is_featured ? '<div class="provider-badge">⭐ مميز</div>' : ''}
-                ${provider.is_verified ? '<div class="verified-badge">✓ موثق</div>' : ''}
-                <div class="provider-avatar">
-                    <div class="avatar-placeholder">${escapeHtml(provider.name).substring(0, 2)}</div>
-                </div>
-                <h3>${escapeHtml(provider.name)}</h3>
-                <p class="provider-specialty">${escapeHtml(provider.specialty)}</p>
-                <div class="provider-location">📍 ${escapeHtml(provider.city)}${provider.neighborhood ? ' - ' + escapeHtml(provider.neighborhood) : ''} - ${escapeHtml(provider.location)}</div>
-                <div class="provider-rating">
-                    <span class="stars">${'⭐'.repeat(Math.round(provider.rating))}</span>
-                    <span>${provider.rating} (${provider.review_count} تقييم)</span>
-                </div>
-                <div class="provider-price-range" id="price-range-${provider.id}" style="margin-top:6px; padding:5px 12px; background:#f0fdfa; border:1px solid #ccfbf1; border-radius:8px; text-align:center; font-size:0.85rem; font-weight:600; color:#0d9488;">
-                    ${provider.price_range_min != null && provider.price_range_max != null
-                        ? `💰 ${provider.price_range_min} - ${provider.price_range_max} د.أ`
-                        : provider.price_range_min != null
-                            ? `💰 يبدأ من ${provider.price_range_min} د.أ`
-                            : `<span style="color:#9ca3af; font-weight:500;">💰 لا توجد أسعار محددة</span>`}
-                </div>
-                <div class="provider-offerings-preview" id="offerings-${provider.id}" style="display:none; margin-top:8px; display:flex; flex-wrap:wrap; gap:5px;"></div>
-                <div class="provider-actions" style="display: flex; gap: 8px; margin-top: 10px;">
-                    <button class="btn btn-primary" style="flex: 1;" onclick="event.stopPropagation(); window.location.href='booking.html?provider_id=${escapeHtml(provider.id)}'">احجز الآن</button>
-                    ${provider.user_id ? `
-                    <button onclick="event.stopPropagation(); window.location.href='customer-dashboard.html?tab=messages&chat_with=${provider.user_id}&name=${encodeURIComponent(provider.name)}'" class="btn btn-outline" style="display: flex; align-items: center; justify-content: center; width: 40px; padding: 0; border: 1px solid var(--primary); color: var(--primary);" title="مراسلة">
-                        💬
-                    </button>` : ''}
-                </div>
-            </div>
-        `}).join('');
-
-        // Load offerings preview for all providers (batch)
-        loadOfferingsForCards(providers.map(p => p.id));
-
-        // Re-apply animations
-        applyScrollAnimations();
+        const providers = await loadProvidersData(filter);
+        renderProviders(providers);
     } catch (err) {
         console.error('Error loading providers:', err);
         grid.innerHTML = '<p class="error">خطأ في تحميل مقدمي الخدمات</p>';
