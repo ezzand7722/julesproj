@@ -13,6 +13,9 @@ let allServices = [];
 let notificationSubscription = null;
 
 document.addEventListener('DOMContentLoaded', async function () {
+    const perfStart = performance.now();
+    console.log('🚀 [PERF] Page load started');
+    
     // Register Service Worker for PWA (Only if on HTTP/HTTPS)
     if ('serviceWorker' in navigator && (window.location.protocol.indexOf('http') === 0)) {
         navigator.serviceWorker.register('sw.js')
@@ -26,23 +29,32 @@ document.addEventListener('DOMContentLoaded', async function () {
     const sessionPromise = checkSession();
     
     // Load critical above-the-fold content first (in parallel)
+    console.log('📡 [PERF] Starting parallel data fetch...');
+    const fetchStart = performance.now();
+    
     const [services, providers] = await Promise.all([
         loadServicesData(),
         loadProvidersData()
     ]);
     
+    console.log(`📡 [PERF] Data fetched in ${(performance.now() - fetchStart).toFixed(0)}ms (services: ${services?.length || 0}, providers: ${providers?.length || 0})`);
+    
     // Render immediately
+    const renderStart = performance.now();
     renderServices(services);
     renderProviders(providers);
+    console.log(`🎨 [PERF] Rendered in ${(performance.now() - renderStart).toFixed(0)}ms`);
     
     // Non-critical content - load after main content
     await sessionPromise;
+    console.log(`🔐 [PERF] Session checked in ${(performance.now() - perfStart).toFixed(0)}ms total`);
     
     // Load below-fold content with intersection observer (lazy)
     setupLazyLoading();
     
     setupEventListeners();
     setupAnimations();
+    console.log(`✅ [PERF] Total load time: ${(performance.now() - perfStart).toFixed(0)}ms`);
     console.log('🛠️ خدمتي - تم تحميل الموقع بنجاح!');
 });
 
@@ -195,11 +207,13 @@ window.escapeHtml = escapeHtml;
 
 // Fetch services data only (no DOM manipulation)
 async function loadServicesData() {
+    const start = performance.now();
     try {
         const { data: services, error } = await supabaseClient
             .from('service_stats')
             .select('*')
             .order('provider_count', { ascending: false });
+        console.log(`   📦 services fetched in ${(performance.now() - start).toFixed(0)}ms`);
         if (error) throw error;
         allServices = services || [];
         return services || [];
@@ -211,6 +225,7 @@ async function loadServicesData() {
 
 // Fetch providers data only (no DOM manipulation)
 async function loadProvidersData(filter = {}) {
+    const start = performance.now();
     try {
         let query = supabaseClient.from('providers').select('*');
         if (filter.city) query = query.eq('city', filter.city);
@@ -220,6 +235,7 @@ async function loadProvidersData(filter = {}) {
         const { data: providers, error } = await query
             .order('is_featured', { ascending: false })
             .order('rating', { ascending: false });
+        console.log(`   📦 providers fetched in ${(performance.now() - start).toFixed(0)}ms`);
         if (error) throw error;
         allProviders = providers || [];
         return providers || [];
@@ -313,7 +329,7 @@ const dataCache = {
 
 // Setup lazy loading for below-fold content
 function setupLazyLoading() {
-    // Prefetch reviews and stats data immediately (but don't render yet)
+    // Start prefetching in background (don't block)
     prefetchBelowFoldData();
     
     // Use Intersection Observer to render when visible
@@ -341,8 +357,7 @@ function setupLazyLoading() {
     const reviewsGrid = document.getElementById('reviewsGrid');
     if (reviewsGrid) lazyObserver.observe(reviewsGrid);
     
-    // Load stats immediately (they're above fold in trust-stats bar)
-    renderStats();
+    // Stats will be rendered by prefetchBelowFoldData when ready
 }
 
 // Prefetch data that will be needed soon
@@ -355,6 +370,10 @@ async function prefetchBelowFoldData() {
     
     dataCache.reviews = reviews;
     dataCache.stats = stats;
+    
+    // Render stats immediately since they're above fold
+    animateNumber(document.getElementById('providerCount'), stats.providerCount, '+');
+    animateNumber(document.getElementById('bookingCount'), stats.bookingCount, '+');
 }
 
 // Fetch reviews data only
