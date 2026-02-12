@@ -322,15 +322,20 @@
                 <button class="filter-btn" onclick="sortProviders('price_high')" id="sortPriceHigh">💎 الأعلى سعراً</button>
                 <div class="filter-separator"></div>
                 <label class="filter-range-label">نطاق السعر:</label>
-                <div class="price-range-container">
-                    <span class="price-unit">د.أ</span>
-                    <input type="number" id="maxPriceInput" class="price-input" min="0" max="500" value="500" placeholder="إلى" oninput="syncPriceSliders('max')">
-                    <div class="dual-range-slider">
-                        <input type="range" id="minPriceSlider" min="0" max="500" value="0" class="range-min" oninput="syncPriceInputs('min')">
-                        <input type="range" id="maxPriceSlider" min="0" max="500" value="500" class="range-max" oninput="syncPriceInputs('max')">
-                        <div class="slider-track"></div>
+                <div class="price-range-simple">
+                    <div class="price-field">
+                        <span class="price-label">من</span>
+                        <input type="number" id="minPriceInput" class="price-input" min="0" max="500" value="0" oninput="updatePriceBar()">
                     </div>
-                    <input type="number" id="minPriceInput" class="price-input" min="0" max="500" value="0" placeholder="من" oninput="syncPriceSliders('min')">
+                    <div class="price-bar-container">
+                        <div class="price-bar-track"></div>
+                        <div class="price-bar-fill" id="priceBarFill"></div>
+                    </div>
+                    <div class="price-field">
+                        <span class="price-label">إلى</span>
+                        <input type="number" id="maxPriceInput" class="price-input" min="0" max="500" value="500" oninput="updatePriceBar()">
+                    </div>
+                    <span class="price-unit">د.أ</span>
                 </div>
                 <button class="filter-btn filter-btn-apply" onclick="applyPriceFilter()">تطبيق</button>
             </div>

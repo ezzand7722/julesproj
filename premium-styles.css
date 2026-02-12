@@ -1163,20 +1163,31 @@ button, .btn, a {
     white-space: nowrap;
 }
 
-/* Price Range Container */
-.price-range-container {
+/* Simple Price Range with visual bar */
+.price-range-simple {
     display: flex;
     align-items: center;
-    gap: 8px;
-    direction: rtl; /* Ensure RTL order: max on left, min on right */
+    gap: 10px;
+}
+
+.price-field {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.price-label {
+    font-size: 0.75rem;
+    color: #6b7280;
+    white-space: nowrap;
 }
 
 .price-input {
-    width: 55px;
-    padding: 4px 6px;
+    width: 60px;
+    padding: 5px 8px;
     border: 1px solid #d1d5db;
     border-radius: 6px;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     text-align: center;
     font-family: inherit;
 }
@@ -1193,104 +1204,34 @@ button, .btn, a {
     white-space: nowrap;
 }
 
-/* Dual Range Slider */
-.dual-range-slider {
+.price-bar-container {
     position: relative;
-    width: 120px;
-    height: 24px;
-    direction: ltr; /* Force LTR for slider so min is on left, max on right */
+    width: 80px;
+    height: 6px;
 }
 
-.slider-track {
+.price-bar-track {
     position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    height: 5px;
-    background: #e5e7eb;
-    border-radius: 3px;
-    pointer-events: none;
+    top: 0;
     left: 0;
     right: 0;
-    z-index: 1;
+    height: 100%;
+    background: #e5e7eb;
+    border-radius: 3px;
 }
 
-.slider-track::before {
-    content: '';
+.price-bar-fill {
     position: absolute;
+    top: 0;
     height: 100%;
     background: var(--primary, #0d9488);
     border-radius: 3px;
-    left: var(--range-left, 0%);
-    width: var(--range-width, 100%);
-}
-
-.dual-range-slider input[type="range"] {
-    position: absolute;
+    right: 0;
     width: 100%;
-    top: 50%;
-    transform: translateY(-50%);
-    background: transparent;
-    pointer-events: none;
-    -webkit-appearance: none;
-    appearance: none;
-    margin: 0;
-    padding: 0;
-    height: 5px;
-    direction: ltr;
+    transition: all 0.15s ease;
 }
 
-.dual-range-slider .range-min {
-    z-index: 2;
-}
-
-.dual-range-slider .range-max {
-    z-index: 3;
-}
-
-.dual-range-slider input[type="range"]::-webkit-slider-runnable-track {
-    width: 100%;
-    height: 5px;
-    background: transparent;
-    border-radius: 3px;
-    cursor: pointer;
-}
-
-.dual-range-slider input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 18px;
-    height: 18px;
-    background: var(--primary, #0d9488);
-    border-radius: 50%;
-    cursor: pointer;
-    pointer-events: auto;
-    border: 2px solid white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    margin-top: -6.5px;
-    position: relative;
-    z-index: 10;
-}
-
-.dual-range-slider input[type="range"]::-moz-range-track {
-    width: 100%;
-    height: 5px;
-    background: transparent;
-    border-radius: 3px;
-    cursor: pointer;
-}
-
-.dual-range-slider input[type="range"]::-moz-range-thumb {
-    width: 18px;
-    height: 18px;
-    background: var(--primary, #0d9488);
-    border-radius: 50%;
-    cursor: pointer;
-    pointer-events: auto;
-    border: 2px solid white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-
-/* Dark mode dual range */
+/* Dark mode price range */
 [data-theme="dark"] .price-input {
     background: #1f2937;
     border-color: #4b5563;
@@ -1302,19 +1243,16 @@ button, .btn, a {
     box-shadow: 0 0 0 2px rgba(45, 212, 191, 0.15);
 }
 
-[data-theme="dark"] .price-unit {
+[data-theme="dark"] .price-unit,
+[data-theme="dark"] .price-label {
     color: #9ca3af;
 }
 
-[data-theme="dark"] .dual-range-slider input[type="range"]::-webkit-slider-runnable-track {
-    background: transparent;
-}
-
-[data-theme="dark"] .slider-track {
+[data-theme="dark"] .price-bar-track {
     background: #374151;
 }
 
-[data-theme="dark"] .slider-track::before {
+[data-theme="dark"] .price-bar-fill {
     background: #2dd4bf;
 }
 
@@ -1382,13 +1320,13 @@ button, .btn, a {
     .filter-separator {
         display: none;
     }
-    .price-range-container {
+    .price-range-simple {
         width: 100%;
         justify-content: center;
         margin-top: 6px;
     }
-    .dual-range-slider {
-        width: 100px;
+    .price-bar-container {
+        width: 60px;
     }
     .price-input {
         width: 50px;

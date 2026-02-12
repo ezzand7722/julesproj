@@ -389,72 +389,36 @@ function sortProviders(sortBy) {
     cards.forEach(card => grid.appendChild(card));
 }
 
-// Sync sliders when text inputs change
-function syncPriceSliders(which) {
+// Update the visual price bar between min and max
+function updatePriceBar() {
     const minInput = document.getElementById('minPriceInput');
     const maxInput = document.getElementById('maxPriceInput');
-    const minSlider = document.getElementById('minPriceSlider');
-    const maxSlider = document.getElementById('maxPriceSlider');
+    const fill = document.getElementById('priceBarFill');
+    
+    if (!minInput || !maxInput || !fill) return;
     
     let minVal = parseInt(minInput.value) || 0;
     let maxVal = parseInt(maxInput.value) || 500;
     
+    // Clamp values
+    minVal = Math.max(0, Math.min(500, minVal));
+    maxVal = Math.max(0, Math.min(500, maxVal));
+    
     // Ensure min <= max
-    if (which === 'min' && minVal > maxVal) {
+    if (minVal > maxVal) {
+        const temp = minVal;
         minVal = maxVal;
+        maxVal = temp;
         minInput.value = minVal;
-    } else if (which === 'max' && maxVal < minVal) {
-        maxVal = minVal;
         maxInput.value = maxVal;
     }
     
-    minSlider.value = minVal;
-    maxSlider.value = maxVal;
-    updateSliderTrack();
-}
-
-// Sync text inputs when sliders change
-function syncPriceInputs(which) {
-    const minInput = document.getElementById('minPriceInput');
-    const maxInput = document.getElementById('maxPriceInput');
-    const minSlider = document.getElementById('minPriceSlider');
-    const maxSlider = document.getElementById('maxPriceSlider');
+    const minPercent = (minVal / 500) * 100;
+    const maxPercent = (maxVal / 500) * 100;
     
-    let minVal = parseInt(minSlider.value);
-    let maxVal = parseInt(maxSlider.value);
-    
-    // Prevent crossing
-    if (which === 'min' && minVal > maxVal) {
-        minVal = maxVal;
-        minSlider.value = minVal;
-    } else if (which === 'max' && maxVal < minVal) {
-        maxVal = minVal;
-        maxSlider.value = maxVal;
-    }
-    
-    minInput.value = minVal;
-    maxInput.value = maxVal;
-    updateSliderTrack();
-}
-
-// Update the colored track between the two handles
-function updateSliderTrack() {
-    const minSlider = document.getElementById('minPriceSlider');
-    const maxSlider = document.getElementById('maxPriceSlider');
-    const track = document.querySelector('.slider-track');
-    
-    if (!minSlider || !maxSlider || !track) return;
-    
-    const min = parseInt(minSlider.min);
-    const max = parseInt(minSlider.max);
-    const minVal = parseInt(minSlider.value);
-    const maxVal = parseInt(maxSlider.value);
-    
-    const minPercent = ((minVal - min) / (max - min)) * 100;
-    const maxPercent = ((maxVal - min) / (max - min)) * 100;
-    
-    track.style.setProperty('--range-left', minPercent + '%');
-    track.style.setProperty('--range-width', (maxPercent - minPercent) + '%');
+    // For RTL: right = minPercent, width = maxPercent - minPercent
+    fill.style.right = minPercent + '%';
+    fill.style.width = (maxPercent - minPercent) + '%';
 }
 
 function applyPriceFilter() {
@@ -479,9 +443,9 @@ function applyPriceFilter() {
     if (currentSort) sortProviders(currentSort);
 }
 
-// Initialize slider track on page load
+// Initialize price bar on page load
 document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(updateSliderTrack, 100);
+    setTimeout(updatePriceBar, 100);
 });
 
 // Load reviews from database
