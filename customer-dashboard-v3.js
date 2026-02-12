@@ -106,6 +106,17 @@ async function checkAuth() {
     loadBookings();
     loadReviews();
 
+    // Initialize Booking Lifecycle Manager
+    if (window.BookingLifecycle && currentUser) {
+        BookingLifecycle.injectStyles();
+        await BookingLifecycle.init(supabaseClient, currentUser.id, 'customer', null);
+        const notifs = await BookingLifecycle.getNotifications();
+        const container = document.getElementById('lifecycleNotifContainer');
+        if (container && notifs.length > 0) {
+            container.innerHTML = BookingLifecycle.renderNotificationBanner(notifs);
+        }
+    }
+
     // Initialize Chat
     if (window.initChat) {
         setTimeout(() => window.initChat(), 1000); // Small delay to ensure DOM is ready
@@ -132,6 +143,7 @@ async function loadBookings() {
                 )
             `)
             .eq('customer_id', currentUser.id)
+            .neq('archived', true)
             .order('created_at', { ascending: false });
 
         if (error) {
@@ -146,7 +158,8 @@ async function loadBookings() {
         // Separate by status
         const pending = allBookings.filter(b => b.status === 'pending');
         const confirmed = allBookings.filter(b => b.status === 'confirmed');
-        const completed = allBookings.filter(b => b.status === 'completed');
+        const completed = allBookings.filter(b => b.status === 'completed' || b.status === 'auto_completed');
+        const cancelled = allBookings.filter(b => b.status === 'cancelled' || b.status === 'auto_cancelled');
 
         // Update stats
         if (document.getElementById('totalBookings')) document.getElementById('totalBookings').textContent = allBookings.length;
@@ -267,7 +280,9 @@ function getStatusIcon(status) {
         case 'pending': return '⏳';
         case 'confirmed': return '✅';
         case 'completed': return '🎉';
+        case 'auto_completed': return '✅';
         case 'cancelled': return '❌';
+        case 'auto_cancelled': return '🚫';
         default: return '🔹';
     }
 }
@@ -277,7 +292,9 @@ function getStatusText(status) {
         'pending': 'بانتظار الرد',
         'confirmed': 'مؤكد',
         'completed': 'مكتمل',
-        'cancelled': 'ملغي'
+        'auto_completed': 'مكتمل تلقائياً',
+        'cancelled': 'ملغي',
+        'auto_cancelled': 'ملغي تلقائياً (لم يتم الرد)'
     };
     return map[status] || status;
 }

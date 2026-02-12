@@ -18,6 +18,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     await loadReviews();
     await loadServiceOfferings();
 
+    // Initialize Booking Lifecycle Manager
+    if (window.BookingLifecycle && currentUser && currentProvider) {
+        BookingLifecycle.injectStyles();
+        await BookingLifecycle.init(supabaseDashboard, currentUser.id, 'provider', currentProvider.id);
+        const notifs = await BookingLifecycle.getNotifications();
+        const container = document.getElementById('lifecycleNotifContainer');
+        if (container && notifs.length > 0) {
+            container.innerHTML = BookingLifecycle.renderNotificationBanner(notifs);
+        }
+    }
+
     // Initialize Chat
     if (window.initChat) {
         setTimeout(() => window.initChat(), 1000);
@@ -258,6 +269,7 @@ async function loadBookings() {
         .from('bookings')
         .select('*')
         .eq('provider_id', currentProvider.id)
+        .neq('archived', true)
         .order('created_at', { ascending: false });
 
     if (error) {
@@ -315,8 +327,8 @@ function renderBookingItem(booking) {
     let customerPhone = profileData?.phone || booking.customer_phone || ''; // Assuming customer_phone might exist
 
     const date = new Date(booking.booking_date || booking.service_date).toLocaleDateString('ar-JO');
-    const statusLabels = { pending: 'قيد الانتظار', confirmed: 'مؤكد', completed: 'مكتمل', cancelled: 'ملغي' };
-    const statusColors = { pending: 'orange', confirmed: 'green', completed: 'blue', cancelled: 'red' };
+    const statusLabels = { pending: 'قيد الانتظار', confirmed: 'مؤكد', completed: 'مكتمل', cancelled: 'ملغي', auto_cancelled: 'ملغي تلقائياً', auto_completed: 'مكتمل تلقائياً' };
+    const statusColors = { pending: 'orange', confirmed: 'green', completed: 'blue', cancelled: 'red', auto_cancelled: '#ef4444', auto_completed: '#6366f1' };
 
     return `
     <div class="booking-item status-${booking.status}">
