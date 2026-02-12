@@ -1185,11 +1185,11 @@ button, .btn, a {
 }
 
 .price-input {
-    width: 70px;
-    padding: 8px 10px;
+    width: 85px;
+    padding: 10px 12px;
     border: 1px solid #d1d5db;
     border-radius: 8px;
-    font-size: 1rem;
+    font-size: 1.1rem;
     text-align: center;
     font-family: inherit;
 }
@@ -1332,8 +1332,8 @@ button, .btn, a {
         width: 50px;
     }
     .price-input {
-        width: 60px;
-        padding: 6px 8px;
-        font-size: 0.9rem;
+        width: 75px;
+        padding: 8px 10px;
+        font-size: 1rem;
     }
 }
