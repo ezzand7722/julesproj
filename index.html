@@ -324,16 +324,16 @@
                 <label class="filter-range-label">نطاق السعر:</label>
                 <div class="price-range-simple">
                     <div class="price-field">
-                        <span class="price-label">من</span>
-                        <input type="number" id="minPriceInput" class="price-input" min="0" max="500" value="0" oninput="updatePriceBar()">
+                        <span class="price-label">إلى</span>
+                        <input type="number" id="maxPriceInput" class="price-input" min="0" max="500" value="500" oninput="updatePriceBar()">
                     </div>
                     <div class="price-bar-container">
                         <div class="price-bar-track"></div>
                         <div class="price-bar-fill" id="priceBarFill"></div>
                     </div>
                     <div class="price-field">
-                        <span class="price-label">إلى</span>
-                        <input type="number" id="maxPriceInput" class="price-input" min="0" max="500" value="500" oninput="updatePriceBar()">
+                        <span class="price-label">من</span>
+                        <input type="number" id="minPriceInput" class="price-input" min="0" max="500" value="0" oninput="updatePriceBar()">
                     </div>
                     <span class="price-unit">د.أ</span>
                 </div>

@@ -413,8 +413,8 @@ function updatePriceBar() {
     const minPercent = (minVal / 500) * 100;
     const maxPercent = (maxVal / 500) * 100;
     
-    // Bar fills from left (min) to right (max) using left positioning
-    fill.style.left = minPercent + '%';
+    // Bar fills from right (min) to left (max) for RTL layout
+    fill.style.right = minPercent + '%';
     fill.style.width = (maxPercent - minPercent) + '%';
 }
 
