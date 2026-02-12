@@ -453,8 +453,8 @@ function updateSliderTrack() {
     const minPercent = ((minVal - min) / (max - min)) * 100;
     const maxPercent = ((maxVal - min) / (max - min)) * 100;
     
-    track.style.left = minPercent + '%';
-    track.style.width = (maxPercent - minPercent) + '%';
+    track.style.setProperty('--range-left', minPercent + '%');
+    track.style.setProperty('--range-width', (maxPercent - minPercent) + '%');
 }
 
 function applyPriceFilter() {
