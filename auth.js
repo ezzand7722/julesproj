@@ -260,6 +260,7 @@ async function handleSignup(e) {
             email,
             password,
             options: {
+                emailRedirectTo: 'https://ezzand7722.github.io/julesproj/login.html',
                 data: { full_name: name, phone, user_type: userType }
             }
         });
