@@ -253,7 +253,7 @@ window.openProviderCategory = function (categoryId) {
             </button>
             <span class="category-badge">${category.icon} ${category.title}</span>
         </div>
-        <div class="services-grid-selection">
+        <div class="services-grid-selection" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;width:100%">
             ${filteredServices.length > 0 ? filteredServices.map(service => `
                 <label class="service-checkbox-item">
                     <input type="radio" name="specialty" value="${service.name_ar}" 
@@ -330,23 +330,26 @@ function injectDashboardCategoryStyles() {
             font-weight: 600;
         }
         .services-grid-selection { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); 
-            gap: 10px; 
+            display: grid !important; 
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)) !important; 
+            gap: 8px !important;
+            width: 100% !important;
         }
-        .service-checkbox-item { cursor: pointer; position: relative; }
-        .service-checkbox-item input { position: absolute; opacity: 0; }
+        .service-checkbox-item { cursor: pointer; position: relative; display: block !important; }
+        .service-checkbox-item input { position: absolute; opacity: 0; width: 0; height: 0; }
         .service-checkbox-item .service-content { 
-            display: flex; flex-direction: row; align-items: center; gap: 8px;
-            padding: 10px 14px; border: 2px solid #e5e7eb; border-radius: 10px; transition: all 0.2s;
-            background: #f9fafb; white-space: nowrap; overflow: hidden;
+            display: flex !important; flex-direction: row !important; align-items: center !important; gap: 6px !important;
+            padding: 8px 10px !important; border: 1.5px solid #e5e7eb !important; border-radius: 8px !important; 
+            transition: all 0.2s; background: #f9fafb !important; font-size: 0.82rem !important;
+            white-space: nowrap; overflow: hidden;
         }
-        .service-checkbox-item .service-content:hover { border-color: #0d9488; background: #f0fdfa; }
+        .service-checkbox-item .service-content:hover { border-color: #0d9488 !important; background: #f0fdfa !important; }
         .service-checkbox-item input:checked + .service-content {
-            border-color: var(--primary, #0d9488); background: #f0fdfa; color: var(--primary, #0d9488); font-weight: 600;
-            box-shadow: 0 0 0 1px var(--primary, #0d9488);
+            border-color: var(--primary, #0d9488) !important; background: #f0fdfa !important; color: var(--primary, #0d9488) !important; font-weight: 600 !important;
+            box-shadow: 0 0 0 1px var(--primary, #0d9488) !important;
         }
-        .service-checkbox-item .service-name { font-size: 0.85rem; overflow: hidden; text-overflow: ellipsis; }
+        .service-checkbox-item .service-icon { font-size: 1.1rem !important; flex-shrink: 0; }
+        .service-checkbox-item .service-name { font-size: 0.82rem !important; overflow: hidden; text-overflow: ellipsis; }
         .no-services-msg { color: #6b7280; font-style: italic; text-align: center; width: 100%; grid-column: 1 / -1; padding: 20px; }
     `;
     document.head.appendChild(style);
