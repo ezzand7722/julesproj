@@ -13,7 +13,7 @@ let notificationSubscription = null;
 document.addEventListener('DOMContentLoaded', async function () {
     const perfStart = performance.now();
     console.log('🚀 [PERF] Page load started');
-    
+
     // Register Service Worker for PWA (Only if on HTTP/HTTPS)
     if ('serviceWorker' in navigator && (window.location.protocol.indexOf('http') === 0)) {
         navigator.serviceWorker.register('sw.js')
@@ -25,13 +25,13 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     // Initialize the app - USE PREFETCHED DATA if available
     const sessionPromise = checkSession();
-    
+
     console.log('📡 [PERF] Checking for prefetched data...');
     const fetchStart = performance.now();
-    
+
     let services, providers;
     let usedCache = false;
-    
+
     // Check if data was prefetched in <head> (from localStorage cache)
     if (window.__PREFETCHED_SERVICES && window.__PREFETCHED_PROVIDERS) {
         // INSTANT - data already loaded from cache!
@@ -57,28 +57,29 @@ document.addEventListener('DOMContentLoaded', async function () {
             loadProvidersData()
         ]);
     }
-    
+
     console.log(`📡 [PERF] Data ready in ${(performance.now() - fetchStart).toFixed(0)}ms (services: ${services?.length || 0}, providers: ${providers?.length || 0})`);
-    
+
     // Render immediately
     const renderStart = performance.now();
-    renderServices(services);
+    renderCategories(); // CHANGED: Render categories first
+    // renderServices(services); // Service grid is hidden by default
     renderProviders(providers);
     console.log(`🎨 [PERF] Rendered in ${(performance.now() - renderStart).toFixed(0)}ms`);
-    
+
     // STALE-WHILE-REVALIDATE: If we used cache, update it in background
     if (usedCache && typeof window.__BACKGROUND_REFRESH === 'function') {
         console.log('🔄 [PERF] Starting background cache refresh...');
         window.__BACKGROUND_REFRESH().catch(err => console.warn('Background refresh failed:', err));
     }
-    
+
     // Non-critical content - load after main content
     await sessionPromise;
     console.log(`🔐 [PERF] Session checked in ${(performance.now() - perfStart).toFixed(0)}ms total`);
-    
+
     // Load below-fold content with intersection observer (lazy)
     setupLazyLoading();
-    
+
     setupEventListeners();
     setupAnimations();
     console.log(`✅ [PERF] Total load time: ${(performance.now() - perfStart).toFixed(0)}ms`);
@@ -92,7 +93,7 @@ async function checkSession() {
     console.log('🔗 Connected to:', SUPABASE_URL);
     try {
         let session;
-        
+
         // Use prefetched session if available (from parallel fetch in <head>)
         if (window.__PREFETCHED_SESSION !== undefined) {
             session = window.__PREFETCHED_SESSION;
@@ -102,7 +103,7 @@ async function checkSession() {
             const result = await supabaseClient.auth.getSession();
             session = result.data?.session;
         }
-        
+
         console.log('📦 Session result:', session ? 'LOGGED IN' : 'NOT LOGGED IN');
         if (session) {
             console.log('👤 User:', session.user.email);
@@ -242,6 +243,119 @@ function escapeHtml(text) {
 // Make escapeHtml global
 window.escapeHtml = escapeHtml;
 
+// ============ CATEGORY DEFINITIONS ============
+
+const SERVICE_CATEGORIES = [
+    {
+        id: 'home_maintenance',
+        title: 'صيانة منزلية',
+        icon: '🏠',
+        keywords: ['سباكة', 'كهرباء', 'نجارة', 'ألمنيوم', 'حدادة', 'بلاط', 'دهان', 'عزل', 'حشرات', 'عامة']
+    },
+    {
+        id: 'appliances',
+        title: 'أجهزة منزلية',
+        icon: '❄️',
+        keywords: ['تكييف', 'غسالات', 'ثلاجات', 'أفران', 'سخانات', 'طاقة شمسية']
+    },
+    {
+        id: 'cars',
+        title: 'سيارات',
+        icon: '🚗',
+        keywords: ['ميكانيك', 'كهرباء سيارات', 'تلميع', 'بنشر', 'سيارات']
+    },
+    {
+        id: 'education',
+        title: 'تعليم وتدريب',
+        icon: '🎓',
+        keywords: ['تعليم', 'دروس', 'تدريب', 'سباحة', 'قيادة']
+    },
+    {
+        id: 'personal',
+        title: 'عناية شخصية',
+        icon: '💇‍♂️',
+        keywords: ['حلاقة', 'تجميل', 'تمريض', 'علاج', 'رعاية']
+    },
+    {
+        id: 'technology',
+        title: 'تكنولوجيا',
+        icon: '💻',
+        keywords: ['كمبيوتر', 'جوالات', 'شبكات', 'ستلايت', 'كاميرات']
+    },
+    {
+        id: 'logistics',
+        title: 'نقل وتوصيل',
+        icon: '🚚',
+        keywords: ['نقل', 'توصيل']
+    },
+    {
+        id: 'other',
+        title: 'خدمات أخرى',
+        icon: '✨',
+        keywords: ['تنظيف', 'خياطة', 'أحذية', 'زراعة', 'تصوير', 'طبخ']
+    }
+];
+
+let activeCategory = null;
+
+// Render Categories Grid (Level 1)
+function renderCategories() {
+    const grid = document.getElementById('categoriesGrid');
+    if (!grid) return;
+
+    grid.innerHTML = SERVICE_CATEGORIES.map(category => `
+        <div class="category-card" onclick="openCategory('${category.id}')">
+            <div class="category-icon">${category.icon}</div>
+            <h3>${category.title}</h3>
+        </div>
+    `).join('');
+}
+
+// Open Specific Category (Level 2)
+function openCategory(categoryId) {
+    activeCategory = categoryId;
+    const category = SERVICE_CATEGORIES.find(c => c.id === categoryId);
+
+    // UI Updates
+    document.getElementById('categoriesSection').classList.add('hidden');
+    document.getElementById('servicesSection').classList.remove('hidden');
+    document.getElementById('currentCategoryTitle').textContent = category ? category.title : 'الخدمات';
+
+    // Filter Services
+    filterServicesByCategory(categoryId);
+
+    // Scroll to top of services
+    document.getElementById('servicesSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Back to Categories List
+function backToCategories() {
+    activeCategory = null;
+    document.getElementById('categoriesSection').classList.remove('hidden');
+    document.getElementById('servicesSection').classList.add('hidden');
+
+    // Clear services filter to show all (or none)
+    // renderServices([]); 
+}
+
+// Filter services based on category keywords
+function filterServicesByCategory(categoryId) {
+    const category = SERVICE_CATEGORIES.find(c => c.id === categoryId);
+    if (!category) return;
+
+    const filteredServices = allServices.filter(service => {
+        // Check if service name matches any keyword in category
+        return category.keywords.some(keyword => service.name_ar.includes(keyword));
+    });
+
+    renderServices(filteredServices);
+}
+
+// Make functions global
+window.renderCategories = renderCategories;
+window.openCategory = openCategory;
+window.backToCategories = backToCategories;
+
 // ============ FAST DATA FETCHERS (separate from rendering) ============
 
 // Fetch services data only (no DOM manipulation)
@@ -273,7 +387,7 @@ async function loadProvidersData(filter = {}) {
         if (filter.city) query = query.eq('city', filter.city);
         if (filter.neighborhood) query = query.eq('neighborhood', filter.neighborhood);
         if (filter.search) query = query.or(`name.ilike.%${filter.search}%,specialty.ilike.%${filter.search}%`);
-        
+
         const { data: providers, error } = await query
             .order('is_featured', { ascending: false })
             .order('rating', { ascending: false });
@@ -295,7 +409,7 @@ let servicesExpanded = false;
 function renderServices(services) {
     const grid = document.getElementById('servicesGrid');
     if (!grid) return;
-    
+
     if (!services || services.length === 0) {
         grid.innerHTML = '<p class="error">لا توجد خدمات</p>';
         // Hide toggle button if exists
@@ -303,9 +417,9 @@ function renderServices(services) {
         if (toggleBtn) toggleBtn.style.display = 'none';
         return;
     }
-    
+
     servicesExpanded = false;
-    
+
     grid.innerHTML = services.map((service, index) => `
         <div class="service-card fade-in-card ${index >= SERVICES_INITIAL_COUNT ? 'service-card-hidden' : ''}" data-service-id="${escapeHtml(service.id)}" data-service-index="${index}" onclick="filterByService('${escapeHtml(service.name_ar)}')">
             <div class="service-icon">${service.icon}</div>
@@ -314,7 +428,7 @@ function renderServices(services) {
             <span class="service-count">${service.provider_count || 0}+ مقدم خدمة</span>
         </div>
     `).join('');
-    
+
     // Show/hide the toggle button
     const toggleBtn = document.getElementById('servicesToggleBtn');
     if (toggleBtn) {
@@ -333,7 +447,7 @@ function toggleServicesView() {
     const grid = document.getElementById('servicesGrid');
     const toggleBtn = document.getElementById('servicesToggleBtn');
     if (!grid || !toggleBtn) return;
-    
+
     const hiddenCards = grid.querySelectorAll('.service-card[data-service-index]');
     hiddenCards.forEach(card => {
         const index = parseInt(card.dataset.serviceIndex);
@@ -347,7 +461,7 @@ function toggleServicesView() {
             }
         }
     });
-    
+
     if (servicesExpanded) {
         toggleBtn.innerHTML = `<span>عرض أقل</span><span class="toggle-arrow toggle-arrow-up">▲</span>`;
         toggleBtn.classList.add('expanded');
@@ -366,17 +480,17 @@ window.toggleServicesView = toggleServicesView;
 function renderProviders(providers) {
     const grid = document.getElementById('providersGrid');
     if (!grid) return;
-    
+
     if (!providers || providers.length === 0) {
         grid.innerHTML = '<p class="no-results">لا توجد نتائج. جرب بحث آخر.</p>';
         return;
     }
-    
+
     grid.innerHTML = providers.map(provider => {
         const minPrice = provider.price_range_min != null ? provider.price_range_min : null;
         const maxPrice = provider.price_range_max != null ? provider.price_range_max : null;
         const avgPrice = (minPrice != null && maxPrice != null) ? ((minPrice + maxPrice) / 2) : (minPrice || maxPrice || null);
-        
+
         return `
         <div class="provider-card fade-in-card" data-provider-id="${escapeHtml(provider.id)}" data-min-price="${minPrice || ''}" data-max-price="${maxPrice || ''}" data-avg-price="${avgPrice || ''}" onclick="window.location.href='provider-profile.html?id=${escapeHtml(provider.id)}'" style="cursor: pointer;">
             ${provider.is_featured ? '<div class="provider-badge">⭐ مميز</div>' : ''}
@@ -393,10 +507,10 @@ function renderProviders(providers) {
             </div>
             <div class="provider-price-range" data-price-range="${provider.id}" style="margin-top:6px; padding:5px 12px; background:#f0fdfa; border:1px solid #ccfbf1; border-radius:8px; text-align:center; font-size:0.85rem; font-weight:600; color:#0d9488;">
                 ${provider.price_range_min != null && provider.price_range_max != null
-                    ? `💰 ${provider.price_range_min} - ${provider.price_range_max} د.أ`
-                    : provider.price_range_min != null
-                        ? `💰 يبدأ من ${provider.price_range_min} د.أ`
-                        : `<span style="color:#9ca3af; font-weight:500;">💰 لا توجد أسعار محددة</span>`}
+                ? `💰 ${provider.price_range_min} - ${provider.price_range_max} د.أ`
+                : provider.price_range_min != null
+                    ? `💰 يبدأ من ${provider.price_range_min} د.أ`
+                    : `<span style="color:#9ca3af; font-weight:500;">💰 لا توجد أسعار محددة</span>`}
             </div>
             <div class="provider-offerings-preview" data-offerings="${provider.id}" style="display:none; margin-top:8px; display:flex; flex-wrap:wrap; gap:5px;"></div>
             <div class="provider-actions" style="display: flex; gap: 8px; margin-top: 10px;">
@@ -408,10 +522,10 @@ function renderProviders(providers) {
             </div>
         </div>
     `}).join('');
-    
+
     // Load offerings preview for all providers (batch)
     loadOfferingsForCards(providers.map(p => p.id));
-    
+
     // Re-apply animations
     applyScrollAnimations();
 }
@@ -428,19 +542,19 @@ const dataCache = {
 function setupLazyLoading() {
     // Start prefetching in background (don't block)
     prefetchBelowFoldData();
-    
+
     // Use Intersection Observer to render when visible
     const observerOptions = {
         root: null,
         rootMargin: '200px', // Start loading 200px before element comes into view
         threshold: 0
     };
-    
+
     const lazyObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 const target = entry.target;
-                
+
                 if (target.id === 'reviewsGrid' && !target.dataset.loaded) {
                     renderReviews(dataCache.reviews);
                     target.dataset.loaded = 'true';
@@ -449,11 +563,11 @@ function setupLazyLoading() {
             }
         });
     }, observerOptions);
-    
+
     // Observe sections that should lazy load
     const reviewsGrid = document.getElementById('reviewsGrid');
     if (reviewsGrid) lazyObserver.observe(reviewsGrid);
-    
+
     // Stats will be rendered by prefetchBelowFoldData when ready
 }
 
@@ -464,10 +578,10 @@ async function prefetchBelowFoldData() {
         fetchReviewsData(),
         fetchStatsData()
     ]);
-    
+
     dataCache.reviews = reviews;
     dataCache.stats = stats;
-    
+
     // Render stats immediately since they're above fold
     animateNumber(document.getElementById('providerCount'), stats.providerCount, '+');
     animateNumber(document.getElementById('bookingCount'), stats.bookingCount, '+');
@@ -510,12 +624,12 @@ async function fetchStatsData() {
 function renderReviews(reviews) {
     const grid = document.getElementById('reviewsGrid');
     if (!grid) return;
-    
+
     if (!reviews || reviews.length === 0) {
         grid.innerHTML = '<p>لا توجد آراء بعد</p>';
         return;
     }
-    
+
     grid.innerHTML = reviews.map(review => `
         <div class="testimonial-card">
             <div class="quote-icon">"</div>
@@ -641,13 +755,13 @@ async function loadOfferingsForCards(providerIds) {
             // Use data attributes instead of IDs to avoid duplicate ID warnings
             const card = document.querySelector(`[data-provider-id="${provId}"]`);
             if (!card) return;
-            
+
             const priceRangeEl = card.querySelector('[data-price-range]');
             const container = card.querySelector('[data-offerings]');
             const provOfferings = grouped[provId] || [];
 
             // Only override price if provider didn't manually set a range
-            const hasManualRange = priceRangeEl && 
+            const hasManualRange = priceRangeEl &&
                 !priceRangeEl.innerHTML.includes('لا توجد أسعار محددة');
 
             // Compute average price from offerings (for sorting/filtering)
@@ -731,25 +845,25 @@ function updatePriceBar() {
     const minInput = document.getElementById('minPriceInput');
     const maxInput = document.getElementById('maxPriceInput');
     const fill = document.getElementById('priceBarFill');
-    
+
     if (!minInput || !maxInput || !fill) return;
-    
+
     let minVal = parseInt(minInput.value) || 0;
     let maxVal = parseInt(maxInput.value) || 500;
-    
+
     // Clamp values
     minVal = Math.max(0, Math.min(500, minVal));
     maxVal = Math.max(0, Math.min(500, maxVal));
-    
+
     // Don't swap - just clamp max to be at least min
     if (maxVal < minVal) {
         maxVal = minVal;
         maxInput.value = maxVal;
     }
-    
+
     const minPercent = (minVal / 500) * 100;
     const maxPercent = (maxVal / 500) * 100;
-    
+
     // Bar fills from right (min) to left (max) for RTL layout
     fill.style.right = minPercent + '%';
     fill.style.width = (maxPercent - minPercent) + '%';
@@ -778,7 +892,7 @@ function applyPriceFilter() {
 }
 
 // Initialize price bar on page load
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     setTimeout(updatePriceBar, 100);
 });
 

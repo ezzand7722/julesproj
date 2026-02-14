@@ -14,94 +14,221 @@
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
     <link rel="apple-touch-icon" href="icons/icon.svg">
-    
+
     <!-- PRIORITY: Preconnect to ALL external domains FIRST -->
     <link rel="preconnect" href="https://rkhkvmcnjuwoxammhsqn.supabase.co">
     <link rel="dns-prefetch" href="https://rkhkvmcnjuwoxammhsqn.supabase.co">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
-    
+
     <!-- Preload critical resources (parallel download) -->
     <link rel="preload" href="style.css" as="style">
     <link rel="preload" href="premium-styles.css" as="style">
     <link rel="preload" href="script.js" as="script">
-    
+
     <!-- Prefetch pages user likely visits next -->
     <link rel="prefetch" href="login.html">
     <link rel="prefetch" href="provider-profile.html">
     <link rel="prefetch" href="booking.html">
-    
+
     <!-- 🚨 CRITICAL: Dark mode check FIRST - prevents white flash -->
     <script>
         // Apply dark mode IMMEDIATELY before any CSS loads
-        (function(){
+        (function () {
             var t = localStorage.getItem('theme');
-            if(t==='dark' || (!t && window.matchMedia('(prefers-color-scheme:dark)').matches)){
-                document.documentElement.setAttribute('data-theme','dark');
-                document.documentElement.style.backgroundColor='#111827';
-                document.documentElement.style.colorScheme='dark';
+            if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme:dark)').matches)) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.documentElement.style.backgroundColor = '#111827';
+                document.documentElement.style.colorScheme = 'dark';
             }
         })();
     </script>
-    
+
     <!-- Critical inline CSS for instant first paint - NO WHITE FLASH -->
     <style>
         /* Prevent white flash - set background on html immediately */
-        html{background:#88a5e0;min-height:100%}
-        html[data-theme="dark"]{background:#111827}
-        
-        :root{--primary:#0d9488;--white:#fff;--gray-100:#f3f4f6;--gray-800:#1f2937}
-        *{margin:0;padding:0;box-sizing:border-box}
-        body{font-family:system-ui,-apple-system,sans-serif;background:var(--gray-100);min-height:100vh}
-        
-        .navbar{background:var(--white);padding:12px 20px;position:fixed;top:0;left:0;right:0;z-index:1000;box-shadow:0 2px 10px rgba(0,0,0,0.1)}
-        .hero{min-height:100vh;background:linear-gradient(135deg,#0d9488 0%,#115e59 50%,#134e4a 100%);display:flex;align-items:center;justify-content:center}
-        
+        html {
+            background: #88a5e0;
+            min-height: 100%
+        }
+
+        html[data-theme="dark"] {
+            background: #111827
+        }
+
+        :root {
+            --primary: #0d9488;
+            --white: #fff;
+            --gray-100: #f3f4f6;
+            --gray-800: #1f2937
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: var(--gray-100);
+            min-height: 100vh
+        }
+
+        .navbar {
+            background: var(--white);
+            padding: 12px 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1)
+        }
+
+        .hero {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0d9488 0%, #115e59 50%, #134e4a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center
+        }
+
         /* Skeleton loading styles */
-        .skeleton{background:linear-gradient(90deg,#e2e8f0 25%,#f1f5f9 50%,#e2e8f0 75%);background-size:200% 100%;animation:sk 1s ease-in-out infinite;border-radius:8px}
-        @keyframes sk{0%{background-position:200% 0}100%{background-position:-200% 0}}
-        .skeleton-card{background:var(--white);border-radius:16px;padding:24px;box-shadow:0 4px 15px rgba(0,0,0,0.08);min-height:280px}
-        .skeleton-service{background:var(--white);border-radius:16px;padding:20px;min-height:160px;box-shadow:0 2px 8px rgba(0,0,0,0.05)}
-        .skeleton-avatar{width:80px;height:80px;border-radius:50%;margin:0 auto 16px}
-        .skeleton-icon{width:64px;height:64px;border-radius:16px;margin:0 auto 12px}
-        .skeleton-title{height:24px;width:70%;margin:0 auto 12px}
-        .skeleton-text{height:16px;margin-bottom:8px}
-        .skeleton-btn{height:44px;width:100%;margin-top:16px;border-radius:8px}
-        .hidden{display:none!important}
-        
+        .skeleton {
+            background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+            background-size: 200% 100%;
+            animation: sk 1s ease-in-out infinite;
+            border-radius: 8px
+        }
+
+        @keyframes sk {
+            0% {
+                background-position: 200% 0
+            }
+
+            100% {
+                background-position: -200% 0
+            }
+        }
+
+        .skeleton-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            min-height: 280px
+        }
+
+        .skeleton-service {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 20px;
+            min-height: 160px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05)
+        }
+
+        .skeleton-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 16px
+        }
+
+        .skeleton-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            margin: 0 auto 12px
+        }
+
+        .skeleton-title {
+            height: 24px;
+            width: 70%;
+            margin: 0 auto 12px
+        }
+
+        .skeleton-text {
+            height: 16px;
+            margin-bottom: 8px
+        }
+
+        .skeleton-btn {
+            height: 44px;
+            width: 100%;
+            margin-top: 16px;
+            border-radius: 8px
+        }
+
+        .hidden {
+            display: none !important
+        }
+
         /* Reserve space for grids - prevent layout shift */
-        .services-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:20px;min-height:200px}
-        .providers-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px;min-height:400px}
-        
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+            min-height: 200px
+        }
+
+        .providers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+            min-height: 400px
+        }
+
         /* Dark mode critical styles */
-        [data-theme="dark"]{--white:#1f2937;--gray-100:#111827;--gray-800:#f3f4f6}
-        [data-theme="dark"] body{background:#111827}
-        [data-theme="dark"] .navbar{background:rgba(17,24,39,0.98)}
-        [data-theme="dark"] .skeleton{background:linear-gradient(90deg,#374151 25%,#4b5563 50%,#374151 75%);background-size:200% 100%}
-        [data-theme="dark"] .skeleton-card,[data-theme="dark"] .skeleton-service{background:#1f2937}
-        [data-theme="dark"] .hero{background:linear-gradient(135deg,#030712 0%,#042f2e 50%,#115e59 100%)}
+        [data-theme="dark"] {
+            --white: #1f2937;
+            --gray-100: #111827;
+            --gray-800: #f3f4f6
+        }
+
+        [data-theme="dark"] body {
+            background: #111827
+        }
+
+        [data-theme="dark"] .navbar {
+            background: rgba(17, 24, 39, 0.98)
+        }
+
+        [data-theme="dark"] .skeleton {
+            background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+            background-size: 200% 100%
+        }
+
+        [data-theme="dark"] .skeleton-card,
+        [data-theme="dark"] .skeleton-service {
+            background: #1f2937
+        }
+
+        [data-theme="dark"] .hero {
+            background: linear-gradient(135deg, #030712 0%, #042f2e 50%, #115e59 100%)
+        }
     </style>
-    
+
     <!-- Supabase SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
+
     <!-- Supabase Singleton - MUST load after SDK -->
     <script src="supabaseClient.js"></script>
-    
+
     <!-- 🚀 STALE-WHILE-REVALIDATE: Instant render from cache, background refresh -->
     <script>
-        (function() {
+        (function () {
             const CACHE_KEY_SERVICES = 'khedmati_services_v2';
             const CACHE_KEY_PROVIDERS = 'khedmati_providers_v2';
             const CACHE_KEY_TIME = 'khedmati_cache_time_v2';
-            
+
             // STEP 1: Check localStorage for cached data (INSTANT)
             const perfStart = performance.now();
             try {
                 const cachedServices = localStorage.getItem(CACHE_KEY_SERVICES);
                 const cachedProviders = localStorage.getItem(CACHE_KEY_PROVIDERS);
-                
+
                 if (cachedServices && cachedProviders) {
                     // INSTANT: Parse and use cached data immediately
                     window.__PREFETCHED_SERVICES = JSON.parse(cachedServices);
@@ -112,13 +239,13 @@
             } catch (e) {
                 console.warn('Cache read error:', e);
             }
-            
+
             // STEP 2: Always fetch fresh data in background (Stale-While-Revalidate)
             // This runs after render, updating cache for next page load
-            window.__BACKGROUND_REFRESH = function() {
+            window.__BACKGROUND_REFRESH = function () {
                 const client = window.getSupabaseClient();
                 if (!client) return Promise.resolve();
-                
+
                 const fetchStart = performance.now();
                 return Promise.all([
                     client.from('service_stats').select('id, name_ar, icon, description_ar, provider_count').order('provider_count', { ascending: false }),
@@ -126,7 +253,7 @@
                 ]).then(([servicesRes, providersRes]) => {
                     const services = servicesRes.data || [];
                     const providers = providersRes.data || [];
-                    
+
                     // Update cache for next visit
                     try {
                         localStorage.setItem(CACHE_KEY_SERVICES, JSON.stringify(services));
@@ -135,12 +262,12 @@
                     } catch (e) {
                         console.warn('Cache write error:', e);
                     }
-                    
+
                     console.log(`🔄 [BACKGROUND] Cache updated in ${(performance.now() - fetchStart).toFixed(0)}ms`);
                     return { services, providers };
                 });
             };
-            
+
             // STEP 3: If no cache, we need to fetch BEFORE render (first visit)
             if (!window.__PREFETCHED_SERVICES || !window.__PREFETCHED_PROVIDERS) {
                 console.log('📡 [FIRST VISIT] No cache, fetching now...');
@@ -154,7 +281,7 @@
                         window.__PREFETCHED_SESSION = sessionRes.data?.session || null;
                         const services = servicesRes.data || [];
                         const providers = providersRes.data || [];
-                        
+
                         // Cache for next visit
                         try {
                             localStorage.setItem(CACHE_KEY_SERVICES, JSON.stringify(services));
@@ -163,7 +290,7 @@
                         } catch (e) {
                             console.warn('Cache write error:', e);
                         }
-                        
+
                         window.__PREFETCHED_SERVICES = services;
                         window.__PREFETCHED_PROVIDERS = providers;
                         console.log(`⚡ [PREFETCH] Data ready in ${(performance.now() - perfStart).toFixed(0)}ms`);
@@ -173,11 +300,14 @@
             }
         })();
     </script>
-    
+
     <!-- Non-blocking font loading -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap"></noscript>
-    
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" as="style"
+        onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap">
+    </noscript>
+
     <!-- CSS (already preloaded above) -->
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="premium-styles.css">
@@ -222,82 +352,86 @@
         <div class="hero-bg">
             <div class="hero-gradient"></div>
             <!-- Decorative hero illustrations -->
-            <svg class="hero-illustration hero-illustration--left" viewBox="0 0 400 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg class="hero-illustration hero-illustration--left" viewBox="0 0 400 500" fill="none"
+                xmlns="http://www.w3.org/2000/svg">
                 <!-- Worker with wrench -->
                 <g opacity="0.12" fill="white">
                     <!-- Person silhouette -->
-                    <circle cx="200" cy="80" r="45"/>
-                    <path d="M130 160 C130 130, 270 130, 270 160 L280 340 C280 360, 120 360, 120 340 Z"/>
-                    <rect x="120" y="340" width="40" height="120" rx="15"/>
-                    <rect x="240" y="340" width="40" height="120" rx="15"/>
+                    <circle cx="200" cy="80" r="45" />
+                    <path d="M130 160 C130 130, 270 130, 270 160 L280 340 C280 360, 120 360, 120 340 Z" />
+                    <rect x="120" y="340" width="40" height="120" rx="15" />
+                    <rect x="240" y="340" width="40" height="120" rx="15" />
                     <!-- Wrench in hand -->
-                    <rect x="275" y="180" width="120" height="18" rx="9" transform="rotate(-30 275 180)"/>
-                    <circle cx="370" cy="140" r="25" stroke="white" stroke-width="10" fill="none"/>
+                    <rect x="275" y="180" width="120" height="18" rx="9" transform="rotate(-30 275 180)" />
+                    <circle cx="370" cy="140" r="25" stroke="white" stroke-width="10" fill="none" />
                 </g>
                 <!-- Gear -->
                 <g opacity="0.08" transform="translate(50, 350)">
-                    <path d="M60 10 L70 0 L80 10 L85 0 L90 12 A40 40 0 0 1 90 88 L85 100 L80 90 L70 100 L60 90 L55 100 L50 88 A40 40 0 0 1 50 12 Z" fill="white"/>
-                    <circle cx="70" cy="50" r="18" fill="white" opacity="0.5"/>
+                    <path
+                        d="M60 10 L70 0 L80 10 L85 0 L90 12 A40 40 0 0 1 90 88 L85 100 L80 90 L70 100 L60 90 L55 100 L50 88 A40 40 0 0 1 50 12 Z"
+                        fill="white" />
+                    <circle cx="70" cy="50" r="18" fill="white" opacity="0.5" />
                 </g>
                 <!-- Light bulb -->
                 <g opacity="0.1" transform="translate(280, 380)">
-                    <path d="M40 0 A35 35 0 1 1 40 70 Q40 85, 30 90 L50 90 Q40 85, 40 70" fill="white"/>
-                    <rect x="28" y="90" width="24" height="8" rx="2" fill="white"/>
-                    <rect x="30" y="100" width="20" height="6" rx="2" fill="white"/>
+                    <path d="M40 0 A35 35 0 1 1 40 70 Q40 85, 30 90 L50 90 Q40 85, 40 70" fill="white" />
+                    <rect x="28" y="90" width="24" height="8" rx="2" fill="white" />
+                    <rect x="30" y="100" width="20" height="6" rx="2" fill="white" />
                 </g>
             </svg>
-            <svg class="hero-illustration hero-illustration--right" viewBox="0 0 400 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg class="hero-illustration hero-illustration--right" viewBox="0 0 400 500" fill="none"
+                xmlns="http://www.w3.org/2000/svg">
                 <!-- City skyline -->
                 <g opacity="0.08" fill="white">
-                    <rect x="20" y="250" width="60" height="250"/>
-                    <rect x="25" y="270" width="12" height="16" rx="2" opacity="0.5"/>
-                    <rect x="43" y="270" width="12" height="16" rx="2" opacity="0.5"/>
-                    <rect x="61" y="270" width="12" height="16" rx="2" opacity="0.5"/>
-                    <rect x="25" y="300" width="12" height="16" rx="2" opacity="0.5"/>
-                    <rect x="43" y="300" width="12" height="16" rx="2" opacity="0.5"/>
-                    <rect x="61" y="300" width="12" height="16" rx="2" opacity="0.5"/>
-                    <rect x="100" y="180" width="80" height="320"/>
-                    <rect x="110" y="200" width="14" height="18" rx="2" opacity="0.5"/>
-                    <rect x="130" y="200" width="14" height="18" rx="2" opacity="0.5"/>
-                    <rect x="150" y="200" width="14" height="18" rx="2" opacity="0.5"/>
-                    <rect x="110" y="235" width="14" height="18" rx="2" opacity="0.5"/>
-                    <rect x="130" y="235" width="14" height="18" rx="2" opacity="0.5"/>
-                    <rect x="150" y="235" width="14" height="18" rx="2" opacity="0.5"/>
-                    <rect x="110" y="270" width="14" height="18" rx="2" opacity="0.5"/>
-                    <rect x="130" y="270" width="14" height="18" rx="2" opacity="0.5"/>
-                    <rect x="150" y="270" width="14" height="18" rx="2" opacity="0.5"/>
+                    <rect x="20" y="250" width="60" height="250" />
+                    <rect x="25" y="270" width="12" height="16" rx="2" opacity="0.5" />
+                    <rect x="43" y="270" width="12" height="16" rx="2" opacity="0.5" />
+                    <rect x="61" y="270" width="12" height="16" rx="2" opacity="0.5" />
+                    <rect x="25" y="300" width="12" height="16" rx="2" opacity="0.5" />
+                    <rect x="43" y="300" width="12" height="16" rx="2" opacity="0.5" />
+                    <rect x="61" y="300" width="12" height="16" rx="2" opacity="0.5" />
+                    <rect x="100" y="180" width="80" height="320" />
+                    <rect x="110" y="200" width="14" height="18" rx="2" opacity="0.5" />
+                    <rect x="130" y="200" width="14" height="18" rx="2" opacity="0.5" />
+                    <rect x="150" y="200" width="14" height="18" rx="2" opacity="0.5" />
+                    <rect x="110" y="235" width="14" height="18" rx="2" opacity="0.5" />
+                    <rect x="130" y="235" width="14" height="18" rx="2" opacity="0.5" />
+                    <rect x="150" y="235" width="14" height="18" rx="2" opacity="0.5" />
+                    <rect x="110" y="270" width="14" height="18" rx="2" opacity="0.5" />
+                    <rect x="130" y="270" width="14" height="18" rx="2" opacity="0.5" />
+                    <rect x="150" y="270" width="14" height="18" rx="2" opacity="0.5" />
                     <!-- Tall tower -->
-                    <rect x="200" y="100" width="50" height="400"/>
-                    <polygon points="200,100 225,50 250,100"/>
-                    <rect x="210" y="130" width="10" height="14" rx="2" opacity="0.5"/>
-                    <rect x="230" y="130" width="10" height="14" rx="2" opacity="0.5"/>
-                    <rect x="210" y="160" width="10" height="14" rx="2" opacity="0.5"/>
-                    <rect x="230" y="160" width="10" height="14" rx="2" opacity="0.5"/>
-                    <rect x="210" y="190" width="10" height="14" rx="2" opacity="0.5"/>
-                    <rect x="230" y="190" width="10" height="14" rx="2" opacity="0.5"/>
+                    <rect x="200" y="100" width="50" height="400" />
+                    <polygon points="200,100 225,50 250,100" />
+                    <rect x="210" y="130" width="10" height="14" rx="2" opacity="0.5" />
+                    <rect x="230" y="130" width="10" height="14" rx="2" opacity="0.5" />
+                    <rect x="210" y="160" width="10" height="14" rx="2" opacity="0.5" />
+                    <rect x="230" y="160" width="10" height="14" rx="2" opacity="0.5" />
+                    <rect x="210" y="190" width="10" height="14" rx="2" opacity="0.5" />
+                    <rect x="230" y="190" width="10" height="14" rx="2" opacity="0.5" />
                     <!-- Small building -->
-                    <rect x="270" y="320" width="55" height="180"/>
-                    <rect x="280" y="340" width="15" height="20" rx="2" opacity="0.5"/>
-                    <rect x="300" y="340" width="15" height="20" rx="2" opacity="0.5"/>
-                    <rect x="280" y="375" width="15" height="20" rx="2" opacity="0.5"/>
-                    <rect x="300" y="375" width="15" height="20" rx="2" opacity="0.5"/>
+                    <rect x="270" y="320" width="55" height="180" />
+                    <rect x="280" y="340" width="15" height="20" rx="2" opacity="0.5" />
+                    <rect x="300" y="340" width="15" height="20" rx="2" opacity="0.5" />
+                    <rect x="280" y="375" width="15" height="20" rx="2" opacity="0.5" />
+                    <rect x="300" y="375" width="15" height="20" rx="2" opacity="0.5" />
                     <!-- Dome (mosque) -->
-                    <rect x="340" y="350" width="50" height="150"/>
+                    <rect x="340" y="350" width="50" height="150" />
                     <path d="M340 350 Q365 290 390 350" />
-                    <rect x="395" y="280" width="8" height="110" rx="4"/>
-                    <circle cx="399" cy="275" r="8"/>
+                    <rect x="395" y="280" width="8" height="110" rx="4" />
+                    <circle cx="399" cy="275" r="8" />
                 </g>
                 <!-- Paintbrush -->
                 <g opacity="0.1" transform="translate(30, 60)">
-                    <rect x="0" y="60" width="14" height="80" rx="3" fill="white" transform="rotate(-15 7 60)"/>
-                    <path d="M-5 60 Q7 30 20 60" fill="white" transform="rotate(-15 7 60)"/>
+                    <rect x="0" y="60" width="14" height="80" rx="3" fill="white" transform="rotate(-15 7 60)" />
+                    <path d="M-5 60 Q7 30 20 60" fill="white" transform="rotate(-15 7 60)" />
                 </g>
                 <!-- Snowflake (AC) -->
                 <g opacity="0.08" transform="translate(320, 100)">
-                    <line x1="30" y1="0" x2="30" y2="60" stroke="white" stroke-width="4"/>
-                    <line x1="0" y1="30" x2="60" y2="30" stroke="white" stroke-width="4"/>
-                    <line x1="8" y1="8" x2="52" y2="52" stroke="white" stroke-width="3"/>
-                    <line x1="52" y1="8" x2="8" y2="52" stroke="white" stroke-width="3"/>
+                    <line x1="30" y1="0" x2="30" y2="60" stroke="white" stroke-width="4" />
+                    <line x1="0" y1="30" x2="60" y2="30" stroke="white" stroke-width="4" />
+                    <line x1="8" y1="8" x2="52" y2="52" stroke="white" stroke-width="3" />
+                    <line x1="52" y1="8" x2="8" y2="52" stroke="white" stroke-width="3" />
                 </g>
             </svg>
         </div>
@@ -390,7 +524,8 @@
                     <span class="mobile-service-icon">🚰</span>
                     <span class="mobile-service-label">سباكة</span>
                 </a>
-                <a href="javascript:void(0)" onclick="filterByService('')" class="mobile-service-item mobile-service-all">
+                <a href="javascript:void(0)" onclick="filterByService('')"
+                    class="mobile-service-item mobile-service-all">
                     <span class="mobile-service-icon">📋</span>
                     <span class="mobile-service-label">الكل</span>
                 </a>
@@ -466,64 +601,164 @@
 
     <section id="services" class="services">
         <div class="container">
-            <div class="section-header">
-                <span class="section-badge">خدماتنا</span>
-                <h2>استكشف فئات الخدمات</h2>
-                <p>نغطي جميع احتياجاتك من الخدمات المنزلية والشخصية</p>
-            </div>
-            <div class="services-grid" id="servicesGrid">
-                <!-- Skeleton Loading for Services -->
-                <div class="skeleton-service">
-                    <div class="skeleton skeleton-icon"></div>
-                    <div class="skeleton skeleton-text"></div>
+
+            <!-- SECTION 1: CATEGORIES VIEW -->
+            <div id="categoriesSection">
+                <div class="section-header">
+                    <span class="section-badge">تصفح حسب القسم</span>
+                    <h2>ما هي الخدمة التي تبحث عنها؟</h2>
+                    <p>اختر القسم المناسب لاستعراض الخدمات المتاحة</p>
                 </div>
-                <div class="skeleton-service">
-                    <div class="skeleton skeleton-icon"></div>
-                    <div class="skeleton skeleton-text"></div>
-                </div>
-                <div class="skeleton-service">
-                    <div class="skeleton skeleton-icon"></div>
-                    <div class="skeleton skeleton-text"></div>
-                </div>
-                <div class="skeleton-service">
-                    <div class="skeleton skeleton-icon"></div>
-                    <div class="skeleton skeleton-text"></div>
-                </div>
-                <div class="skeleton-service">
-                    <div class="skeleton skeleton-icon"></div>
-                    <div class="skeleton skeleton-text"></div>
-                </div>
-                <div class="skeleton-service">
-                    <div class="skeleton skeleton-icon"></div>
-                    <div class="skeleton skeleton-text"></div>
+
+                <div class="categories-grid" id="categoriesGrid">
+                    <!-- Categories will be injected here by script.js -->
                 </div>
             </div>
-            <!-- Show More / Show Less Toggle -->
-            <button id="servicesToggleBtn" class="services-toggle-btn" onclick="toggleServicesView()" style="display:none;">
-                <span>عرض جميع الخدمات</span>
-                <span class="toggle-arrow">▼</span>
-            </button>
+
+            <!-- SECTION 2: SUB-SERVICES VIEW (Hidden by default) -->
+            <div id="servicesSection" class="hidden">
+                <div class="section-header">
+                    <button onclick="backToCategories()" class="back-link">
+                        <span style="font-size: 1.2rem;">&rarr;</span> العودة للأقسام
+                    </button>
+                    <span class="section-badge">الخدمات المتاحة</span>
+                    <h2 id="currentCategoryTitle">الخدمات</h2>
+                </div>
+
+                <div class="services-grid" id="servicesGrid">
+                    <!-- Services will be injected here -->
+                    <!-- Skeleton Loading for Services -->
+                    <div class="skeleton-service">
+                        <div class="skeleton skeleton-icon"></div>
+                        <div class="skeleton skeleton-text"></div>
+                    </div>
+                </div>
+
+                <!-- Show More / Show Less Toggle (Inside Services View) -->
+                <button id="servicesToggleBtn" class="services-toggle-btn" onclick="toggleServicesView()"
+                    style="display:none;">
+                    <span>عرض جميع الخدمات</span>
+                    <span class="toggle-arrow">▼</span>
+                </button>
+            </div>
+
         </div>
     </section>
 
     <style>
+        /* Category Grid Styles */
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .category-card {
+            background: var(--white);
+            border: 1px solid var(--gray-200, #e5e7eb);
+            border-radius: 16px;
+            padding: 25px 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            height: 100%;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 15px -3px rgba(13, 148, 136, 0.15);
+        }
+
+        .category-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--gray-100);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 5px;
+            transition: transform 0.3s ease;
+        }
+
+        .category-card:hover .category-icon {
+            transform: scale(1.1);
+            background: #f0fdfa;
+            /* teal-50 */
+        }
+
+        .category-card h3 {
+            font-size: 1.1rem;
+            color: var(--gray-800);
+            font-weight: 600;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-family: inherit;
+            padding: 0;
+        }
+
+        .back-link:hover {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
+
+        /* Dark mode support */
+        [data-theme="dark"] .category-card {
+            background: #1f2937;
+            border-color: #374151;
+        }
+
+        [data-theme="dark"] .category-card h3 {
+            color: #f3f4f6;
+        }
+
+        [data-theme="dark"] .category-icon {
+            background: #374151;
+        }
+
+        [data-theme="dark"] .category-card:hover .category-icon {
+            background: #115e59;
+        }
+
         /* Services Show More / Show Less */
         .service-card-hidden {
             display: none !important;
         }
+
         .service-card-reveal {
             animation: serviceReveal 0.4s ease-out forwards;
         }
+
         @keyframes serviceReveal {
             from {
                 opacity: 0;
                 transform: translateY(20px) scale(0.95);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0) scale(1);
             }
         }
+
         .services-toggle-btn {
             display: flex;
             align-items: center;
@@ -542,38 +777,46 @@
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(13, 148, 136, 0.3);
         }
+
         .services-toggle-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(13, 148, 136, 0.4);
             background: linear-gradient(135deg, #0f766e, #115e59);
         }
+
         .services-toggle-btn:active {
             transform: translateY(0);
         }
+
         .services-toggle-btn.expanded {
             background: linear-gradient(135deg, #6b7280, #4b5563);
             box-shadow: 0 4px 15px rgba(107, 114, 128, 0.3);
         }
+
         .services-toggle-btn.expanded:hover {
             box-shadow: 0 8px 25px rgba(107, 114, 128, 0.4);
             background: linear-gradient(135deg, #4b5563, #374151);
         }
+
         .toggle-arrow {
             font-size: 0.8rem;
             transition: transform 0.3s ease;
         }
+
         .toggle-arrow-up {
             transform: rotate(0deg);
         }
-        
+
         /* Dark mode support */
         [data-theme="dark"] .services-toggle-btn {
             background: linear-gradient(135deg, #115e59, #134e4a);
             box-shadow: 0 4px 15px rgba(13, 148, 136, 0.2);
         }
+
         [data-theme="dark"] .services-toggle-btn:hover {
             box-shadow: 0 8px 25px rgba(13, 148, 136, 0.3);
         }
+
         [data-theme="dark"] .services-toggle-btn.expanded {
             background: linear-gradient(135deg, #4b5563, #374151);
         }
@@ -621,15 +864,19 @@
             <!-- Sort & Filter Bar -->
             <div class="providers-filter-bar" id="providersFilterBar">
                 <span class="filter-label">ترتيب حسب:</span>
-                <button class="filter-btn active" onclick="sortProviders('rating')" id="sortRating">⭐ الأعلى تقييماً</button>
-                <button class="filter-btn" onclick="sortProviders('price_low')" id="sortPriceLow">💰 الأقل سعراً</button>
-                <button class="filter-btn" onclick="sortProviders('price_high')" id="sortPriceHigh">💎 الأعلى سعراً</button>
+                <button class="filter-btn active" onclick="sortProviders('rating')" id="sortRating">⭐ الأعلى
+                    تقييماً</button>
+                <button class="filter-btn" onclick="sortProviders('price_low')" id="sortPriceLow">💰 الأقل
+                    سعراً</button>
+                <button class="filter-btn" onclick="sortProviders('price_high')" id="sortPriceHigh">💎 الأعلى
+                    سعراً</button>
                 <div class="filter-separator"></div>
                 <label class="filter-range-label">نطاق السعر:</label>
                 <div class="price-range-simple">
                     <div class="price-field">
                         <span class="price-label">إلى</span>
-                        <input type="number" id="maxPriceInput" class="price-input" min="0" max="500" value="500" oninput="updatePriceBar()">
+                        <input type="number" id="maxPriceInput" class="price-input" min="0" max="500" value="500"
+                            oninput="updatePriceBar()">
                     </div>
                     <div class="price-bar-container">
                         <div class="price-bar-track"></div>
@@ -637,7 +884,8 @@
                     </div>
                     <div class="price-field">
                         <span class="price-label">من</span>
-                        <input type="number" id="minPriceInput" class="price-input" min="0" max="500" value="0" oninput="updatePriceBar()">
+                        <input type="number" id="minPriceInput" class="price-input" min="0" max="500" value="0"
+                            oninput="updatePriceBar()">
                     </div>
                     <span class="price-unit">د.أ</span>
                 </div>
@@ -801,54 +1049,87 @@
             </div>
         </div>
     </div>
-    <script src="script.js"></script>
+    <script src="script.js?v=3"></script>
 
     <!-- Fixed Decorative SVG Elements -->
     <div class="page-decorations" aria-hidden="true">
         <!-- Floating blobs -->
         <svg class="deco-blob deco-blob--1" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-            <path fill="#0d9488" d="M44.7,-76.4C58.8,-69.2,71.8,-59.1,79.6,-45.8C87.4,-32.5,90,-16.3,88.4,-0.9C86.8,14.4,81,28.8,72.6,41.1C64.2,53.4,53.2,63.6,40.4,71.2C27.6,78.8,13.8,83.8,-0.7,85C-15.2,86.2,-30.4,83.6,-43.4,76.4C-56.3,69.2,-67.1,57.4,-74.2,43.8C-81.4,30.3,-85,15.1,-84.3,0.4C-83.6,-14.3,-78.6,-28.6,-70.4,-40.5C-62.2,-52.4,-50.8,-61.9,-38.1,-70C-25.4,-78.1,-12.7,-84.8,1.4,-87.2C15.5,-89.6,30.6,-83.6,44.7,-76.4Z" transform="translate(100 100)"/>
+            <path fill="#0d9488"
+                d="M44.7,-76.4C58.8,-69.2,71.8,-59.1,79.6,-45.8C87.4,-32.5,90,-16.3,88.4,-0.9C86.8,14.4,81,28.8,72.6,41.1C64.2,53.4,53.2,63.6,40.4,71.2C27.6,78.8,13.8,83.8,-0.7,85C-15.2,86.2,-30.4,83.6,-43.4,76.4C-56.3,69.2,-67.1,57.4,-74.2,43.8C-81.4,30.3,-85,15.1,-84.3,0.4C-83.6,-14.3,-78.6,-28.6,-70.4,-40.5C-62.2,-52.4,-50.8,-61.9,-38.1,-70C-25.4,-78.1,-12.7,-84.8,1.4,-87.2C15.5,-89.6,30.6,-83.6,44.7,-76.4Z"
+                transform="translate(100 100)" />
         </svg>
         <svg class="deco-blob deco-blob--2" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-            <path fill="#a78bfa" d="M39.5,-65.3C50.9,-60.5,59.5,-49.5,67.1,-37.3C74.7,-25.1,81.3,-12.6,81.2,-0.1C81.1,12.5,74.3,24.9,65.8,35.1C57.3,45.3,47.2,53.2,35.9,60.1C24.6,66.9,12.3,72.6,-0.8,74C-13.8,75.4,-27.7,72.5,-39.8,66.1C-52,59.8,-62.5,50,-69.1,37.9C-75.7,25.8,-78.5,12.9,-77.6,0.5C-76.7,-11.9,-72.2,-23.8,-65,-34C-57.8,-44.2,-48,-52.8,-36.8,-57.7C-25.7,-62.7,-12.8,-64.1,0.8,-65.5C14.5,-66.8,28.1,-70.1,39.5,-65.3Z" transform="translate(100 100)"/>
+            <path fill="#a78bfa"
+                d="M39.5,-65.3C50.9,-60.5,59.5,-49.5,67.1,-37.3C74.7,-25.1,81.3,-12.6,81.2,-0.1C81.1,12.5,74.3,24.9,65.8,35.1C57.3,45.3,47.2,53.2,35.9,60.1C24.6,66.9,12.3,72.6,-0.8,74C-13.8,75.4,-27.7,72.5,-39.8,66.1C-52,59.8,-62.5,50,-69.1,37.9C-75.7,25.8,-78.5,12.9,-77.6,0.5C-76.7,-11.9,-72.2,-23.8,-65,-34C-57.8,-44.2,-48,-52.8,-36.8,-57.7C-25.7,-62.7,-12.8,-64.1,0.8,-65.5C14.5,-66.8,28.1,-70.1,39.5,-65.3Z"
+                transform="translate(100 100)" />
         </svg>
         <svg class="deco-blob deco-blob--3" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-            <path fill="#f97316" d="M43.3,-73.5C55.6,-68.3,64.8,-55.6,72,-42.2C79.3,-28.7,84.6,-14.4,83.7,-0.5C82.9,13.3,75.9,26.7,67.5,38.2C59.1,49.8,49.3,59.5,37.6,66.1C25.9,72.7,12.9,76.2,-0.3,76.7C-13.5,77.2,-27,74.8,-38.7,68.3C-50.4,61.8,-60.3,51.2,-67.5,38.8C-74.7,26.4,-79.2,12.2,-79.5,-0.2C-79.8,-12.5,-75.8,-25,-68.5,-35.4C-61.3,-45.8,-50.7,-54,-39,-59.6C-27.3,-65.2,-13.6,-68.2,1.1,-70C15.9,-71.8,31.1,-78.7,43.3,-73.5Z" transform="translate(100 100)"/>
+            <path fill="#f97316"
+                d="M43.3,-73.5C55.6,-68.3,64.8,-55.6,72,-42.2C79.3,-28.7,84.6,-14.4,83.7,-0.5C82.9,13.3,75.9,26.7,67.5,38.2C59.1,49.8,49.3,59.5,37.6,66.1C25.9,72.7,12.9,76.2,-0.3,76.7C-13.5,77.2,-27,74.8,-38.7,68.3C-50.4,61.8,-60.3,51.2,-67.5,38.8C-74.7,26.4,-79.2,12.2,-79.5,-0.2C-79.8,-12.5,-75.8,-25,-68.5,-35.4C-61.3,-45.8,-50.7,-54,-39,-59.6C-27.3,-65.2,-13.6,-68.2,1.1,-70C15.9,-71.8,31.1,-78.7,43.3,-73.5Z"
+                transform="translate(100 100)" />
         </svg>
         <svg class="deco-blob deco-blob--4" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-            <path fill="#22c55e" d="M41.5,-69.5C53.9,-64.7,64.2,-53.6,71.4,-40.8C78.6,-28,82.7,-14,82,-0.4C81.3,13.2,75.7,26.4,67.8,37.5C59.9,48.5,49.6,57.4,37.8,63.6C26,69.7,13,73.2,-0.5,74C-14,74.8,-28,73.1,-39.5,66.7C-51.1,60.3,-60.1,49.3,-67,36.8C-73.8,24.3,-78.5,12.2,-78.5,0C-78.4,-12.2,-73.6,-24.3,-66.2,-34.5C-58.8,-44.7,-48.8,-52.8,-37.5,-58.3C-26.2,-63.8,-13.1,-66.6,0.8,-68C14.8,-69.3,29.1,-74.3,41.5,-69.5Z" transform="translate(100 100)"/>
+            <path fill="#22c55e"
+                d="M41.5,-69.5C53.9,-64.7,64.2,-53.6,71.4,-40.8C78.6,-28,82.7,-14,82,-0.4C81.3,13.2,75.7,26.4,67.8,37.5C59.9,48.5,49.6,57.4,37.8,63.6C26,69.7,13,73.2,-0.5,74C-14,74.8,-28,73.1,-39.5,66.7C-51.1,60.3,-60.1,49.3,-67,36.8C-73.8,24.3,-78.5,12.2,-78.5,0C-78.4,-12.2,-73.6,-24.3,-66.2,-34.5C-58.8,-44.7,-48.8,-52.8,-37.5,-58.3C-26.2,-63.8,-13.1,-66.6,0.8,-68C14.8,-69.3,29.1,-74.3,41.5,-69.5Z"
+                transform="translate(100 100)" />
         </svg>
         <svg class="deco-blob deco-blob--5" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-            <path fill="#0d9488" d="M38.2,-63.5C49.3,-58.8,57.6,-47.6,64.4,-35.3C71.2,-23,76.5,-9.5,75.4,3.1C74.3,15.6,66.8,27.3,57.9,37C49,46.7,38.7,54.5,27.1,59.5C15.6,64.5,2.8,66.7,-10.4,66.3C-23.7,65.9,-37.4,62.9,-47.7,55.5C-58.1,48.1,-65.1,36.3,-69.7,23.3C-74.3,10.2,-76.4,-4.1,-73.3,-17.1C-70.2,-30.1,-61.8,-41.7,-50.7,-46.5C-39.7,-51.3,-25.9,-49.2,-13.9,-53.5C-1.9,-57.9,8.4,-68.6,19,-69.6C29.7,-70.6,40.7,-61.9,38.2,-63.5Z" transform="translate(100 100)"/>
+            <path fill="#0d9488"
+                d="M38.2,-63.5C49.3,-58.8,57.6,-47.6,64.4,-35.3C71.2,-23,76.5,-9.5,75.4,3.1C74.3,15.6,66.8,27.3,57.9,37C49,46.7,38.7,54.5,27.1,59.5C15.6,64.5,2.8,66.7,-10.4,66.3C-23.7,65.9,-37.4,62.9,-47.7,55.5C-58.1,48.1,-65.1,36.3,-69.7,23.3C-74.3,10.2,-76.4,-4.1,-73.3,-17.1C-70.2,-30.1,-61.8,-41.7,-50.7,-46.5C-39.7,-51.3,-25.9,-49.2,-13.9,-53.5C-1.9,-57.9,8.4,-68.6,19,-69.6C29.7,-70.6,40.7,-61.9,38.2,-63.5Z"
+                transform="translate(100 100)" />
         </svg>
 
         <!-- Dot patterns -->
         <svg class="deco-dots deco-dots--1" width="120" height="120" viewBox="0 0 120 120">
             <g fill="#0d9488">
-                <circle cx="10" cy="10" r="3"/><circle cx="30" cy="10" r="3"/><circle cx="50" cy="10" r="3"/><circle cx="70" cy="10" r="3"/>
-                <circle cx="10" cy="30" r="3"/><circle cx="30" cy="30" r="3"/><circle cx="50" cy="30" r="3"/><circle cx="70" cy="30" r="3"/>
-                <circle cx="10" cy="50" r="3"/><circle cx="30" cy="50" r="3"/><circle cx="50" cy="50" r="3"/><circle cx="70" cy="50" r="3"/>
-                <circle cx="10" cy="70" r="3"/><circle cx="30" cy="70" r="3"/><circle cx="50" cy="70" r="3"/><circle cx="70" cy="70" r="3"/>
-                <circle cx="10" cy="90" r="3"/><circle cx="30" cy="90" r="3"/><circle cx="50" cy="90" r="3"/><circle cx="70" cy="90" r="3"/>
+                <circle cx="10" cy="10" r="3" />
+                <circle cx="30" cy="10" r="3" />
+                <circle cx="50" cy="10" r="3" />
+                <circle cx="70" cy="10" r="3" />
+                <circle cx="10" cy="30" r="3" />
+                <circle cx="30" cy="30" r="3" />
+                <circle cx="50" cy="30" r="3" />
+                <circle cx="70" cy="30" r="3" />
+                <circle cx="10" cy="50" r="3" />
+                <circle cx="30" cy="50" r="3" />
+                <circle cx="50" cy="50" r="3" />
+                <circle cx="70" cy="50" r="3" />
+                <circle cx="10" cy="70" r="3" />
+                <circle cx="30" cy="70" r="3" />
+                <circle cx="50" cy="70" r="3" />
+                <circle cx="70" cy="70" r="3" />
+                <circle cx="10" cy="90" r="3" />
+                <circle cx="30" cy="90" r="3" />
+                <circle cx="50" cy="90" r="3" />
+                <circle cx="70" cy="90" r="3" />
             </g>
         </svg>
         <svg class="deco-dots deco-dots--2" width="100" height="100" viewBox="0 0 100 100">
             <g fill="#a78bfa">
-                <circle cx="10" cy="10" r="2.5"/><circle cx="30" cy="10" r="2.5"/><circle cx="50" cy="10" r="2.5"/>
-                <circle cx="10" cy="30" r="2.5"/><circle cx="30" cy="30" r="2.5"/><circle cx="50" cy="30" r="2.5"/>
-                <circle cx="10" cy="50" r="2.5"/><circle cx="30" cy="50" r="2.5"/><circle cx="50" cy="50" r="2.5"/>
-                <circle cx="10" cy="70" r="2.5"/><circle cx="30" cy="70" r="2.5"/><circle cx="50" cy="70" r="2.5"/>
+                <circle cx="10" cy="10" r="2.5" />
+                <circle cx="30" cy="10" r="2.5" />
+                <circle cx="50" cy="10" r="2.5" />
+                <circle cx="10" cy="30" r="2.5" />
+                <circle cx="30" cy="30" r="2.5" />
+                <circle cx="50" cy="30" r="2.5" />
+                <circle cx="10" cy="50" r="2.5" />
+                <circle cx="30" cy="50" r="2.5" />
+                <circle cx="50" cy="50" r="2.5" />
+                <circle cx="10" cy="70" r="2.5" />
+                <circle cx="30" cy="70" r="2.5" />
+                <circle cx="50" cy="70" r="2.5" />
             </g>
         </svg>
 
         <!-- Spinning rings -->
         <svg class="deco-ring deco-ring--1" viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="40" fill="none" stroke="#0d9488" stroke-width="2" stroke-dasharray="12 8"/>
-            <circle cx="50" cy="50" r="25" fill="none" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="6 10"/>
+            <circle cx="50" cy="50" r="40" fill="none" stroke="#0d9488" stroke-width="2" stroke-dasharray="12 8" />
+            <circle cx="50" cy="50" r="25" fill="none" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="6 10" />
         </svg>
         <svg class="deco-ring deco-ring--2" viewBox="0 0 80 80">
-            <circle cx="40" cy="40" r="30" fill="none" stroke="#f97316" stroke-width="2" stroke-dasharray="8 12"/>
-            <circle cx="40" cy="40" r="18" fill="none" stroke="#22c55e" stroke-width="1.5" stroke-dasharray="4 8"/>
+            <circle cx="40" cy="40" r="30" fill="none" stroke="#f97316" stroke-width="2" stroke-dasharray="8 12" />
+            <circle cx="40" cy="40" r="18" fill="none" stroke="#22c55e" stroke-width="1.5" stroke-dasharray="4 8" />
         </svg>
     </div>
     <script src="darkmode.js"></script>

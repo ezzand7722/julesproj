@@ -1,5 +1,5 @@
 // Khedmati Service Worker for PWA
-const CACHE_NAME = 'khedmati-v2';
+const CACHE_NAME = 'khedmati-v3';
 const urlsToCache = [
     '/',
     '/index.html',
