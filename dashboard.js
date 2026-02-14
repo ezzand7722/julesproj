@@ -253,7 +253,7 @@ window.openProviderCategory = function (categoryId) {
             </button>
             <span class="category-badge">${category.icon} ${category.title}</span>
         </div>
-        <div class="services-grid-selection" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%">
+        <div class="services-grid-selection" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;width:100%">
             ${filteredServices.length > 0 ? filteredServices.map(service => `
                 <label class="service-checkbox-item">
                     <input type="radio" name="specialty" value="${service.name_ar}" 
@@ -331,7 +331,7 @@ function injectDashboardCategoryStyles() {
         }
         .services-grid-selection { 
             display: grid !important; 
-            grid-template-columns: 1fr 1fr !important; 
+            grid-template-columns: 1fr 1fr 1fr !important; 
             gap: 8px !important;
             width: 100% !important;
         }
