@@ -160,6 +160,11 @@ async function loadCredits() {
 }
 
 // Load Services
+// Global state for dashboard services
+let dashboardAllServices = [];
+let dashboardActiveCategory = null;
+
+// Load Services
 async function loadServices() {
     const selector = document.getElementById('servicesSelector');
     selector.innerHTML = '<div class="loading-spinner">جاري تحميل الخدمات...</div>';
@@ -174,14 +179,55 @@ async function loadServices() {
         return;
     }
 
-    // Current specialty logic (simple string match for now)
-    // If we want multiple services, we need to change DB schema or store as comma-separated.
-    // For now, let's assume single specialty but visualized better.
-    // Or if user wants checkboxes, I'll style them as such.
+    dashboardAllServices = services;
+    renderProviderCategories();
+}
+
+// Render Categories in Dashboard
+window.renderProviderCategories = function () {
+    const selector = document.getElementById('servicesSelector');
+    if (!selector) return;
+
+    // Use shared SERVICE_CATEGORIES from categories.js
+    const categoriesHtml = SERVICE_CATEGORIES.map(category => `
+        <div class="category-card-small" onclick="openProviderCategory('${category.id}')">
+            <div class="category-icon">${category.icon}</div>
+            <div class="category-title">${category.title}</div>
+        </div>
+    `).join('');
 
     selector.innerHTML = `
+        <div class="dashboard-section-header">
+            <p>اختر القسم:</p>
+        </div>
+        <div class="categories-grid-small">
+            ${categoriesHtml}
+        </div>
+    `;
+
+    injectDashboardCategoryStyles();
+}
+
+// Open Category in Dashboard
+window.openProviderCategory = function (categoryId) {
+    dashboardActiveCategory = categoryId;
+    const category = SERVICE_CATEGORIES.find(c => c.id === categoryId);
+    const selector = document.getElementById('servicesSelector');
+
+    // Filter services
+    const filteredServices = dashboardAllServices.filter(service => {
+        return category.keywords.some(keyword => service.name_ar.includes(keyword));
+    });
+
+    selector.innerHTML = `
+        <div class="dashboard-section-header">
+            <button type="button" class="back-link-small" onclick="renderProviderCategories()">
+                <span>&rarr;</span> العودة للأقسام
+            </button>
+            <span class="category-badge">${category.icon} ${category.title}</span>
+        </div>
         <div class="services-grid-selection">
-            ${services.map(service => `
+            ${filteredServices.length > 0 ? filteredServices.map(service => `
                 <label class="service-checkbox-item">
                     <input type="radio" name="specialty" value="${service.name_ar}" 
                         ${currentProvider.specialty === service.name_ar ? 'checked' : ''}
@@ -191,35 +237,92 @@ async function loadServices() {
                         <span class="service-name">${service.name_ar}</span>
                     </span>
                 </label>
-            `).join('')}
+            `).join('') : '<p class="no-services-msg">لا توجد خدمات مطابقة في هذا القسم</p>'}
         </div>
     `;
+}
 
-    // Add some styles if not present
-    if (!document.getElementById('service-selection-styles')) {
-        const style = document.createElement('style');
-        style.id = 'service-selection-styles';
-        style.textContent = `
-            .services-grid-selection { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; }
-            .service-checkbox-item { cursor: pointer; position: relative; }
-            .service-checkbox-item input { position: absolute; opacity: 0; }
-            .service-checkbox-item .service-content { 
-                display: flex; flex-direction: row; align-items: center; gap: 8px;
-                padding: 10px 14px; border: 2px solid #e5e7eb; border-radius: 10px; transition: all 0.2s;
-                background: #f9fafb; white-space: nowrap;
-            }
-            .service-checkbox-item .service-content:hover { border-color: #0d9488; background: #f0fdfa; }
-            .service-checkbox-item input:checked + .service-content {
-                border-color: var(--primary, #0d9488); background: #f0fdfa; color: var(--primary, #0d9488); font-weight: 600;
-                box-shadow: 0 0 0 1px var(--primary, #0d9488);
-            }
-            .service-icon { font-size: 1.3rem; flex-shrink: 0; }
-            .service-name { font-size: 0.88rem; }
-            @media (min-width: 600px) { .services-grid-selection { grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); } }
-            @media (min-width: 900px) { .services-grid-selection { grid-template-columns: repeat(4, 1fr); } }
-        `;
-        document.head.appendChild(style);
-    }
+function injectDashboardCategoryStyles() {
+    if (document.getElementById('dashboard-category-styles')) return;
+
+    const style = document.createElement('style');
+    style.id = 'dashboard-category-styles';
+    style.textContent = `
+        .categories-grid-small {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 12px;
+            margin-top: 10px;
+        }
+        .category-card-small {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 15px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        .category-card-small:hover {
+            border-color: var(--primary);
+            background: var(--primary-50);
+            transform: translateY(-2px);
+        }
+        .category-card-small .category-icon { font-size: 1.5rem; }
+        .category-card-small .category-title { font-size: 0.9rem; font-weight: 500; }
+        
+        .dashboard-section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        .back-link-small {
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 0;
+            font-family: inherit;
+        }
+        .back-link-small:hover { text-decoration: underline; }
+        .category-badge {
+            background: var(--primary-50);
+            color: var(--primary);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .services-grid-selection { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); 
+            gap: 10px; 
+        }
+        .service-checkbox-item { cursor: pointer; position: relative; }
+        .service-checkbox-item input { position: absolute; opacity: 0; }
+        .service-checkbox-item .service-content { 
+            display: flex; flex-direction: row; align-items: center; gap: 8px;
+            padding: 10px 14px; border: 2px solid #e5e7eb; border-radius: 10px; transition: all 0.2s;
+            background: #f9fafb; white-space: nowrap; overflow: hidden;
+        }
+        .service-checkbox-item .service-content:hover { border-color: #0d9488; background: #f0fdfa; }
+        .service-checkbox-item input:checked + .service-content {
+            border-color: var(--primary, #0d9488); background: #f0fdfa; color: var(--primary, #0d9488); font-weight: 600;
+            box-shadow: 0 0 0 1px var(--primary, #0d9488);
+        }
+        .service-checkbox-item .service-name { font-size: 0.85rem; overflow: hidden; text-overflow: ellipsis; }
+        .no-services-msg { color: #6b7280; font-style: italic; text-align: center; width: 100%; grid-column: 1 / -1; padding: 20px; }
+    `;
+    document.head.appendChild(style);
 }
 
 // Update Specialty
@@ -306,7 +409,7 @@ async function loadBookings() {
     if (document.getElementById('confirmedCount')) document.getElementById('confirmedCount').textContent = confirmed.length;
     if (document.getElementById('completedCount')) document.getElementById('completedCount').textContent = completed.length;
     if (document.getElementById('cancelledCount')) document.getElementById('cancelledCount').textContent = cancelled.length;
-    
+
     // Update stats (if they exist)
     if (document.getElementById('totalBookings')) document.getElementById('totalBookings').textContent = enrichedBookings.length;
     if (document.getElementById('pendingBookings')) document.getElementById('pendingBookings').textContent = pending.length;
@@ -337,11 +440,11 @@ function switchBookingTab(tabName) {
     // Hide all tabs
     document.querySelectorAll('.bookings-tab-content').forEach(tab => tab.style.display = 'none');
     document.querySelectorAll('.booking-tab-btn').forEach(btn => btn.classList.remove('active'));
-    
+
     // Show selected tab
     const tabContent = document.getElementById('bookingsTab' + tabName.charAt(0).toUpperCase() + tabName.slice(1));
     const tabBtn = document.getElementById('tab' + tabName.charAt(0).toUpperCase() + tabName.slice(1));
-    
+
     if (tabContent) tabContent.style.display = 'block';
     if (tabBtn) tabBtn.classList.add('active');
 }
@@ -585,22 +688,22 @@ function resetTopUpModal() {
     document.getElementById('step2').style.display = 'none';
     document.getElementById('step3').style.display = 'none';
     document.getElementById('processingStep').style.display = 'none';
-    
+
     // Reset selection styles
     document.querySelectorAll('.package-card').forEach(c => {
         c.style.borderColor = '#eee';
         c.style.backgroundColor = 'white';
     });
-    
+
     document.querySelectorAll('.payment-method-card').forEach(c => {
         c.classList.remove('selected');
     });
-    
+
     // Hide all payment forms
     document.querySelectorAll('.payment-form').forEach(f => {
         f.style.display = 'none';
     });
-    
+
     selectedPackageData = null;
     selectedPaymentMethod = null;
     currentPaymentId = null;
@@ -634,20 +737,20 @@ window.backToPackages = function () {
 
 window.selectPaymentMethod = function (method) {
     selectedPaymentMethod = method;
-    
+
     // Highlight selection
     document.querySelectorAll('.payment-method-card').forEach(c => {
         c.classList.remove('selected');
     });
     event.currentTarget.classList.add('selected');
-    
+
     // Only credit card can proceed to step 3
     if (method === 'credit_card') {
         // Wait a bit then move to step 3
         setTimeout(() => {
             document.getElementById('step2').style.display = 'none';
             document.getElementById('step3').style.display = 'block';
-            
+
             // Show credit card form
             document.querySelectorAll('.payment-form').forEach(f => {
                 f.style.display = 'none';
@@ -658,19 +761,19 @@ window.selectPaymentMethod = function (method) {
 }
 
 // WhatsApp contact for alternative payments
-window.contactWhatsApp = function() {
+window.contactWhatsApp = function () {
     const packageInfo = selectedPackageData;
     const message = `مرحباً! أرغب في شحن رصيدي:\n\nالباقة: ${packageInfo.name}\nالمبلغ: ${packageInfo.price} دينار\nالعملات: ${packageInfo.amount} عملة\n\nأرغب في الدفع عبر CliQ أو محفظة إلكترونية`;
-    
+
     // Replace with your actual WhatsApp number
     const whatsappNumber = '962799999999'; // Change this to your WhatsApp number
     const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
-    
+
     window.open(whatsappUrl, '_blank');
-    
+
     // Show confirmation message
     showNotification('سيتم فتح واتساب للتواصل معنا. سنساعدك في إتمام عملية الدفع! 💬', 'success');
-    
+
     // Close modal after a delay
     setTimeout(() => {
         closeTopUpModal();
@@ -693,10 +796,10 @@ window.processCreditCardPayment = async function () {
     const btn = document.getElementById('payBtnCard');
     btn.disabled = true;
     btn.textContent = 'جاري الاتصال بمزود الدفع...';
-    
+
     try {
         showProcessingStep('جاري فتح صفحة الدفع الآمنة...');
-        
+
         const result = await window.PaymentGateway.initCreditCardPayment(
             selectedPackageData.price,
             selectedPackageData.name,
@@ -704,13 +807,13 @@ window.processCreditCardPayment = async function () {
             selectedPackageData.amount,
             supabaseDashboard
         );
-        
+
         if (result.success) {
             currentPaymentId = result.paymentId;
-            
+
             // In production, open payment gateway URL
             // window.open(result.paymentUrl, '_blank');
-            
+
             // For demo, simulate successful payment
             setTimeout(async () => {
                 await simulatePaymentCompletion(result.creditsAmount, result.packageName);
@@ -737,7 +840,7 @@ async function simulatePaymentCompletion(creditsAmount, packageName) {
             packageName || selectedPackageData.name,
             supabaseDashboard
         );
-        
+
         if (result.success) {
             showNotification(`تم شحن ${creditsAmount || selectedPackageData.amount} عملة بنجاح! 🎉`, 'success');
             await loadCredits(); // Refresh balance
@@ -761,7 +864,7 @@ window.processPayment = async function () {
 
     const btn = document.getElementById('payBtn');
     if (!btn) return; // Old UI might not exist
-    
+
     btn.disabled = true;
     btn.textContent = 'جاري معالجة الدفع...';
 
@@ -858,7 +961,7 @@ function escapeHtml(text) {
 }
 
 // Add or update a service offering (with optional image upload)
-window.addServiceOffering = async function() {
+window.addServiceOffering = async function () {
     const title = document.getElementById('offeringTitle').value.trim();
     const price = parseFloat(document.getElementById('offeringPrice').value);
     const priceType = document.getElementById('offeringPriceType').value;
@@ -949,7 +1052,7 @@ window.addServiceOffering = async function() {
 }
 
 // Edit an offering - populate form
-window.editOffering = async function(id) {
+window.editOffering = async function (id) {
     try {
         const { data: offering, error } = await supabaseDashboard
             .from('service_offerings')
@@ -995,7 +1098,7 @@ window.editOffering = async function(id) {
 }
 
 // Cancel edit mode
-window.cancelEditOffering = function() {
+window.cancelEditOffering = function () {
     editingOfferingId = null;
     document.getElementById('offeringTitle').value = '';
     document.getElementById('offeringDesc').value = '';
@@ -1012,7 +1115,7 @@ window.cancelEditOffering = function() {
 }
 
 // Delete an offering
-window.deleteOffering = async function(id) {
+window.deleteOffering = async function (id) {
     if (!confirm('هل تريد حذف هذه الخدمة؟')) return;
 
     try {
@@ -1031,14 +1134,14 @@ window.deleteOffering = async function(id) {
 }
 
 // Image preview for offering image upload
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const imgInput = document.getElementById('offeringImage');
     if (imgInput) {
-        imgInput.addEventListener('change', function() {
+        imgInput.addEventListener('change', function () {
             const preview = document.getElementById('offeringImagePreview');
             if (this.files && this.files[0]) {
                 const reader = new FileReader();
-                reader.onload = function(e) {
+                reader.onload = function (e) {
                     preview.src = e.target.result;
                     preview.style.display = 'block';
                 };

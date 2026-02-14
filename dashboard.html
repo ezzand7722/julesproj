@@ -7,7 +7,8 @@
     <title>لوحة التحكم - خدمتي</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Tajawal:wght@300;400;500;700;800&display=swap"
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Tajawal:wght@300;400;500;700;800&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="auth.css">
@@ -17,7 +18,7 @@
     <link rel="stylesheet" href="chat.css">
     <link rel="stylesheet" href="premium-styles.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>if(localStorage.getItem('theme')==='dark')document.documentElement.setAttribute('data-theme','dark')</script>
+    <script>if (localStorage.getItem('theme') === 'dark') document.documentElement.setAttribute('data-theme', 'dark')</script>
 </head>
 
 <body class="dashboard-page">
@@ -108,6 +109,7 @@
                         box-shadow: none !important;
                         margin-top: 0 !important;
                     }
+
                     .chat-sidebar {
                         border-radius: 8px 0 0 8px;
                     }
@@ -126,15 +128,20 @@
                             <p>تواصل مع عملائك لتأكيد الحجوزات</p>
                         </div>
                         <div id="activeChat" style="display: none; flex-direction: column; height: 100%;">
-                            <div class="chat-header" style="display: flex; align-items: center; justify-content: space-between; padding: 1rem;">
+                            <div class="chat-header"
+                                style="display: flex; align-items: center; justify-content: space-between; padding: 1rem;">
                                 <div style="display: flex; align-items: center; gap: 0.5rem; flex: 1;">
-                                    <button class="back-btn" onclick="backToConversations()" style="display:none; background:none; border:none; font-size:1.5rem; cursor:pointer; margin-left: 0.5rem;">←</button>
+                                    <button class="back-btn" onclick="backToConversations()"
+                                        style="display:none; background:none; border:none; font-size:1.5rem; cursor:pointer; margin-left: 0.5rem;">←</button>
                                     <div>
-                                        <h3 id="chatHeaderName" style="margin: 0; font-size: 1rem; font-weight: 600;">اسم العميل</h3>
-                                        <p id="chatHeaderService" style="margin: 0; font-size: 0.875rem; color: #6b7280;">خدمة</p>
+                                        <h3 id="chatHeaderName" style="margin: 0; font-size: 1rem; font-weight: 600;">
+                                            اسم العميل</h3>
+                                        <p id="chatHeaderService"
+                                            style="margin: 0; font-size: 0.875rem; color: #6b7280;">خدمة</p>
                                     </div>
                                 </div>
-                                <button onclick="callCustomer()" title="اتصال" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; padding: 0.5rem;">📞</button>
+                                <button onclick="callCustomer()" title="اتصال"
+                                    style="background: none; border: none; font-size: 1.5rem; cursor: pointer; padding: 0.5rem;">📞</button>
                             </div>
                             <div id="chatMessages" class="chat-messages"></div>
                             <div class="chat-input-area">
@@ -166,28 +173,28 @@
                         ❌ ملغاة <span class="tab-count" id="cancelledCount">0</span>
                     </button>
                 </div>
-                
+
                 <!-- Pending Bookings -->
                 <div id="bookingsTabPending" class="bookings-tab-content active">
                     <div class="bookings-list" id="pendingBookingsList">
                         <div class="loading-spinner">جاري التحميل...</div>
                     </div>
                 </div>
-                
+
                 <!-- Confirmed Bookings -->
                 <div id="bookingsTabConfirmed" class="bookings-tab-content" style="display:none;">
                     <div class="bookings-list" id="confirmedBookingsList">
                         <div class="loading-spinner">جاري التحميل...</div>
                     </div>
                 </div>
-                
+
                 <!-- Completed Bookings -->
                 <div id="bookingsTabCompleted" class="bookings-tab-content" style="display:none;">
                     <div class="bookings-list" id="completedBookingsList">
                         <div class="loading-spinner">جاري التحميل...</div>
                     </div>
                 </div>
-                
+
                 <!-- Cancelled Bookings -->
                 <div id="bookingsTabCancelled" class="bookings-tab-content" style="display:none;">
                     <div class="bookings-list" id="cancelledBookingsList">
@@ -201,7 +208,8 @@
         <div id="tab-profile" class="provider-tab-content" style="display:none;">
             <div class="dashboard-card">
                 <h2>👤 ملفي الشخصي</h2>
-                <p class="offering-subtitle" style="font-size:0.9rem; margin-bottom:20px;">معلوماتك الأساسية التي يراها العملاء</p>
+                <p class="offering-subtitle" style="font-size:0.9rem; margin-bottom:20px;">معلوماتك الأساسية التي يراها
+                    العملاء</p>
                 <form id="profileForm" class="profile-form" onsubmit="updateProfile(event)">
                     <!-- Row 1: Name, City, Neighborhood -->
                     <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:16px;">
@@ -237,42 +245,53 @@
                         <label>نطاق الأسعار (يظهر في الصفحة الرئيسية)</label>
                         <div style="display:grid; grid-template-columns:1fr auto 1fr; gap:10px; align-items:center;">
                             <div>
-                                <input type="number" id="priceRangeMin" placeholder="من (مثال: 5)" min="0" step="0.5" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-family:inherit;">
+                                <input type="number" id="priceRangeMin" placeholder="من (مثال: 5)" min="0" step="0.5"
+                                    style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-family:inherit;">
                             </div>
                             <span style="color:#6b7280; font-weight:600;">—</span>
                             <div>
-                                <input type="number" id="priceRangeMax" placeholder="إلى (مثال: 50)" min="0" step="0.5" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-family:inherit;">
+                                <input type="number" id="priceRangeMax" placeholder="إلى (مثال: 50)" min="0" step="0.5"
+                                    style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-family:inherit;">
                             </div>
                         </div>
-                        <p style="font-size:0.78rem; color:#9ca3af; margin-top:4px;">💡 حدد نطاق أسعارك ليظهر للعملاء في بطاقتك. اتركه فارغاً إذا لم ترد عرض الأسعار.</p>
+                        <p style="font-size:0.78rem; color:#9ca3af; margin-top:4px;">💡 حدد نطاق أسعارك ليظهر للعملاء في
+                            بطاقتك. اتركه فارغاً إذا لم ترد عرض الأسعار.</p>
                     </div>
 
                     <!-- Row 4: Bio + Social links side by side -->
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
                         <div class="form-group" style="margin-bottom:0;">
                             <label>نبذة عنك</label>
-                            <textarea id="profileBio" placeholder="اكتب نبذة قصيرة عن خبراتك..." rows="4" style="height:100%;min-height:100px;"></textarea>
+                            <textarea id="profileBio" placeholder="اكتب نبذة قصيرة عن خبراتك..." rows="4"
+                                style="height:100%;min-height:100px;"></textarea>
                         </div>
                         <div class="form-group" style="margin-bottom:0;">
                             <label>روابط التواصل (اختياري)</label>
                             <div style="display:flex; flex-direction:column; gap:8px;">
                                 <div class="input-with-icon" style="position:relative;">
-                                    <span class="input-icon" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); font-size:1.1rem; pointer-events:none;">📘</span>
-                                    <input type="url" id="socialFacebook" placeholder="فيسبوك" style="width:100%; padding:10px 45px 10px 12px; border:1px solid #ddd; border-radius:8px; font-family:inherit; font-size:0.9rem; text-align:right;">
+                                    <span class="input-icon"
+                                        style="position:absolute; right:12px; top:50%; transform:translateY(-50%); font-size:1.1rem; pointer-events:none;">📘</span>
+                                    <input type="url" id="socialFacebook" placeholder="فيسبوك"
+                                        style="width:100%; padding:10px 45px 10px 12px; border:1px solid #ddd; border-radius:8px; font-family:inherit; font-size:0.9rem; text-align:right;">
                                 </div>
                                 <div class="input-with-icon" style="position:relative;">
-                                    <span class="input-icon" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); font-size:1.1rem; pointer-events:none;">📷</span>
-                                    <input type="url" id="socialInstagram" placeholder="انستغرام" style="width:100%; padding:10px 45px 10px 12px; border:1px solid #ddd; border-radius:8px; font-family:inherit; font-size:0.9rem; text-align:right;">
+                                    <span class="input-icon"
+                                        style="position:absolute; right:12px; top:50%; transform:translateY(-50%); font-size:1.1rem; pointer-events:none;">📷</span>
+                                    <input type="url" id="socialInstagram" placeholder="انستغرام"
+                                        style="width:100%; padding:10px 45px 10px 12px; border:1px solid #ddd; border-radius:8px; font-family:inherit; font-size:0.9rem; text-align:right;">
                                 </div>
                                 <div class="input-with-icon" style="position:relative;">
-                                    <span class="input-icon" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); font-size:1.1rem; pointer-events:none;">🌐</span>
-                                    <input type="url" id="socialWebsite" placeholder="موقع" style="width:100%; padding:10px 45px 10px 12px; border:1px solid #ddd; border-radius:8px; font-family:inherit; font-size:0.9rem; text-align:right;">
+                                    <span class="input-icon"
+                                        style="position:absolute; right:12px; top:50%; transform:translateY(-50%); font-size:1.1rem; pointer-events:none;">🌐</span>
+                                    <input type="url" id="socialWebsite" placeholder="موقع"
+                                        style="width:100%; padding:10px 45px 10px 12px; border:1px solid #ddd; border-radius:8px; font-family:inherit; font-size:0.9rem; text-align:right;">
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary btn-block" id="saveProfileBtn">💾 حفظ التغييرات</button>
+                    <button type="submit" class="btn btn-primary btn-block" id="saveProfileBtn">💾 حفظ
+                        التغييرات</button>
                 </form>
             </div>
         </div>
@@ -281,29 +300,35 @@
         <div id="tab-services" class="provider-tab-content" style="display:none;">
             <div class="dashboard-card">
                 <h2>💰 قائمة خدماتي وأسعاري</h2>
-                <p class="offering-subtitle" style="font-size: 0.9rem; margin-bottom: 16px;">أضف خدماتك مع الأسعار ليراها العملاء في ملفك الشخصي وعند الحجز</p>
-                
+                <p class="offering-subtitle" style="font-size: 0.9rem; margin-bottom: 16px;">أضف خدماتك مع الأسعار
+                    ليراها العملاء في ملفك الشخصي وعند الحجز</p>
+
                 <!-- Add New Offering Form -->
-                <div id="offeringForm" class="offering-form" style="border-radius: 12px; padding: 16px; margin-bottom: 20px;">
+                <div id="offeringForm" class="offering-form"
+                    style="border-radius: 12px; padding: 16px; margin-bottom: 20px;">
                     <div style="display: grid; gap: 12px;">
                         <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
                             <div class="form-group" style="margin-bottom:0;">
                                 <label style="font-size:0.85rem; font-weight:600;">اسم الخدمة</label>
-                                <input type="text" id="offeringTitle" placeholder="مثال: تنظيف مكيف سبليت" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-family:inherit;">
+                                <input type="text" id="offeringTitle" placeholder="مثال: تنظيف مكيف سبليت"
+                                    style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-family:inherit;">
                             </div>
                             <div class="form-group" style="margin-bottom:0;">
                                 <label style="font-size:0.85rem; font-weight:600;">الوصف (اختياري)</label>
-                                <input type="text" id="offeringDesc" placeholder="تفاصيل ما يشمله السعر" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-family:inherit;">
+                                <input type="text" id="offeringDesc" placeholder="تفاصيل ما يشمله السعر"
+                                    style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-family:inherit;">
                             </div>
                         </div>
                         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px;">
                             <div class="form-group" style="margin-bottom:0;">
                                 <label style="font-size:0.85rem; font-weight:600;">السعر (د.أ)</label>
-                                <input type="number" id="offeringPrice" placeholder="20" min="0" step="0.5" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-family:inherit;">
+                                <input type="number" id="offeringPrice" placeholder="20" min="0" step="0.5"
+                                    style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-family:inherit;">
                             </div>
                             <div class="form-group" style="margin-bottom:0;">
                                 <label style="font-size:0.85rem; font-weight:600;">نوع السعر</label>
-                                <select id="offeringPriceType" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-family:inherit;">
+                                <select id="offeringPriceType"
+                                    style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-family:inherit;">
                                     <option value="fixed">سعر ثابت</option>
                                     <option value="starting_at">يبدأ من</option>
                                     <option value="hourly">بالساعة</option>
@@ -311,19 +336,24 @@
                             </div>
                             <div class="form-group" style="margin-bottom:0;">
                                 <label style="font-size:0.85rem; font-weight:600;">المدة التقديرية</label>
-                                <input type="text" id="offeringDuration" placeholder="ساعة واحدة" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-family:inherit;">
+                                <input type="text" id="offeringDuration" placeholder="ساعة واحدة"
+                                    style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-family:inherit;">
                             </div>
                             <div class="form-group" style="margin-bottom:0;">
                                 <label style="font-size:0.85rem; font-weight:600;">صورة (اختياري)</label>
                                 <div style="display:flex; align-items:center; gap:6px;">
-                                    <input type="file" id="offeringImage" accept="image/*" style="flex:1; padding:8px; border:1px solid #ddd; border-radius:8px; font-family:inherit; font-size:0.8rem;">
-                                    <img id="offeringImagePreview" src="" style="width:38px; height:38px; border-radius:6px; object-fit:cover; display:none; border:1px solid #ddd;">
+                                    <input type="file" id="offeringImage" accept="image/*"
+                                        style="flex:1; padding:8px; border:1px solid #ddd; border-radius:8px; font-family:inherit; font-size:0.8rem;">
+                                    <img id="offeringImagePreview" src=""
+                                        style="width:38px; height:38px; border-radius:6px; object-fit:cover; display:none; border:1px solid #ddd;">
                                 </div>
                             </div>
                         </div>
                         <div style="display: flex; gap: 8px;">
-                            <button class="btn btn-primary" onclick="addServiceOffering()" id="addOfferingBtn" style="flex:1;">+ إضافة خدمة</button>
-                            <button class="btn btn-ghost" onclick="cancelEditOffering()" id="cancelEditOfferingBtn" style="display:none;">إلغاء</button>
+                            <button class="btn btn-primary" onclick="addServiceOffering()" id="addOfferingBtn"
+                                style="flex:1;">+ إضافة خدمة</button>
+                            <button class="btn btn-ghost" onclick="cancelEditOffering()" id="cancelEditOfferingBtn"
+                                style="display:none;">إلغاء</button>
                         </div>
                     </div>
                 </div>
@@ -349,7 +379,8 @@
                         </div>
                         <div id="uploadPreview" style="display: none; margin-top: 10px;">
                             <img id="previewImg" style="max-width: 100%; border-radius: 8px; display: none;">
-                            <video id="previewVideo" controls style="max-width: 100%; border-radius: 8px; display: none;"></video>
+                            <video id="previewVideo" controls
+                                style="max-width: 100%; border-radius: 8px; display: none;"></video>
                             <input type="text" id="portfolioCaption" placeholder="أضف وصفاً..." class="input-caption">
                             <div class="upload-actions">
                                 <button class="btn btn-primary" onclick="uploadPortfolioItem()">رفع</button>
@@ -386,19 +417,33 @@
                 <div class="packages-grid" style="display: grid; gap: 1rem;">
                     <div class="package-card" onclick="selectPackage(10, 'باقة البداية', 5)"
                         style="border: 2px solid #eee; padding: 1rem; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; justify-content: space-between; align-items: center;">
-                        <div><h4 style="margin: 0;">باقة البداية</h4><p style="margin: 0; color: #666; font-size: 0.9rem;">10 عملات</p></div>
-                        <div class="price" style="font-weight: bold; color: var(--primary); font-size: 1.2rem;">5 JD</div>
+                        <div>
+                            <h4 style="margin: 0;">باقة البداية</h4>
+                            <p style="margin: 0; color: #666; font-size: 0.9rem;">10 عملات</p>
+                        </div>
+                        <div class="price" style="font-weight: bold; color: var(--primary); font-size: 1.2rem;">5 JD
+                        </div>
                     </div>
                     <div class="package-card" onclick="selectPackage(50, 'باقة المحترفين', 20)"
                         style="border: 2px solid var(--primary); background: var(--primary-50); padding: 1rem; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; justify-content: space-between; align-items: center;">
-                        <div><h4 style="margin: 0;">باقة المحترفين 🔥</h4><p style="margin: 0; color: #666; font-size: 0.9rem;">50 عملة</p>
-                            <span style="background: #fbbf24; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; margin-top: 4px; display: inline-block;">الأفضل قيمة</span></div>
-                        <div class="price" style="font-weight: bold; color: var(--primary); font-size: 1.2rem;">20 JD</div>
+                        <div>
+                            <h4 style="margin: 0;">باقة المحترفين 🔥</h4>
+                            <p style="margin: 0; color: #666; font-size: 0.9rem;">50 عملة</p>
+                            <span
+                                style="background: #fbbf24; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; margin-top: 4px; display: inline-block;">الأفضل
+                                قيمة</span>
+                        </div>
+                        <div class="price" style="font-weight: bold; color: var(--primary); font-size: 1.2rem;">20 JD
+                        </div>
                     </div>
                     <div class="package-card" onclick="selectPackage(100, 'باقة الأعمال', 35)"
                         style="border: 2px solid #eee; padding: 1rem; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; justify-content: space-between; align-items: center;">
-                        <div><h4 style="margin: 0;">باقة الأعمال</h4><p style="margin: 0; color: #666; font-size: 0.9rem;">100 عملة</p></div>
-                        <div class="price" style="font-weight: bold; color: var(--primary); font-size: 1.2rem;">35 JD</div>
+                        <div>
+                            <h4 style="margin: 0;">باقة الأعمال</h4>
+                            <p style="margin: 0; color: #666; font-size: 0.9rem;">100 عملة</p>
+                        </div>
+                        <div class="price" style="font-weight: bold; color: var(--primary); font-size: 1.2rem;">35 JD
+                        </div>
                     </div>
                 </div>
             </div>
@@ -406,35 +451,45 @@
             <div id="step2" class="payment-step" style="display: none;">
                 <h3 style="margin-bottom: 1rem; font-size: 1.1rem;">اختر طريقة الدفع</h3>
                 <p style="color: #666; margin-bottom: 1rem; font-size: 0.9rem;">
-                    المبلغ المطلوب: <strong><span id="selectedPrice">0</span> JD</strong> | 
+                    المبلغ المطلوب: <strong><span id="selectedPrice">0</span> JD</strong> |
                     الباقة: <strong><span id="selectedPackageName">-</span></strong>
                 </p>
                 <div class="payment-methods" style="display: grid; gap: 0.75rem;">
                     <div class="payment-method-card" onclick="selectPaymentMethod('credit_card')"
                         style="border: 2px solid #eee; padding: 1rem; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 1rem;">
                         <div style="font-size: 2rem;">💳</div>
-                        <div style="flex: 1;"><h4 style="margin: 0; font-size: 1rem;">بطاقة ائتمان/خصم</h4><p style="margin: 0; color: #666; font-size: 0.85rem;">Visa, MasterCard, Mada</p></div>
+                        <div style="flex: 1;">
+                            <h4 style="margin: 0; font-size: 1rem;">بطاقة ائتمان/خصم</h4>
+                            <p style="margin: 0; color: #666; font-size: 0.85rem;">Visa, MasterCard, Mada</p>
+                        </div>
                         <div style="color: #10b981;">✓</div>
                     </div>
                     <div class="payment-method-card" onclick="contactWhatsApp()"
                         style="border: 2px solid #25D366; padding: 1rem; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 1rem; background: #f0fdf4;">
                         <div style="font-size: 2rem;">💬</div>
-                        <div style="flex: 1;"><h4 style="margin: 0; font-size: 1rem; color: #25D366;">الدفع عبر CliQ أو المحفظة</h4><p style="margin: 0; color: #666; font-size: 0.85rem;">تواصل معنا عبر واتساب</p></div>
+                        <div style="flex: 1;">
+                            <h4 style="margin: 0; font-size: 1rem; color: #25D366;">الدفع عبر CliQ أو المحفظة</h4>
+                            <p style="margin: 0; color: #666; font-size: 0.85rem;">تواصل معنا عبر واتساب</p>
+                        </div>
                         <div style="color: #25D366; font-size: 1.5rem;">→</div>
                     </div>
                 </div>
-                <button class="btn btn-ghost btn-block" onclick="backToPackages()" style="margin-top: 1rem;">← العودة للباقات</button>
+                <button class="btn btn-ghost btn-block" onclick="backToPackages()" style="margin-top: 1rem;">← العودة
+                    للباقات</button>
             </div>
 
             <div id="step3" class="payment-step" style="display: none;">
                 <h3 style="margin-bottom: 1rem; font-size: 1.1rem;">أدخل تفاصيل الدفع</h3>
                 <div id="creditCardForm" class="payment-form" style="display: none;">
-                    <p style="background: #fef3c7; padding: 0.75rem; border-radius: 6px; font-size: 0.9rem; margin-bottom: 1rem;">
+                    <p
+                        style="background: #fef3c7; padding: 0.75rem; border-radius: 6px; font-size: 0.9rem; margin-bottom: 1rem;">
                         💡 سيتم فتح صفحة الدفع الآمنة في نافذة جديدة
                     </p>
-                    <button id="payBtnCard" class="btn btn-primary btn-block" onclick="processCreditCardPayment()">متابعة للدفع الآمن 🔒</button>
+                    <button id="payBtnCard" class="btn btn-primary btn-block"
+                        onclick="processCreditCardPayment()">متابعة للدفع الآمن 🔒</button>
                 </div>
-                <button class="btn btn-ghost btn-block" onclick="backToPaymentMethods()" style="margin-top: 1rem;">← العودة لطرق الدفع</button>
+                <button class="btn btn-ghost btn-block" onclick="backToPaymentMethods()" style="margin-top: 1rem;">←
+                    العودة لطرق الدفع</button>
             </div>
 
             <div id="processingStep" class="payment-step" style="display: none; text-align: center; padding: 2rem 0;">
@@ -442,17 +497,36 @@
                 <h3 style="margin-bottom: 0.5rem;">جاري معالجة الدفع...</h3>
                 <p id="processingMessage" style="color: #666;">يرجى الانتظار</p>
                 <div style="margin-top: 1rem;">
-                    <div class="spinner" style="border: 3px solid #f3f3f3; border-top: 3px solid var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto;"></div>
+                    <div class="spinner"
+                        style="border: 3px solid #f3f3f3; border-top: 3px solid var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto;">
+                    </div>
                 </div>
             </div>
 
             <style>
-                @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-                .payment-method-card:hover { border-color: var(--primary) !important; background: var(--primary-50); }
-                .payment-method-card.selected { border-color: var(--primary) !important; background: var(--primary-50) !important; }
+                @keyframes spin {
+                    0% {
+                        transform: rotate(0deg);
+                    }
+
+                    100% {
+                        transform: rotate(360deg);
+                    }
+                }
+
+                .payment-method-card:hover {
+                    border-color: var(--primary) !important;
+                    background: var(--primary-50);
+                }
+
+                .payment-method-card.selected {
+                    border-color: var(--primary) !important;
+                    background: var(--primary-50) !important;
+                }
             </style>
         </div>
     </div>
+    <script src="categories.js"></script>
     <script src="booking-lifecycle.js?v=1.0"></script>
     <script src="admin-config.js?v=2.0"></script>
     <script src="payment-gateway.js?v=2.0"></script>

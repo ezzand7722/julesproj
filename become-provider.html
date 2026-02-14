@@ -13,7 +13,94 @@
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
-    <script>if(localStorage.getItem('theme')==='dark')document.documentElement.setAttribute('data-theme','dark')</script>
+    <script>if (localStorage.getItem('theme') === 'dark') document.documentElement.setAttribute('data-theme', 'dark')</script>
+    <style>
+        /* Service Selector Styles */
+        .categories-grid-small {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .category-card-small {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .category-card-small:hover {
+            border-color: var(--primary);
+            background: var(--primary-50);
+        }
+
+        .category-icon {
+            font-size: 1.5rem;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .category-title {
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .services-grid-selection {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .service-checkbox-item {
+            cursor: pointer;
+            position: relative;
+        }
+
+        .service-checkbox-item input {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .service-checkbox-item .service-content {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #f9f9f9;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .service-checkbox-item input:checked+.service-content {
+            border-color: var(--primary);
+            background: var(--primary-50);
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .dashboard-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .back-link-small {
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            padding: 0;
+            font-size: 0.9rem;
+        }
+    </style>
 </head>
 
 <body>
@@ -45,17 +132,12 @@
 
                     <div class="form-group">
                         <label>المهنة / التخصص</label>
-                        <select id="specialty" required>
-                            <option value="">اختر التخصص...</option>
-                            <option value="سباكة">سباكة</option>
-                            <option value="كهرباء">كهرباء</option>
-                            <option value="نجارة">نجارة</option>
-                            <option value="تنظيف">تنظيف</option>
-                            <option value="تكييف">تكييف</option>
-                            <option value="دهان">دهان</option>
-                            <option value="نقل عفش">نقل عفش</option>
-                            <option value="ستلايت">ستلايت</option>
-                        </select>
+                        <label>المهنة / التخصص</label>
+                        <!-- Dynamic Service Selector -->
+                        <div id="servicesSelector" class="services-selector">
+                            <div class="loading-spinner">جاري تحميل الخدمات...</div>
+                        </div>
+                        <input type="hidden" id="specialty" required>
                     </div>
 
                     <div class="form-group">
@@ -85,17 +167,22 @@
         </div>
     </div>
 
+    <script src="categories.js"></script>
     <script src="script.js"></script>
     <script>
         // Check session and load user data
+        let dashboardAllServices = [];
+        let dashboardActiveCategory = null;
+
         document.addEventListener('DOMContentLoaded', async () => {
+            // 1. Check Auth
             const { data: { session } } = await supabaseClient.auth.getSession();
             if (!session) {
                 window.location.href = 'login.html';
                 return;
             }
 
-            // Get Bio/Details
+            // 2. Load User Profile
             const { data: profile } = await supabaseClient
                 .from('profiles')
                 .select('*')
@@ -109,7 +196,65 @@
                     window.location.href = 'dashboard.html';
                 }
             }
+
+            // 3. Load Services for Selector
+            loadServicesForSignup();
         });
+
+        async function loadServicesForSignup() {
+            const selector = document.getElementById('servicesSelector');
+            const { data: services, error } = await supabaseClient.from('service_stats').select('*');
+            if (error || !services) {
+                selector.innerHTML = '<p class="error">فشل تحميل الخدمات</p>';
+                return;
+            }
+            dashboardAllServices = services;
+            renderProviderCategories();
+        }
+
+        function renderProviderCategories() {
+            const selector = document.getElementById('servicesSelector');
+            const categoriesHtml = SERVICE_CATEGORIES.map(category => `
+                <div class="category-card-small" onclick="openProviderCategory('${category.id}')">
+                    <span class="category-icon">${category.icon}</span>
+                    <span class="category-title">${category.title}</span>
+                </div>
+            `).join('');
+            selector.innerHTML = `<div class="categories-grid-small">${categoriesHtml}</div>`;
+        }
+
+        function openProviderCategory(categoryId) {
+            dashboardActiveCategory = categoryId;
+            const category = SERVICE_CATEGORIES.find(c => c.id === categoryId);
+            const selector = document.getElementById('servicesSelector');
+
+            const filteredServices = dashboardAllServices.filter(service => {
+                return category.keywords.some(keyword => service.name_ar.includes(keyword));
+            });
+
+            selector.innerHTML = `
+                <div class="dashboard-section-header">
+                    <button type="button" class="back-link-small" onclick="renderProviderCategories()">← رجوع للأقسام</button>
+                    <span class="category-badge">${category.icon} ${category.title}</span>
+                </div>
+                <div class="services-grid-selection">
+                    ${filteredServices.map(service => `
+                        <label class="service-checkbox-item">
+                            <input type="radio" name="specialty_radio" value="${service.name_ar}" onchange="selectSpecialty('${service.name_ar}')">
+                            <span class="service-content">${service.icon} ${service.name_ar}</span>
+                        </label>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // Expose functions to window
+        window.renderProviderCategories = renderProviderCategories;
+        window.openProviderCategory = openProviderCategory;
+
+        function selectSpecialty(value) {
+            document.getElementById('specialty').value = value;
+        }
 
         async function handleUpgrade(e) {
             e.preventDefault();
@@ -120,6 +265,12 @@
             const phone = document.getElementById('phone').value;
             const fullPhone = '+962' + phone;
             const specialty = document.getElementById('specialty').value;
+            if (!specialty) {
+                alert('يرجى اختيار التخصص/الخدمة');
+                btn.disabled = false;
+                btn.textContent = 'ترقية الحساب';
+                return;
+            }
             const city = document.getElementById('city').value;
             const bio = document.getElementById('bio').value;
 
