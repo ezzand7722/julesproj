@@ -333,7 +333,7 @@ function injectDashboardCategoryStyles() {
             justify-content: space-between;
             margin-bottom: 20px;
             gap: 15px;
-            flex-wrap: nowrap;
+            flex-wrap: wrap;
         }
         .category-badge {
             background: var(--primary-50);
@@ -342,6 +342,12 @@ function injectDashboardCategoryStyles() {
             border-radius: 20px;
             font-size: 0.85rem;
             font-weight: 600;
+            max-width: 100%;
+            white-space: normal;
+            line-height: 1.3;
+            word-break: break-word;
+            text-align: center;
+            flex-shrink: 0;
         }
         .services-grid-selection { 
             display: grid !important; 
@@ -366,6 +372,59 @@ function injectDashboardCategoryStyles() {
         .service-checkbox-item .service-icon { font-size: 2rem !important; margin-bottom: 4px; }
         .service-checkbox-item .service-name { font-size: 0.9rem !important; line-height: 1.2; }
         .no-services-msg { color: #6b7280; font-style: italic; text-align: center; width: 100%; grid-column: 1 / -1; padding: 20px; }
+
+        [data-theme="dark"] .category-card-small {
+            background: #1f2937;
+            border-color: #374151;
+        }
+        [data-theme="dark"] .category-card-small:hover {
+            border-color: #2dd4bf;
+            background: #0f172a;
+        }
+        [data-theme="dark"] .category-card-small .category-title {
+            color: #e5e7eb;
+        }
+        [data-theme="dark"] .category-card-small .category-icon {
+            color: #93c5fd;
+        }
+        [data-theme="dark"] .back-link-small {
+            background: #111827;
+            border-color: #374151;
+            color: #5eead4;
+        }
+        [data-theme="dark"] .back-link-small:hover {
+            background: #1f2937;
+        }
+        [data-theme="dark"] .category-badge {
+            background: #0f172a;
+            color: #5eead4;
+            border: 1px solid #374151;
+        }
+        [data-theme="dark"] .service-checkbox-item .service-content {
+            background: #1f2937 !important;
+            border-color: #374151 !important;
+            color: #e5e7eb !important;
+        }
+        [data-theme="dark"] .service-checkbox-item .service-content:hover {
+            background: #111827 !important;
+            border-color: #2dd4bf !important;
+        }
+        [data-theme="dark"] .service-checkbox-item input:checked + .service-content {
+            background: #042f2e !important;
+            color: #5eead4 !important;
+            border-color: #2dd4bf !important;
+            box-shadow: 0 4px 6px -1px rgba(13, 148, 136, 0.25), 0 0 0 1px #2dd4bf !important;
+        }
+
+        @media (max-width: 640px) {
+            .dashboard-section-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .category-badge {
+                width: 100%;
+            }
+        }
     `;
     document.head.appendChild(style);
 }
