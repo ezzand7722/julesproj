@@ -111,8 +111,12 @@ async function updateUI() {
     document.getElementById('welcomeName').textContent = currentProvider.name.split(' ')[0];
 
     document.getElementById('profileName').value = currentProvider.name;
-    document.getElementById('profileCity').value = currentProvider.city;
+    document.getElementById('profileCity').value = currentProvider.city || '';
+
+    // Populate neighborhoods FIRST, then set value
+    updateDashboardNeighborhoods();
     document.getElementById('profileLocation').value = currentProvider.location || '';
+
     document.getElementById('profileBio').value = currentProvider.bio || '';
 
     // Load social links
@@ -158,6 +162,29 @@ async function loadCredits() {
         console.error('Error loading credits:', err);
     }
 }
+
+// Update Neighborhoods Dropdown based on City
+function updateDashboardNeighborhoods() {
+    const citySelect = document.getElementById('profileCity');
+    const locationSelect = document.getElementById('profileLocation');
+    if (!citySelect || !locationSelect) return;
+
+    const city = citySelect.value;
+    const neighborhoods = (window.neighborhoodsByCity && window.neighborhoodsByCity[city]) || [];
+
+    locationSelect.innerHTML = '<option value="">اختر المنطقة...</option>' +
+        neighborhoods.map(n => `<option value="${n}">${n}</option>`).join('');
+}
+
+// City change listener
+document.addEventListener('DOMContentLoaded', () => {
+    const citySelect = document.getElementById('profileCity');
+    if (citySelect) {
+        citySelect.addEventListener('change', () => {
+            updateDashboardNeighborhoods();
+        });
+    }
+});
 
 // Load Services
 // Global state for dashboard services
