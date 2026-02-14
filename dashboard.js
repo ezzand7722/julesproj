@@ -253,7 +253,7 @@ window.openProviderCategory = function (categoryId) {
             </button>
             <span class="category-badge">${category.icon} ${category.title}</span>
         </div>
-        <div class="services-grid-selection" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;width:100%">
+        <div class="services-grid-selection" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;width:100%">
             ${filteredServices.length > 0 ? filteredServices.map(service => `
                 <label class="service-checkbox-item">
                     <input type="radio" name="specialty" value="${service.name_ar}" 
@@ -275,32 +275,39 @@ function injectDashboardCategoryStyles() {
     const style = document.createElement('style');
     style.id = 'dashboard-category-styles';
     style.textContent = `
+        .services-selector {
+            display: block !important;
+        }
         .categories-grid-small {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
             gap: 12px;
             margin-top: 10px;
+            width: 100%;
         }
         .category-card-small {
             background: #fff;
             border: 1px solid #e5e7eb;
             border-radius: 12px;
-            padding: 15px 10px;
+            padding: 12px;
             text-align: center;
             cursor: pointer;
             transition: all 0.2s;
             display: flex;
             flex-direction: column;
+            justify-content: center;
             align-items: center;
             gap: 8px;
+            width: 100%;
+            aspect-ratio: 1 / 1;
         }
         .category-card-small:hover {
             border-color: var(--primary);
             background: var(--primary-50);
             transform: translateY(-2px);
         }
-        .category-card-small .category-icon { font-size: 2.5rem; margin-bottom: 5px; }
-        .category-card-small .category-title { font-size: 1.1rem; font-weight: 600; }
+        .category-card-small .category-icon { font-size: 2rem; margin-bottom: 4px; }
+        .category-card-small .category-title { font-size: 1rem; font-weight: 600; line-height: 1.25; }
         
         .back-link-small {
             background: #f3f4f6;
@@ -338,8 +345,8 @@ function injectDashboardCategoryStyles() {
         }
         .services-grid-selection { 
             display: grid !important; 
-            grid-template-columns: 1fr 1fr 1fr !important; 
-            gap: 8px !important;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) !important; 
+            gap: 10px !important;
             width: 100% !important;
         }
         .service-checkbox-item { cursor: pointer; position: relative; display: block !important; }
