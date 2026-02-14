@@ -68,21 +68,45 @@
 
         .service-checkbox-item .service-content {
             display: flex;
+            flex-direction: column;
             align-items: center;
+            justify-content: center;
             gap: 8px;
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            background: #f9f9f9;
-            font-size: 0.9rem;
+            padding: 15px;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 12px;
             transition: all 0.2s;
+            background: #f9fafb;
+            font-size: 0.9rem;
+            text-align: center;
+            aspect-ratio: 1 / 1;
+            height: 100%;
+            white-space: normal;
+            overflow: visible;
+        }
+
+        .service-checkbox-item .service-content:hover {
+            border-color: #0d9488;
+            background: #f0fdfa;
+            transform: translateY(-2px);
         }
 
         .service-checkbox-item input:checked+.service-content {
-            border-color: var(--primary);
-            background: var(--primary-50);
-            color: var(--primary);
-            font-weight: bold;
+            border-color: var(--primary, #0d9488);
+            background: #f0fdfa;
+            color: var(--primary, #0d9488);
+            font-weight: 600;
+            box-shadow: 0 4px 6px -1px rgba(13, 148, 136, 0.1), 0 0 0 1px var(--primary, #0d9488);
+        }
+
+        .service-checkbox-item .service-icon {
+            font-size: 2rem;
+            margin-bottom: 4px;
+        }
+
+        .service-checkbox-item .service-name {
+            font-size: 0.9rem;
+            line-height: 1.2;
         }
 
         .dashboard-section-header {

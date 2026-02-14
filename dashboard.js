@@ -341,18 +341,19 @@ function injectDashboardCategoryStyles() {
         .service-checkbox-item { cursor: pointer; position: relative; display: block !important; }
         .service-checkbox-item input { position: absolute; opacity: 0; width: 0; height: 0; }
         .service-checkbox-item .service-content { 
-            display: flex !important; flex-direction: row !important; align-items: center !important; gap: 6px !important;
-            padding: 8px 10px !important; border: 1.5px solid #e5e7eb !important; border-radius: 8px !important; 
-            transition: all 0.2s; background: #f9fafb !important; font-size: 0.82rem !important;
-            white-space: nowrap; overflow: hidden;
+            display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; gap: 8px !important;
+            padding: 15px !important; border: 1.5px solid #e5e7eb !important; border-radius: 12px !important; 
+            transition: all 0.2s; background: #f9fafb !important; font-size: 0.9rem !important;
+            text-align: center !important; aspect-ratio: 1 / 1 !important; height: 100% !important;
+            white-space: normal !important; overflow: visible !important;
         }
-        .service-checkbox-item .service-content:hover { border-color: #0d9488 !important; background: #f0fdfa !important; }
+        .service-checkbox-item .service-content:hover { border-color: #0d9488 !important; background: #f0fdfa !important; transform: translateY(-2px); }
         .service-checkbox-item input:checked + .service-content {
             border-color: var(--primary, #0d9488) !important; background: #f0fdfa !important; color: var(--primary, #0d9488) !important; font-weight: 600 !important;
-            box-shadow: 0 0 0 1px var(--primary, #0d9488) !important;
+            box-shadow: 0 4px 6px -1px rgba(13, 148, 136, 0.1), 0 0 0 1px var(--primary, #0d9488) !important;
         }
-        .service-checkbox-item .service-icon { font-size: 1.1rem !important; flex-shrink: 0; }
-        .service-checkbox-item .service-name { font-size: 0.82rem !important; overflow: hidden; text-overflow: ellipsis; }
+        .service-checkbox-item .service-icon { font-size: 2rem !important; margin-bottom: 4px; }
+        .service-checkbox-item .service-name { font-size: 0.9rem !important; line-height: 1.2; }
         .no-services-msg { color: #6b7280; font-style: italic; text-align: center; width: 100%; grid-column: 1 / -1; padding: 20px; }
     `;
     document.head.appendChild(style);
