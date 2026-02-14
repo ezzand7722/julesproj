@@ -302,28 +302,32 @@ function injectDashboardCategoryStyles() {
         .category-card-small .category-icon { font-size: 2.5rem; margin-bottom: 5px; }
         .category-card-small .category-title { font-size: 1.1rem; font-weight: 600; }
         
-        .dashboard-section-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 15px;
-        }
         .back-link-small {
             background: #f3f4f6;
             border: 1px solid #d1d5db;
             color: var(--primary);
             cursor: pointer;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            padding: 8px 16px;
+            padding: 8px 14px;
             border-radius: 8px;
             font-family: inherit;
             transition: all 0.2s;
             font-weight: 500;
+            white-space: nowrap !important;
+            flex-shrink: 0;
         }
         .back-link-small:hover { background: #e5e7eb; transform: translateY(-1px); }
+        .dashboard-section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            gap: 15px;
+            flex-wrap: nowrap;
+        }
         .category-badge {
             background: var(--primary-50);
             color: var(--primary);
