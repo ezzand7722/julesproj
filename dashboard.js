@@ -299,8 +299,8 @@ function injectDashboardCategoryStyles() {
             background: var(--primary-50);
             transform: translateY(-2px);
         }
-        .category-card-small .category-icon { font-size: 1.5rem; }
-        .category-card-small .category-title { font-size: 0.9rem; font-weight: 500; }
+        .category-card-small .category-icon { font-size: 2.5rem; margin-bottom: 5px; }
+        .category-card-small .category-title { font-size: 1.1rem; font-weight: 600; }
         
         .dashboard-section-header {
             display: flex;
@@ -309,18 +309,21 @@ function injectDashboardCategoryStyles() {
             margin-bottom: 15px;
         }
         .back-link-small {
-            background: none;
-            border: none;
+            background: #f3f4f6;
+            border: 1px solid #d1d5db;
             color: var(--primary);
             cursor: pointer;
-            font-size: 0.9rem;
-            display: flex;
+            font-size: 0.95rem;
+            display: inline-flex;
             align-items: center;
-            gap: 5px;
-            padding: 0;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 8px;
             font-family: inherit;
+            transition: all 0.2s;
+            font-weight: 500;
         }
-        .back-link-small:hover { text-decoration: underline; }
+        .back-link-small:hover { background: #e5e7eb; transform: translateY(-1px); }
         .category-badge {
             background: var(--primary-50);
             color: var(--primary);
