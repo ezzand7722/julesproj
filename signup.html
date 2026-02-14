@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="premium-styles.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabaseClient.js"></script>
-    <script>if(localStorage.getItem('theme')==='dark')document.documentElement.setAttribute('data-theme','dark')</script>
+    <script>if (localStorage.getItem('theme') === 'dark') document.documentElement.setAttribute('data-theme', 'dark')</script>
 </head>
 
 <body class="auth-page">
@@ -143,7 +143,9 @@
                         </div>
                         <div class="form-group">
                             <label>المنطقة</label>
-                            <input type="text" id="providerLocation" placeholder="مثال: خلدا، الجبيهة">
+                            <select id="providerLocation">
+                                <option value="">اختر المنطقة...</option>
+                            </select>
                         </div>
                     </div>
 
@@ -180,6 +182,7 @@
     </div>
 
     <!-- Use the shared auth.js file! -->
+    <script src="locations.js"></script>
     <script src="auth.js"></script>
     <script src="darkmode.js"></script>
 </body>

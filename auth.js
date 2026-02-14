@@ -199,6 +199,22 @@ async function handleLogin(e) {
     }
 }
 
+// Provider City/Location Logic
+document.addEventListener('DOMContentLoaded', () => {
+    const citySelect = document.getElementById('providerCity');
+    const locationSelect = document.getElementById('providerLocation');
+
+    if (citySelect && locationSelect) {
+        citySelect.addEventListener('change', () => {
+            const city = citySelect.value;
+            const neighborhoods = (window.neighborhoodsByCity && window.neighborhoodsByCity[city]) || [];
+
+            locationSelect.innerHTML = '<option value="">اختر المنطقة...</option>' +
+                neighborhoods.map(n => `<option value="${n}">${n}</option>`).join('');
+        });
+    }
+});
+
 async function handleSignup(e) {
     e.preventDefault();
     if (!supabaseClient) {
