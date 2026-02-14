@@ -498,8 +498,86 @@
                     <div class="skeleton skeleton-text"></div>
                 </div>
             </div>
+            <!-- Show More / Show Less Toggle -->
+            <button id="servicesToggleBtn" class="services-toggle-btn" onclick="toggleServicesView()" style="display:none;">
+                <span>عرض جميع الخدمات</span>
+                <span class="toggle-arrow">▼</span>
+            </button>
         </div>
     </section>
+
+    <style>
+        /* Services Show More / Show Less */
+        .service-card-hidden {
+            display: none !important;
+        }
+        .service-card-reveal {
+            animation: serviceReveal 0.4s ease-out forwards;
+        }
+        @keyframes serviceReveal {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        .services-toggle-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 30px auto 0;
+            padding: 14px 40px;
+            background: linear-gradient(135deg, #0d9488, #0f766e);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(13, 148, 136, 0.3);
+        }
+        .services-toggle-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(13, 148, 136, 0.4);
+            background: linear-gradient(135deg, #0f766e, #115e59);
+        }
+        .services-toggle-btn:active {
+            transform: translateY(0);
+        }
+        .services-toggle-btn.expanded {
+            background: linear-gradient(135deg, #6b7280, #4b5563);
+            box-shadow: 0 4px 15px rgba(107, 114, 128, 0.3);
+        }
+        .services-toggle-btn.expanded:hover {
+            box-shadow: 0 8px 25px rgba(107, 114, 128, 0.4);
+            background: linear-gradient(135deg, #4b5563, #374151);
+        }
+        .toggle-arrow {
+            font-size: 0.8rem;
+            transition: transform 0.3s ease;
+        }
+        .toggle-arrow-up {
+            transform: rotate(0deg);
+        }
+        
+        /* Dark mode support */
+        [data-theme="dark"] .services-toggle-btn {
+            background: linear-gradient(135deg, #115e59, #134e4a);
+            box-shadow: 0 4px 15px rgba(13, 148, 136, 0.2);
+        }
+        [data-theme="dark"] .services-toggle-btn:hover {
+            box-shadow: 0 8px 25px rgba(13, 148, 136, 0.3);
+        }
+        [data-theme="dark"] .services-toggle-btn.expanded {
+            background: linear-gradient(135deg, #4b5563, #374151);
+        }
+    </style>
 
     <section id="how-it-works" class="how-it-works">
         <div class="container">

@@ -287,6 +287,10 @@ async function loadProvidersData(filter = {}) {
     }
 }
 
+// How many services to show initially before "Show More"
+const SERVICES_INITIAL_COUNT = 8;
+let servicesExpanded = false;
+
 // Render services to DOM
 function renderServices(services) {
     const grid = document.getElementById('servicesGrid');
@@ -294,18 +298,69 @@ function renderServices(services) {
     
     if (!services || services.length === 0) {
         grid.innerHTML = '<p class="error">لا توجد خدمات</p>';
+        // Hide toggle button if exists
+        const toggleBtn = document.getElementById('servicesToggleBtn');
+        if (toggleBtn) toggleBtn.style.display = 'none';
         return;
     }
     
-    grid.innerHTML = services.map(service => `
-        <div class="service-card fade-in-card" data-service-id="${escapeHtml(service.id)}" onclick="filterByService('${escapeHtml(service.name_ar)}')">
+    servicesExpanded = false;
+    
+    grid.innerHTML = services.map((service, index) => `
+        <div class="service-card fade-in-card ${index >= SERVICES_INITIAL_COUNT ? 'service-card-hidden' : ''}" data-service-id="${escapeHtml(service.id)}" data-service-index="${index}" onclick="filterByService('${escapeHtml(service.name_ar)}')">
             <div class="service-icon">${service.icon}</div>
             <h3>${escapeHtml(service.name_ar)}</h3>
             <p>${escapeHtml(service.description_ar || '')}</p>
             <span class="service-count">${service.provider_count || 0}+ مقدم خدمة</span>
         </div>
     `).join('');
+    
+    // Show/hide the toggle button
+    const toggleBtn = document.getElementById('servicesToggleBtn');
+    if (toggleBtn) {
+        if (services.length > SERVICES_INITIAL_COUNT) {
+            toggleBtn.style.display = 'flex';
+            toggleBtn.innerHTML = `<span>عرض جميع الخدمات (${services.length})</span><span class="toggle-arrow">▼</span>`;
+        } else {
+            toggleBtn.style.display = 'none';
+        }
+    }
 }
+
+// Toggle showing all services
+function toggleServicesView() {
+    servicesExpanded = !servicesExpanded;
+    const grid = document.getElementById('servicesGrid');
+    const toggleBtn = document.getElementById('servicesToggleBtn');
+    if (!grid || !toggleBtn) return;
+    
+    const hiddenCards = grid.querySelectorAll('.service-card[data-service-index]');
+    hiddenCards.forEach(card => {
+        const index = parseInt(card.dataset.serviceIndex);
+        if (index >= SERVICES_INITIAL_COUNT) {
+            if (servicesExpanded) {
+                card.classList.remove('service-card-hidden');
+                card.classList.add('service-card-reveal');
+            } else {
+                card.classList.add('service-card-hidden');
+                card.classList.remove('service-card-reveal');
+            }
+        }
+    });
+    
+    if (servicesExpanded) {
+        toggleBtn.innerHTML = `<span>عرض أقل</span><span class="toggle-arrow toggle-arrow-up">▲</span>`;
+        toggleBtn.classList.add('expanded');
+    } else {
+        toggleBtn.innerHTML = `<span>عرض جميع الخدمات (${allServices.length})</span><span class="toggle-arrow">▼</span>`;
+        toggleBtn.classList.remove('expanded');
+        // Scroll back to services section
+        document.getElementById('services')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+// Make toggle global
+window.toggleServicesView = toggleServicesView;
 
 // Render providers to DOM
 function renderProviders(providers) {
