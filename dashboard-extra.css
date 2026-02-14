@@ -64,6 +64,14 @@
     position: relative;
 }
 
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+        max-width: 100%;
+        padding: 24px;
+    }
+}
+
 .modal-close {
     position: absolute;
     top: 15px;

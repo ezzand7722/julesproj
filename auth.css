@@ -15,7 +15,7 @@
     background: var(--white);
     border-radius: var(--radius-xl);
     overflow: hidden;
-    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 .auth-card {
@@ -39,6 +39,31 @@
 
 .auth-form.active {
     display: block;
+}
+
+.auth-form input:focus-visible,
+.auth-form select:focus-visible,
+.auth-form textarea:focus-visible,
+.profile-form input:focus-visible,
+.profile-form select:focus-visible,
+.profile-form textarea:focus-visible {
+    outline: none;
+    border-color: var(--primary, #0d9488) !important;
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
+}
+
+.input-error {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.15);
+}
+
+.field-error {
+    display: block;
+    min-height: 1rem;
+    margin-top: 6px;
+    color: #ef4444;
+    font-size: 0.8rem;
+    line-height: 1.2;
 }
 
 .auth-form h1 {
@@ -384,8 +409,9 @@
 .dashboard-card {
     background: var(--white);
     border-radius: var(--radius-lg);
-    padding: 24px;
+    padding: 32px;
     margin-bottom: 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 .dashboard-card h2 {

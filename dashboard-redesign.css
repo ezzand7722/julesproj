@@ -219,6 +219,35 @@
     box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.25);
 }
 
+.requests-empty-state {
+    display: none;
+    text-align: center;
+    color: #6b7280;
+    padding: 40px 20px;
+    border: 1px dashed #d1d5db;
+    border-radius: 12px;
+    background: #f9fafb;
+    margin-top: 16px;
+}
+
+.requests-empty-state svg {
+    display: block;
+    margin: 0 auto 12px;
+}
+
+.requests-empty-state h3 {
+    margin: 0 0 8px;
+    font-size: 1.1rem;
+    color: #6b7280;
+    font-weight: 700;
+}
+
+.requests-empty-state p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 0.9rem;
+}
+
 .btn-primary-action:hover {
     box-shadow: 0 8px 12px -1px rgba(37, 99, 235, 0.35);
     transform: translateY(-1px);

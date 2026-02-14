@@ -43,14 +43,17 @@
                     <div class="form-group">
                         <label>الاسم الكامل</label>
                         <input type="text" id="signupName" required placeholder="أحمد محمد">
+                        <span class="field-error" data-error-for="signupName"></span>
                     </div>
                     <div class="form-group">
                         <label>البريد الإلكتروني</label>
                         <input type="email" id="signupEmail" required placeholder="example@email.com">
+                        <span class="field-error" data-error-for="signupEmail"></span>
                     </div>
                     <div class="form-group">
                         <label>رقم الهاتف</label>
                         <input type="tel" id="signupPhone" required placeholder="07XXXXXXXX" pattern="07[0-9]{8}">
+                        <span class="field-error" data-error-for="signupPhone"></span>
                     </div>
                     <div class="form-group">
                         <label>كلمة المرور</label>
@@ -60,6 +63,7 @@
                             <button type="button" class="toggle-password"
                                 onclick="togglePassword('signupPassword')">👁️</button>
                         </div>
+                        <span class="field-error" data-error-for="signupPassword"></span>
                     </div>
 
                     <!-- Provider-specific fields -->

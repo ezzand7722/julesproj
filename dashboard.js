@@ -478,6 +478,30 @@ async function loadBookings() {
     if (cancelledList) {
         cancelledList.innerHTML = cancelled.length ? cancelled.map(b => renderBookingItem(b)).join('') : '<p class="empty-state">لا توجد حجوزات ملغاة</p>';
     }
+
+    updateBookingsEmptyState('pending');
+}
+
+function updateBookingsEmptyState(tabName = 'pending') {
+    const emptyStateEl = document.getElementById('bookingsEmptyState');
+    if (!emptyStateEl) return;
+
+    const map = {
+        pending: 'pendingBookingsList',
+        confirmed: 'confirmedBookingsList',
+        completed: 'completedBookingsList',
+        cancelled: 'cancelledBookingsList'
+    };
+
+    const listId = map[tabName] || map.pending;
+    const list = document.getElementById(listId);
+    if (!list) {
+        emptyStateEl.style.display = 'none';
+        return;
+    }
+
+    const hasBookingCards = list.querySelector('.booking-item') !== null;
+    emptyStateEl.style.display = hasBookingCards ? 'none' : 'block';
 }
 
 // Switch between booking tabs
@@ -492,6 +516,7 @@ function switchBookingTab(tabName) {
 
     if (tabContent) tabContent.style.display = 'block';
     if (tabBtn) tabBtn.classList.add('active');
+    updateBookingsEmptyState(tabName);
 }
 
 // Render Booking Item

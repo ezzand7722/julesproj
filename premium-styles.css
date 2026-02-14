@@ -24,8 +24,8 @@
     --border-default: #DFE1E6;
     --border-light: #EBECF0;
 
-    --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.08);
-    --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.12);
+    --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.08);
+    --shadow-card-hover: 0 10px 28px rgba(0, 0, 0, 0.12);
     --shadow-nav: 0 2px 8px rgba(0, 0, 0, 0.06);
 
     --radius-sm: 8px;
@@ -123,7 +123,7 @@ main,
     background-color: var(--bg-surface) !important;
     border-radius: var(--radius-md) !important;
     box-shadow: var(--shadow-card) !important;
-    padding: 20px;
+    padding: 24px;
     margin-bottom: 16px;
     border: 1px solid var(--border-light) !important;
     backdrop-filter: none !important;
