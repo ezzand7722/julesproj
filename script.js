@@ -1161,11 +1161,6 @@ async function handleBooking(e) {
     }
 }
 
-// Provider signup - redirect to login page
-function showProviderSignup() {
-    window.location.href = 'login.html';
-}
-
 // Notification system
 function showNotification(message, type = 'info') {
     const existing = document.querySelector('.notification');

@@ -37,6 +37,15 @@ window.togglePassword = togglePassword;
 // Check Login State
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('🚀 Auth page loaded');
+
+    // Allow direct links like signup.html?type=provider
+    const typeFromUrl = new URLSearchParams(window.location.search).get('type');
+    if (typeFromUrl === 'provider') {
+        const signupForm = document.getElementById('signupForm');
+        if (signupForm) showForm('signupForm');
+        setUserType('provider');
+    }
+
     if (!supabaseClient) return;
 
     try {
@@ -46,55 +55,53 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             // Check if user selected 'provider' before Google OAuth redirect
             const pendingUserType = localStorage.getItem('pendingUserType');
-            if (pendingUserType === 'provider') {
-                console.log('📝 Updating role to provider from Google OAuth...');
-                await supabaseClient
-                    .from('profiles')
-                    .update({ role: 'provider' })
-                    .eq('id', session.user.id);
-                localStorage.removeItem('pendingUserType');
-                window.location.href = 'dashboard.html';
-                return;
-            }
-            localStorage.removeItem('pendingUserType');
+            const pendingProviderDataRaw = localStorage.getItem('pendingProviderData');
 
-            // Check if there's pending provider data from email signup
-            const pendingProviderData = localStorage.getItem('pendingProviderData');
-            if (pendingProviderData) {
-                console.log('📝 Creating provider record from email signup...');
-                const providerData = JSON.parse(pendingProviderData);
+            if (pendingUserType === 'provider' || pendingProviderDataRaw) {
+                console.log('📝 Processing provider onboarding after OAuth...');
 
-                // First update profile role
+                // Ensure role is provider
                 await supabaseClient
                     .from('profiles')
                     .update({ role: 'provider' })
                     .eq('id', session.user.id);
 
-                // Then create provider record
-                const { error: providerError } = await supabaseClient
-                    .from('providers')
-                    .insert([{
+                // If we have provider details, create or update provider record
+                if (pendingProviderDataRaw) {
+                    const providerData = JSON.parse(pendingProviderDataRaw);
+                    const metadata = session.user.user_metadata || {};
+
+                    const providerPayload = {
                         user_id: session.user.id,
-                        name: providerData.name,
-                        specialty: providerData.specialty,
-                        city: providerData.city,
-                        location: providerData.location,
-                        phone: providerData.phone,
+                        name: providerData.name || metadata.full_name || metadata.name || (session.user.email ? session.user.email.split('@')[0] : 'مقدم خدمة'),
+                        specialty: providerData.specialty || 'صيانة عامة',
+                        city: providerData.city || 'عمّان',
+                        location: providerData.location || providerData.city || 'عمّان',
+                        phone: providerData.phone || metadata.phone || null,
                         rating: 4.0,
                         review_count: 0,
                         is_featured: false,
                         is_verified: false
-                    }]);
+                    };
 
-                if (providerError) {
-                    console.error('Provider insert error:', providerError);
-                } else {
-                    console.log('✅ Provider record created successfully');
+                    const { error: providerError } = await supabaseClient
+                        .from('providers')
+                        .upsert([providerPayload], { onConflict: 'user_id' });
+
+                    if (providerError) {
+                        console.error('Provider upsert error:', providerError);
+                    } else {
+                        console.log('✅ Provider record created/updated successfully');
+                    }
                 }
+
+                localStorage.removeItem('pendingUserType');
                 localStorage.removeItem('pendingProviderData');
                 window.location.href = 'dashboard.html';
                 return;
             }
+
+            localStorage.removeItem('pendingUserType');
 
             const { data: profile } = await supabaseClient
                 .from('profiles')
@@ -301,7 +308,7 @@ async function handleSignup(e) {
     }
 }
 
-async function signInWithGoogle() {
+async function signInWithGoogle(forcedUserType = null) {
     if (window.location.protocol === 'file:') {
         alert('⚠️ تنبيه: تسجيل الدخول بـ Google لا يعمل عند فتح الملف مباشرة.\n\nيجب تشغيل الموقع باستخدام خادم محلي (Local Server) مثل "Live Server" في VS Code.\n\nالبروتوكول الحالي: file://');
         return;
@@ -314,7 +321,32 @@ async function signInWithGoogle() {
 
     // Save user type selection to localStorage before redirect
     const userTypeElement = document.getElementById('userType');
-    const selectedUserType = userTypeElement ? userTypeElement.value : 'customer';
+    const typeFromUrl = new URLSearchParams(window.location.search).get('type');
+    const selectedUserType = forcedUserType || (userTypeElement ? userTypeElement.value : null) || (typeFromUrl === 'provider' ? 'provider' : 'customer');
+
+    if (selectedUserType === 'provider') {
+        const specialty = document.getElementById('providerSpecialty')?.value?.trim() || '';
+        const city = document.getElementById('providerCity')?.value?.trim() || '';
+        const location = document.getElementById('providerLocation')?.value?.trim() || city;
+        const name = document.getElementById('signupName')?.value?.trim() || '';
+        const phone = document.getElementById('signupPhone')?.value?.trim() || '';
+
+        if (!specialty || !city) {
+            showNotification('لاستخدام Google كمقدم خدمة، اختر التخصص والمدينة أولاً', 'warning');
+            return;
+        }
+
+        localStorage.setItem('pendingProviderData', JSON.stringify({
+            specialty,
+            city,
+            location,
+            name,
+            phone
+        }));
+    } else {
+        localStorage.removeItem('pendingProviderData');
+    }
+
     localStorage.setItem('pendingUserType', selectedUserType);
     console.log('💾 Saved pending user type:', selectedUserType);
 
