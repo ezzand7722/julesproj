@@ -51,7 +51,7 @@
 
         .services-grid-selection {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            grid-template-columns: 1fr 1fr;
             gap: 8px;
             margin-top: 10px;
         }
@@ -257,7 +257,7 @@
                     <button type="button" class="back-link-small" onclick="renderProviderCategories()">← رجوع للأقسام</button>
                     <span class="category-badge">${category.icon} ${category.title}</span>
                 </div>
-                <div class="services-grid-selection" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;width:100%">
+                <div class="services-grid-selection" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%">
                     ${filteredServices.map(service => `
                         <label class="service-checkbox-item">
                             <input type="radio" name="specialty_radio" value="${service.name_ar}" onchange="selectSpecialty('${service.name_ar}')">
