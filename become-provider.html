@@ -149,7 +149,7 @@
                     <div class="form-group">
                         <label>رقم الهاتف</label>
                         <div class="phone-input-wrapper">
-                            <input type="tel" id="phone" placeholder="790000000" pattern="[0-9]{9}" required>
+                            <input type="tel" id="phone" placeholder="790000000 أو 0790000000" pattern="(0?[0-9]{9})" maxlength="10" inputmode="numeric" required>
                             <span class="country-code">+962</span>
                         </div>
                     </div>
@@ -301,14 +301,34 @@
             document.getElementById('specialty').value = value;
         }
 
+        function normalizeJordanPhone(rawPhone) {
+            const digitsOnly = (rawPhone || '').replace(/\D/g, '');
+            if (digitsOnly.length === 10 && digitsOnly.startsWith('0')) {
+                return digitsOnly.slice(1);
+            }
+            if (digitsOnly.length === 9) {
+                return digitsOnly;
+            }
+            return null;
+        }
+
         async function handleUpgrade(e) {
             e.preventDefault();
             const btn = e.target.querySelector('button[type="submit"]');
             btn.disabled = true;
             btn.textContent = 'جاري الترقية...';
 
-            const phone = document.getElementById('phone').value;
-            const fullPhone = '+962' + phone;
+            const phoneInput = document.getElementById('phone');
+            const normalizedPhone = normalizeJordanPhone(phoneInput.value);
+            if (!normalizedPhone) {
+                alert('يرجى إدخال رقم هاتف صحيح (مثل 790000000 أو 0790000000)');
+                btn.disabled = false;
+                btn.textContent = 'ترقية الحساب';
+                return;
+            }
+
+            phoneInput.value = normalizedPhone;
+            const fullPhone = '+962' + normalizedPhone;
             const specialty = document.getElementById('specialty').value;
             if (!specialty) {
                 alert('يرجى اختيار التخصص/الخدمة');

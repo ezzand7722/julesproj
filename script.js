@@ -124,6 +124,10 @@ async function checkSession() {
 async function updateAuthUI(session) {
     const guestButtons = document.querySelector('.guest-buttons');
     const userMenu = document.getElementById('userMenu');
+    const userNameEl = document.getElementById('userName');
+    const userAvatarEl = document.getElementById('userAvatar');
+    const dashboardBtn = document.getElementById('dashboardBtn');
+    const customerDashboardBtn = document.getElementById('customerDashboardBtn');
 
     // Mobile menu elements
     const mobileLoginBtn = document.getElementById('mobileLoginBtn');
@@ -133,8 +137,8 @@ async function updateAuthUI(session) {
     const mobileLogoutBtn = document.getElementById('mobileLogoutBtn');
 
     if (session) {
-        guestButtons.classList.add('hidden');
-        userMenu.classList.remove('hidden');
+        if (guestButtons) guestButtons.classList.add('hidden');
+        if (userMenu) userMenu.classList.remove('hidden');
 
         // Update mobile menu for logged in users
         if (mobileLoginBtn) mobileLoginBtn.classList.add('hidden');
@@ -146,9 +150,9 @@ async function updateAuthUI(session) {
         const displayName = metadata.full_name || metadata.name || session.user.email.split('@')[0];
         const avatarUrl = metadata.avatar_url || metadata.picture;
 
-        document.getElementById('userName').textContent = displayName;
-        if (avatarUrl) {
-            document.getElementById('userAvatar').innerHTML = `<img src="${avatarUrl}" alt="Avatar">`;
+        if (userNameEl) userNameEl.textContent = displayName;
+        if (avatarUrl && userAvatarEl) {
+            userAvatarEl.innerHTML = `<img src="${avatarUrl}" alt="Avatar">`;
         }
 
         // 2. Background Fetch (Role Only)
@@ -160,10 +164,10 @@ async function updateAuthUI(session) {
                 .single();
 
             if (profile && profile.role === 'provider') {
-                document.getElementById('dashboardBtn').classList.remove('hidden');
+                if (dashboardBtn) dashboardBtn.classList.remove('hidden');
                 if (mobileProviderDashboardBtn) mobileProviderDashboardBtn.classList.remove('hidden');
             } else if (profile && profile.role === 'customer') {
-                document.getElementById('customerDashboardBtn').classList.remove('hidden');
+                if (customerDashboardBtn) customerDashboardBtn.classList.remove('hidden');
                 if (mobileCustomerDashboardBtn) mobileCustomerDashboardBtn.classList.remove('hidden');
             }
         } catch (e) {
@@ -171,8 +175,8 @@ async function updateAuthUI(session) {
             console.warn('Profile fetch warning:', e);
         }
     } else {
-        guestButtons.classList.remove('hidden');
-        userMenu.classList.add('hidden');
+        if (guestButtons) guestButtons.classList.remove('hidden');
+        if (userMenu) userMenu.classList.add('hidden');
 
         // Show login buttons on mobile
         if (mobileLoginBtn) mobileLoginBtn.classList.remove('hidden');
