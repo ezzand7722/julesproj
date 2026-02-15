@@ -545,17 +545,27 @@ async function loadBookings() {
         profiles?.forEach(p => profilesMap[p.id] = p);
     }
 
-    // 3. Attach Profiles
+    // 3. Attach Profiles + normalize status for robust tab mapping
     const enrichedBookings = resolvedBookings.map(b => ({
         ...b,
+        normalized_status: normalizeBookingStatus(b.status),
         profiles: profilesMap[b.customer_id] || null
     }));
 
-    // Filter by status
-    const pending = enrichedBookings.filter(b => b.status === 'pending');
-    const confirmed = enrichedBookings.filter(b => b.status === 'confirmed');
-    const completed = enrichedBookings.filter(b => b.status === 'completed' || b.status === 'auto_completed');
-    const cancelled = enrichedBookings.filter(b => b.status === 'cancelled' || b.status === 'auto_cancelled');
+    // Filter by normalized status
+    const pending = enrichedBookings.filter(b => b.normalized_status === 'pending');
+    const confirmed = enrichedBookings.filter(b => b.normalized_status === 'confirmed');
+    const completed = enrichedBookings.filter(b => b.normalized_status === 'completed');
+    const cancelled = enrichedBookings.filter(b => b.normalized_status === 'cancelled');
+
+    console.log('Bookings status summary:', {
+        total: enrichedBookings.length,
+        pending: pending.length,
+        confirmed: confirmed.length,
+        completed: completed.length,
+        cancelled: cancelled.length,
+        rawStatuses: [...new Set(enrichedBookings.map(b => b.status || 'NULL'))]
+    });
 
     // Update counts
     if (document.getElementById('pendingCount')) document.getElementById('pendingCount').textContent = pending.length;
@@ -639,15 +649,17 @@ function renderBookingItem(booking) {
     const customerName = profileData?.full_name || booking.customer_name || 'عميل';
     let customerPhone = profileData?.phone || booking.customer_phone || ''; // Assuming customer_phone might exist
 
-    const date = new Date(booking.booking_date || booking.service_date).toLocaleDateString('ar-JO');
-    const statusLabels = { pending: 'قيد الانتظار', confirmed: 'مؤكد', completed: 'مكتمل', cancelled: 'ملغي', auto_cancelled: 'ملغي تلقائياً', auto_completed: 'مكتمل تلقائياً' };
-    const statusColors = { pending: 'orange', confirmed: 'green', completed: 'blue', cancelled: 'red', auto_cancelled: '#ef4444', auto_completed: '#6366f1' };
+    const dateValue = booking.booking_date || booking.service_date;
+    const date = dateValue ? new Date(dateValue).toLocaleDateString('ar-JO') : 'غير محدد';
+    const normalizedStatus = booking.normalized_status || normalizeBookingStatus(booking.status);
+    const statusLabels = { pending: 'قيد الانتظار', confirmed: 'مؤكد', completed: 'مكتمل', cancelled: 'ملغي' };
+    const statusColors = { pending: 'orange', confirmed: 'green', completed: 'blue', cancelled: 'red' };
 
     return `
-    <div class="booking-item status-${booking.status}">
+    <div class="booking-item status-${normalizedStatus}">
         <div class="booking-header">
-            <span class="booking-id">#${booking.id.substr(0, 8)}</span>
-            <span class="booking-status" style="color:${statusColors[booking.status]}">${statusLabels[booking.status]}</span>
+            <span class="booking-id">#${(booking.id || '').toString().substring(0, 8)}</span>
+            <span class="booking-status" style="color:${statusColors[normalizedStatus] || 'orange'}">${statusLabels[normalizedStatus] || 'قيد الانتظار'}</span>
         </div>
         <div class="booking-details">
             <p><strong>العميل:</strong> ${escapeHtml(customerName)}</p>
@@ -655,18 +667,29 @@ function renderBookingItem(booking) {
             <p><strong>التاريخ:</strong> ${date} - ${booking.booking_time || booking.preferred_time}</p>
             ${booking.notes ? `<p><strong>ملاحظات:</strong> ${escapeHtml(booking.notes)}</p>` : ''}
         </div>
-        ${booking.status === 'pending' ? `
+        ${normalizedStatus === 'pending' ? `
         <div class="booking-actions">
             <button class="btn-small btn-confirm" onclick="updateBookingStatus('${booking.id}', 'confirmed')">قبول</button>
             <button class="btn-small btn-cancel" onclick="updateBookingStatus('${booking.id}', 'cancelled')">رفض</button>
         </div>` : ''}
-        ${booking.status === 'confirmed' ? `
+        ${normalizedStatus === 'confirmed' ? `
         <div class="booking-actions">
             <button class="btn-small btn-complete" onclick="updateBookingStatus('${booking.id}', 'completed')">إكمال الخدمة</button>
         </div>` : ''}
     </div>
-    </div>
     `;
+}
+
+function normalizeBookingStatus(status) {
+    const s = (status || '').toString().toLowerCase().trim();
+    if (!s) return 'pending';
+
+    if (['pending', 'requested', 'new', 'awaiting_response', 'pending_provider_response'].includes(s)) return 'pending';
+    if (['confirmed', 'accepted', 'in_progress', 'scheduled'].includes(s)) return 'confirmed';
+    if (['completed', 'auto_completed', 'done', 'finished', 'completed_archived'].includes(s)) return 'completed';
+    if (['cancelled', 'canceled', 'auto_cancelled', 'rejected', 'declined', 'provider_ghosted'].includes(s)) return 'cancelled';
+
+    return 'pending';
 }
 
 // Utility: Escape HTML to prevent XSS
