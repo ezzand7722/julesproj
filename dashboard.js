@@ -46,15 +46,24 @@ async function checkAuth() {
 
     currentUser = session.user;
 
-    // Get provider record
-    let { data: provider, error } = await supabaseDashboard
+    // Get provider record (robust against duplicate rows)
+    const { data: providerRows, error: providerLookupError } = await supabaseDashboard
         .from('providers')
         .select('*')
         .eq('user_id', currentUser.id)
-        .single();
+        .order('created_at', { ascending: true })
+        .limit(1);
+
+    let provider = providerRows?.[0] || null;
+
+    if (providerLookupError) {
+        console.error('❌ Failed to load provider record:', providerLookupError);
+        showNotification('تعذر تحميل بيانات مقدم الخدمة، حاول مرة أخرى', 'error');
+        return;
+    }
 
     // If no provider record exists but user has session, check if they're a provider
-    if (error || !provider) {
+    if (!provider) {
         console.log('⚠️ No provider record found, checking profile...');
 
         // Check if user's profile role is 'provider'
@@ -473,7 +482,7 @@ async function loadBookings() {
         .from('bookings')
         .select('*')
         .eq('provider_id', currentProvider.id)
-        .neq('archived', true)
+        .or('archived.is.null,archived.eq.false')
         .order('created_at', { ascending: false });
 
     if (error) {

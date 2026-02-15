@@ -93,7 +93,7 @@ async function loadConversations() {
 
     let contacts = [];
 
-    if (profile.role === 'customer') {
+    if (profile?.role === 'customer') {
         const { data: bookings } = await supabaseClient
             .from('bookings')
             .select('provider_id, providers(user_id, name, id, specialty)')
@@ -120,11 +120,18 @@ async function loadConversations() {
         // Provider: Get customers
         // We need to fetch bookings where provider_id matches my provider record
         // First get my provider record
-        const { data: providerParams } = await supabaseClient
+        const { data: providerRows, error: providerError } = await supabaseClient
             .from('providers')
             .select('id')
             .eq('user_id', myId)
-            .single();
+            .order('created_at', { ascending: true })
+            .limit(1);
+
+        if (providerError) {
+            console.error('Failed to load provider row for chat contacts:', providerError);
+        }
+
+        const providerParams = providerRows?.[0] || null;
 
         if (providerParams) {
             const { data: bookings } = await supabaseClient
