@@ -74,15 +74,41 @@ async function loadConversations() {
 
     listContainer.innerHTML = '<div class="loading-spinner">جاري التحميل...</div>';
 
-    // Complex query: Get distinct list of people I've chatted with
-    // Supabase doesn't support complex distinct on multiple cols easily via JS sdk alone 
-    // without a view or RPC.
-    // WORKAROUND: Fetch my bookings to get known contacts (Providers/Customers)
-    // OR: Fetch all messages involved in.
+    // 0) First source of truth: existing messages (works even when bookings are legacy/misaligned)
+    const contactMap = new Map();
+    const { data: relatedMessages } = await supabaseClient
+        .from('messages')
+        .select('sender_id, receiver_id, created_at')
+        .or(`sender_id.eq.${myId},receiver_id.eq.${myId}`)
+        .order('created_at', { ascending: false })
+        .limit(500);
 
-    // For simplicity: We will fetch "Contacts" derived from Bookings.
-    // If I am customer -> fetch my providers from bookings.
-    // If I am provider -> fetch my customers from bookings.
+    const partnerIdsFromMessages = [...new Set((relatedMessages || []).map(m => {
+        if (m.sender_id === myId) return m.receiver_id;
+        if (m.receiver_id === myId) return m.sender_id;
+        return null;
+    }).filter(id => id && id !== myId))];
+
+    if (partnerIdsFromMessages.length > 0) {
+        const { data: partnerProfiles } = await supabaseClient
+            .from('profiles')
+            .select('id, full_name, role')
+            .in('id', partnerIdsFromMessages);
+
+        const profileMap = new Map();
+        (partnerProfiles || []).forEach(p => profileMap.set(p.id, p));
+
+        partnerIdsFromMessages.forEach(partnerId => {
+            const p = profileMap.get(partnerId);
+            const displayName = p?.full_name || 'مستخدم';
+            contactMap.set(partnerId, {
+                id: partnerId,
+                name: displayName,
+                specialty: p?.role === 'provider' ? 'مقدم خدمة' : 'عميل',
+                avatar: displayName.substring(0, 2)
+            });
+        });
+    }
 
     // 1. Get my role
     const { data: profile } = await supabaseClient
@@ -91,7 +117,7 @@ async function loadConversations() {
         .eq('id', myId)
         .single();
 
-    let contacts = [];
+    let contacts = Array.from(contactMap.values());
 
     if (profile?.role === 'customer') {
         const { data: bookings } = await supabaseClient
@@ -114,7 +140,10 @@ async function loadConversations() {
                 });
             }
         });
-        contacts = Array.from(map.values());
+        map.forEach((value, key) => {
+            if (!contactMap.has(key)) contactMap.set(key, value);
+        });
+        contacts = Array.from(contactMap.values());
 
     } else {
         // Provider: Get customers
@@ -163,9 +192,14 @@ async function loadConversations() {
                     });
                 }
             });
-            contacts = Array.from(map.values());
+            map.forEach((value, key) => {
+                if (!contactMap.has(key)) contactMap.set(key, value);
+            });
+            contacts = Array.from(contactMap.values());
         }
     }
+
+    console.log('Chat contacts loaded:', contacts.length);
 
     // Render Contacts
     if (contacts.length === 0) {
