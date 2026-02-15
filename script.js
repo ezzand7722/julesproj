@@ -1222,7 +1222,7 @@ function setupSmoothScroll() {
             e.preventDefault();
             const target = document.querySelector(this.getAttribute('href'));
             if (target) {
-                const navHeight = document.querySelector('.navbar').offsetHeight;
+                const navHeight = document.querySelector('.navbar')?.offsetHeight || 0;
                 window.scrollTo({ top: target.offsetTop - navHeight - 20, behavior: 'smooth' });
             }
         });
@@ -1234,6 +1234,8 @@ function setupAnimations() {
     // Navbar scroll effect
     window.addEventListener('scroll', () => {
         const navbar = document.querySelector('.navbar');
+        if (!navbar) return;
+
         if (window.pageYOffset > 100) {
             navbar.style.background = 'rgba(255, 255, 255, 0.98)';
             navbar.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.1)';
