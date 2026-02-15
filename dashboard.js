@@ -514,8 +514,26 @@ async function loadBookings() {
         return;
     }
 
+    let resolvedBookings = bookings || [];
+
+    // Legacy fallback: some old rows may have provider_id = auth user id
+    if (resolvedBookings.length === 0 && currentUser?.id) {
+        const { data: legacyBookings, error: legacyError } = await supabaseDashboard
+            .from('bookings')
+            .select('*')
+            .eq('provider_id', currentUser.id)
+            .or('archived.is.null,archived.eq.false')
+            .order('created_at', { ascending: false });
+
+        if (!legacyError && legacyBookings?.length) {
+            resolvedBookings = legacyBookings;
+        }
+    }
+
+    console.log('Provider bookings loaded:', resolvedBookings.length);
+
     // 2. Fetch Customer Details Manually
-    const customerIds = [...new Set(bookings.map(b => b.customer_id).filter(Boolean))];
+    const customerIds = [...new Set(resolvedBookings.map(b => b.customer_id).filter(Boolean))];
     const profilesMap = {};
 
     if (customerIds.length > 0) {
@@ -528,7 +546,7 @@ async function loadBookings() {
     }
 
     // 3. Attach Profiles
-    const enrichedBookings = bookings.map(b => ({
+    const enrichedBookings = resolvedBookings.map(b => ({
         ...b,
         profiles: profilesMap[b.customer_id] || null
     }));
