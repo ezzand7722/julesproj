@@ -118,35 +118,48 @@ async function loadConversations() {
 
     } else {
         // Provider: Get customers
-        // We need to fetch bookings where provider_id matches my provider record
-        // First get my provider record
+        // We need to fetch bookings where provider_id matches any provider row for this user
         const { data: providerRows, error: providerError } = await supabaseClient
             .from('providers')
             .select('id')
             .eq('user_id', myId)
-            .order('created_at', { ascending: true })
-            .limit(1);
+            .order('created_at', { ascending: false });
 
         if (providerError) {
             console.error('Failed to load provider row for chat contacts:', providerError);
         }
 
-        const providerParams = providerRows?.[0] || null;
+        const providerIds = providerRows?.map(p => p.id).filter(Boolean) || [];
 
-        if (providerParams) {
+        if (providerIds.length > 0) {
             const { data: bookings } = await supabaseClient
                 .from('bookings')
                 .select('customer_id, customer_name')
-                .eq('provider_id', providerParams.id);
+                .in('provider_id', providerIds);
+
+            const customerIds = [...new Set((bookings || []).map(b => b.customer_id).filter(Boolean))];
+            const profileNameMap = new Map();
+
+            if (customerIds.length > 0) {
+                const { data: customerProfiles } = await supabaseClient
+                    .from('profiles')
+                    .select('id, full_name')
+                    .in('id', customerIds);
+
+                (customerProfiles || []).forEach(p => {
+                    profileNameMap.set(p.id, p.full_name || 'عميل');
+                });
+            }
 
             const map = new Map();
             bookings?.forEach(b => {
                 if (b.customer_id) {
+                    const displayName = profileNameMap.get(b.customer_id) || b.customer_name || 'عميل';
                     map.set(b.customer_id, {
                         id: b.customer_id,
-                        name: b.customer_name,
+                        name: displayName,
                         specialty: 'عميل',
-                        avatar: b.customer_name.substring(0, 2)
+                        avatar: displayName.substring(0, 2)
                     });
                 }
             });

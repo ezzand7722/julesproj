@@ -9,6 +9,7 @@ window.supabaseClient = supabaseDashboard;
 
 let currentUser = null;
 let currentProvider = null;
+let providerIdsForUser = [];
 
 // Initialize dashboard
 document.addEventListener('DOMContentLoaded', async () => {
@@ -46,15 +47,15 @@ async function checkAuth() {
 
     currentUser = session.user;
 
-    // Get provider record (robust against duplicate rows)
+    // Get provider records (some accounts may have duplicate provider rows)
     const { data: providerRows, error: providerLookupError } = await supabaseDashboard
         .from('providers')
         .select('*')
         .eq('user_id', currentUser.id)
-        .order('created_at', { ascending: true })
-        .limit(1);
+        .order('created_at', { ascending: false });
 
-    let provider = providerRows?.[0] || null;
+    let provider = null;
+    providerIdsForUser = providerRows?.map(p => p.id).filter(Boolean) || [];
 
     if (providerLookupError) {
         console.error('❌ Failed to load provider record:', providerLookupError);
@@ -63,7 +64,7 @@ async function checkAuth() {
     }
 
     // If no provider record exists but user has session, check if they're a provider
-    if (!provider) {
+    if (providerIdsForUser.length === 0) {
         console.log('⚠️ No provider record found, checking profile...');
 
         // Check if user's profile role is 'provider'
@@ -98,12 +99,31 @@ async function checkAuth() {
             }
 
             provider = newProvider;
+            providerIdsForUser = [newProvider.id];
             showNotification('تم إنشاء حساب مقدم الخدمة بنجاح! 🎉', 'success');
         } else {
             // Not a provider at all
             showNotification('هذه الصفحة لمقدمي الخدمات فقط', 'warning');
             setTimeout(() => window.location.href = 'index.html', 2000);
             return;
+        }
+    } else {
+        provider = providerRows[0];
+
+        // Prefer provider row that has the newest booking (if duplicates exist)
+        if (providerIdsForUser.length > 1) {
+            const { data: latestBooking } = await supabaseDashboard
+                .from('bookings')
+                .select('provider_id, created_at')
+                .in('provider_id', providerIdsForUser)
+                .order('created_at', { ascending: false })
+                .limit(1)
+                .maybeSingle();
+
+            if (latestBooking?.provider_id) {
+                const matched = providerRows.find(p => p.id === latestBooking.provider_id);
+                if (matched) provider = matched;
+            }
         }
     }
 
@@ -477,11 +497,13 @@ async function loadProviderData() {
 async function loadBookings() {
     console.log('Loading bookings...');
 
+    const idsToQuery = providerIdsForUser.length ? providerIdsForUser : [currentProvider.id];
+
     // 1. Fetch Bookings (straight select, no join to avoid 400 error)
     const { data: bookings, error } = await supabaseDashboard
         .from('bookings')
         .select('*')
-        .eq('provider_id', currentProvider.id)
+        .in('provider_id', idsToQuery)
         .or('archived.is.null,archived.eq.false')
         .order('created_at', { ascending: false });
 
