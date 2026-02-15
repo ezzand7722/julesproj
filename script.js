@@ -196,12 +196,15 @@ async function handleLogout() {
 window.handleLogout = handleLogout;
 
 // Jordan Neighborhoods Data
-const neighborhoodsByCity = {
+const defaultNeighborhoodsByCity = {
     'عمان': ['عبدون', 'الصويفية', 'مرج الحمام', 'الهاشمي الشمالي', 'طبربور', 'الجبيهة', 'خلدا', 'الرابية', 'تلاع العلي', 'شفا بدران'],
     'اربد': ['حي الحسين', 'النزهة', 'الحي الشرقي', 'المدينة الصناعية', 'الرمثا', 'بيت راس'],
     'الزرقاء': ['الزرقاء الجديدة', 'المدينة الصناعية', 'الرصيفة', 'جبل طارق', 'الأمير محمد'],
     'العقبة': ['وسط المدينة', 'الشاطئ الجنوبي', 'السكة الحديد', 'العقبة الصناعية']
 };
+
+const neighborhoodsData =
+    (typeof window !== 'undefined' && window.neighborhoodsByCity) || defaultNeighborhoodsByCity;
 
 // Update neighborhoods dropdown based on selected city
 function updateNeighborhoods() {
@@ -211,12 +214,12 @@ function updateNeighborhoods() {
 
     const selectedCity = citySelect.value;
 
-    if (selectedCity && neighborhoodsByCity[selectedCity]) {
+    if (selectedCity && neighborhoodsData[selectedCity]) {
         // Show neighborhood dropdown
         neighborhoodWrapper.style.display = 'flex';
 
         // Populate neighborhoods
-        const neighborhoods = neighborhoodsByCity[selectedCity];
+        const neighborhoods = neighborhoodsData[selectedCity];
         neighborhoodSelect.innerHTML = '<option value="">كل الأحياء</option>' +
             neighborhoods.map(n => `<option value="${n}">${n}</option>`).join('');
     } else {
