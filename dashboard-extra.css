@@ -167,6 +167,113 @@
     color: var(--gray-700);
 }
 
+/* Provider bookings (SP dashboard) */
+.bookings-list {
+    display: grid;
+    gap: 14px;
+}
+
+.booking-item {
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    background: rgba(15, 23, 42, 0.35);
+    border-radius: 16px;
+    padding: 18px;
+}
+
+.booking-item .booking-header {
+    margin-bottom: 10px;
+}
+
+.booking-item .booking-id {
+    font-weight: 700;
+    font-size: 0.82rem;
+    color: #93c5fd;
+    letter-spacing: 0.03em;
+}
+
+.booking-item .booking-status {
+    background: rgba(15, 23, 42, 0.55);
+    border: 1px solid rgba(148, 163, 184, 0.24);
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.booking-item .booking-details {
+    border-top: 1px dashed rgba(148, 163, 184, 0.25);
+    margin-top: 10px;
+    padding-top: 12px;
+}
+
+.booking-actions {
+    margin-top: 14px;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-start;
+}
+
+.booking-actions .btn-small {
+    border: 0;
+    border-radius: 10px;
+    padding: 9px 14px;
+    min-width: 88px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+.booking-actions .btn-small:hover {
+    transform: translateY(-1px);
+}
+
+.booking-actions .btn-small:active {
+    transform: translateY(0);
+}
+
+.booking-actions .btn-confirm {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: #ffffff;
+    box-shadow: 0 8px 16px rgba(16, 185, 129, 0.28);
+}
+
+.booking-actions .btn-cancel {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: #ffffff;
+    box-shadow: 0 8px 16px rgba(239, 68, 68, 0.24);
+}
+
+.booking-actions .btn-complete {
+    background: linear-gradient(135deg, var(--primary), #0891b2);
+    color: #ffffff;
+    box-shadow: 0 8px 16px rgba(8, 145, 178, 0.24);
+}
+
+@media (max-width: 640px) {
+    .booking-actions {
+        flex-direction: column;
+    }
+
+    .booking-actions .btn-small {
+        width: 100%;
+    }
+}
+
+[data-theme="light"] .booking-item {
+    background: #f8fafc;
+    border-color: #e2e8f0;
+}
+
+[data-theme="light"] .booking-item .booking-id {
+    color: #0f172a;
+}
+
+[data-theme="light"] .booking-item .booking-status {
+    background: #ffffff;
+    border-color: #e2e8f0;
+}
+
 /* Review Item Styles */
 .review-item {
     padding: 20px;
