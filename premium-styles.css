@@ -751,8 +751,28 @@ button, .btn, a {
     background: #1f2937 !important;
     border-color: #374151 !important;
 }
+[data-theme="dark"] .booking-id {
+    background: #111827 !important;
+    color: #cbd5e1 !important;
+    border: 1px solid #374151 !important;
+}
 [data-theme="dark"] .booking-details {
     border-top-color: #374151 !important;
+}
+/* Requests empty-state in bookings tab */
+[data-theme="dark"] .requests-empty-state {
+    background: #111827 !important;
+    border-color: #374151 !important;
+    color: #cbd5e1 !important;
+}
+[data-theme="dark"] .requests-empty-state h3 {
+    color: #e2e8f0 !important;
+}
+[data-theme="dark"] .requests-empty-state p {
+    color: #94a3b8 !important;
+}
+[data-theme="dark"] .requests-empty-state svg path {
+    stroke: #64748b !important;
 }
 /* Review items */
 [data-theme="dark"] .review-item {
